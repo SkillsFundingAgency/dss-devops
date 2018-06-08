@@ -10,7 +10,9 @@
   try {
 
     $ADDomainName = $Subscription.ExtendedProperties.Account.Split('@')[1]
+    Write-Verbose $ADDomainName
     $ADAppUserName = "$ApplicationId@$ADDomainName"
+    Write-Verbose $ADAppUserName
     $ADAppCredential = New-Object -TypeName pscredential –ArgumentList $ADAppUserName, $AppPassword
     Write-Host "AAD Credendial created...." -ForegroundColor Yellow 
 
@@ -32,8 +34,10 @@
     'grant_type' = 'client_credentials'
     'client_secret' = $UnsecurePassword
   }
+  Write-Verbose $Body
 
   $TokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $Subscription.TenantId
+  Write-Verbose $TokenEndpoint
 
   $Params = @{
       ContentType = 'application/x-www-form-urlencoded'
@@ -42,6 +46,7 @@
       Method = 'Post'
       URI = $TokenEndpoint
   }
+  Write-Verbose $Params
 
   $Token = Invoke-RestMethod @Params
   # Show the raw token and expiration date converted in readable format: #
