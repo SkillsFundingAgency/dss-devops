@@ -4,7 +4,7 @@ param(
     [Parameter(Mandatory=$true)]    
     [string]$ApplicationId,
     [Parameter(Mandatory=$true)]
-    [System.Security.SecureString]$AppPassword,
+    [String]$AppPassword,
     [Parameter(Mandatory=$true)]
     [string]$FunctionAppName,
     [Parameter(Mandatory=$true)]
@@ -13,4 +13,6 @@ param(
 
 Import-Module $ModulePath
 
-Enable-Swagger -ApplicationId $ApplicationId -AppPassword $AppPassword -FunctionAppName $FunctionAppName -SubscriptionName $SubscriptionName
+$SecurePwd = ConvertTo-SecureString -String $AppPassword -AsPlainText -Force
+
+Enable-Swagger -ApplicationId $ApplicationId -AppPassword $SecurePwd -FunctionAppName $FunctionAppName -SubscriptionName $SubscriptionName
