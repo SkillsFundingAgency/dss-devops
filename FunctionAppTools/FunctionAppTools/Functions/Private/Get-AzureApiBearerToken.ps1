@@ -1,4 +1,5 @@
 ﻿function Get-AzureApiBearerToken {
+  [CmdletBinding()]
   param (
     $SubscriptionName,
     $ApplicationId,
