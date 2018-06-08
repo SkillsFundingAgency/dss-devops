@@ -1,4 +1,5 @@
 function Enable-Swagger {
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]    
         [string]$ApplicationId,
