@@ -53,7 +53,7 @@ function Get-MasterAPIKey($kuduApiAuthorisationToken, $functionAppName ){
  
     $apiUrl = "https://$functionAppName.scm.azurewebsites.net/api/functions/admin/masterkey"
     
-    $result = Invoke-RestMethod -Uri $apiUrl -Headers @{"Authorization"=$kuduApiAuthorisationToken;"If-Match"="*"} 
+    $result = Invoke-RestMethod -Uri $apiUrl -Headers @{"Authorization"=$kuduApiAuthorisationToken;"If-Match"="*"} -UseBasicParsing
      
     return $result
 }

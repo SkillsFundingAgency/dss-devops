@@ -18,9 +18,9 @@ function Get-Swagger{
 
     $MasterKey = Get-FunctionAppMasterkey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName
     $Uri = "https://$FunctionAppName.azurewebsites.net/admin/host/systemkeys/swaggerdocumentationkey"
-    $SwaggerKey = Invoke-RestMethod -Method post -Headers @{'x-functions-key'="$MasterKey"} -Uri $Uri
+    $SwaggerKey = Invoke-RestMethod -Method post -Headers @{'x-functions-key'="$MasterKey"} -Uri $Uri -UseBasicParsing
     
     $Uri = "https://$FunctionAppName.azurewebsites.net/api/$ApiResourceName/api-definition?code=$($SwaggerKey.value)"
-    $Swagger = Invoke-RestMethod -Method GET -Uri $Uri
+    $Swagger = Invoke-RestMethod -Method GET -Uri $Uri -UseBasicParsing
     $Swagger
 }

@@ -51,6 +51,7 @@
       Body = $Body
       Method = 'Post'
       URI = $TokenEndpoint
+      UseBasicParsing = $true
   }
   Write-Verbose $Params
 
