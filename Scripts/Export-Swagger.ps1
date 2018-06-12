@@ -1,16 +1,20 @@
 [CmdletBinding()]
 param(
 	[Parameter(Mandatory=$true)]
-	[string]$SwaggerUri,
+	[string]$ModulePath,
 	[Parameter(Mandatory=$true)]
 	[string]$FunctionAppName,
+	[Parameter(Mandatory=$true)]
+	[string]$ApiResourceName,
 	[Parameter(Mandatory=$true)]
 	[string]$ResourceGroup,
 	[Parameter(Mandatory=$true)]
 	[string]$OutputFilePath
 )
 
-$Swagger = Invoke-RestMethod -Method GET -Uri "$SwaggerUri"
+Import-Module $ModulePath
+
+$Swagger = Get-Swagger -FunctionAppName $FunctionAppName -ApiResourceName $ApiResourceName -ResourceGroupName $ResourceGroupName
 Write-Verbose -Message $($Swagger | ConvertTo-Json)
 
 $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
