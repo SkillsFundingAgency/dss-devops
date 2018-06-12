@@ -14,7 +14,7 @@ param(
 
 Import-Module $ModulePath
 
-$Swagger = Get-Swagger -FunctionAppName $FunctionAppName -ApiResourceName $ApiResourceName -ResourceGroupName $ResourceGroupName
+$Swagger = Get-Swagger -FunctionAppName $FunctionAppName -ApiResourceName $ApiResourceName -ResourceGroupName $ResourceGroup
 Write-Verbose -Message $($Swagger | ConvertTo-Json)
 
 $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
