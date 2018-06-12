@@ -6,14 +6,19 @@
     [System.Security.SecureString]$AppPassword
   )
 
+  Write-Host "Logging preference: $VerbosePreference"
+
   $Subscription = Get-AzureRmSubscription -SubscriptionName $SubscriptionName
+  
+  Write-Verbose -Message "SubscriptionId: $($Subscription.Id)"
+  Write-Verbose "Logged on account: $($Subscription.ExtendedProperties.Account)"
 
   try {
 
     $ADDomainName = $Subscription.ExtendedProperties.Account.Split('@')[1]
-    Write-Verbose $ADDomainName
+    Write-Verbose -Message $ADDomainName
     $ADAppUserName = "$ApplicationId@$ADDomainName"
-    Write-Verbose $ADAppUserName
+    Write-Verbose -Message $ADAppUserName
     $ADAppCredential = New-Object -TypeName pscredential –ArgumentList $ADAppUserName, $AppPassword
     Write-Host "AAD Credendial created...." -ForegroundColor Yellow 
 
