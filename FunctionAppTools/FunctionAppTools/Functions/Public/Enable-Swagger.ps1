@@ -10,7 +10,7 @@ function Enable-Swagger {
         [Parameter(Mandatory=$true)]
         [string]$SubscriptionName
     )
-    $BearerToken = Get-AzureApiBearerToken -SubscriptionName $SubscriptionName -ApplicationId $ApplicationId -AppPassword $AppPassword
+    $BearerToken = Get-AzureApiBearerToken -SubscriptionName $SubscriptionName -ApplicationId $ApplicationId -AppPassword $AppPassword -Verbose:$VerbosePreference
 
     $Uri = "https://$FunctionAppName.scm.azurewebsites.net/api/functions/config"
     $Body = '{"swagger": {"enabled": true}}'

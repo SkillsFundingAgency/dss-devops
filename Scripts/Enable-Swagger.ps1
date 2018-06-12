@@ -16,4 +16,4 @@ Import-Module $ModulePath
 
 $SecurePwd = ConvertTo-SecureString -String $AppPassword -AsPlainText -Force
 
-Enable-Swagger -ApplicationId $ApplicationId -AppPassword $SecurePwd -FunctionAppName $FunctionAppName -SubscriptionName $SubscriptionName
+Enable-Swagger -ApplicationId $ApplicationId -AppPassword $SecurePwd -FunctionAppName $FunctionAppName -SubscriptionName $SubscriptionName -Verbose:$VerbosePreference
