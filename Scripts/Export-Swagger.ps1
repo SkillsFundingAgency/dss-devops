@@ -10,7 +10,7 @@ param(
 	[string]$OutputFilePath
 )
 
-$Swagger = Invoke-RestMethod -Method GET -Uri $SwaggerUri
+$Swagger = Invoke-RestMethod -Method GET -Uri "$SwaggerUri"
 Write-Verbose -Message $($Swagger | ConvertTo-Json)
 
 $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
