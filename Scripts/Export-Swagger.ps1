@@ -10,8 +10,6 @@ param(
 	[string]$OutputFilePath
 )
 
-Import-Module $ModulePath
-
 $Swagger = Invoke-RestMethod -Method GET -Uri $SwaggerUri
 Write-Verbose -Message $($Swagger | ConvertTo-Json)
 
