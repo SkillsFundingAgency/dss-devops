@@ -64,7 +64,7 @@ function Get-HostAPIKeys($kuduApiAuthorisationToken, $functionAppName, $masterKe
      $apiUrl2 = "https://$functionAppName.azurewebsites.net/admin/host/keys?code="
      $apiUrl=$apiUrl2 + $masterKey.masterKey.ToString()
      $apiUrl
-     $result = Invoke-WebRequest $apiUrl
+     $result = Invoke-WebRequest $apiUrl -UseBasicParsing
     return $result
 }
 
