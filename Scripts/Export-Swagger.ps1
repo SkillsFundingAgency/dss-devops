@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
 	[Parameter(Mandatory=$true)]
-	[string]$ModulePath,
+	[string]$SwaggerUri,
 	[Parameter(Mandatory=$true)]
 	[string]$FunctionAppName,
 	[Parameter(Mandatory=$true)]
@@ -12,7 +12,7 @@ param(
 
 Import-Module $ModulePath
 
-$Swagger = Get-Swagger -FunctionAppName $FunctionAppName -ResourceGroup $ResourceGroup
+$Swagger = Invoke-RestMethod -Method GET -Uri $SwaggerUri
 Write-Verbose -Message $($Swagger | ConvertTo-Json)
 
 $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
