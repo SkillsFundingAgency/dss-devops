@@ -20,10 +20,9 @@ Write-Verbose -Message $($Swagger | ConvertTo-Json -Depth 20)
 $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
 Write-Verbose -Message "Filename: $FileName"
 
-if(!$OutputFilePath.EndsWith("\\")) {
-	$OutputFilePath = $OutputFilePath + "\"
-}
-$OutputFile = New-Item -Path $OutputFilePath$FileName -ItemType File
+$OutputFolder = New-Item -Path $OutputFilePath -ItemType Directory
+$OutputFile = New-Item -Path $($OutputFolder.FullName)$FileName -ItemType File
+Write-Verbose -Message "OutputFile: $($OutputFile.FullName)"
 Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
 
 # store the filename in a VSTS variable to be consumed by a later task
