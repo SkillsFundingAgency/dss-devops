@@ -21,7 +21,7 @@ $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMd
 Write-Verbose -Message "Filename: $FileName"
 
 $OutputFolder = New-Item -Path $OutputFilePath -ItemType Directory
-$OutputFile = New-Item -Path $($OutputFolder.FullName)$FileName -ItemType File
+$OutputFile = New-Item -Path "$($OutputFolder.FullName)\$FileName" -ItemType File
 Write-Verbose -Message "OutputFile: $($OutputFile.FullName)"
 Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
 
