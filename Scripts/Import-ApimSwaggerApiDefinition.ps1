@@ -26,8 +26,10 @@ Param(
     [String]$InstanceName,
     [Parameter(Mandatory=$true)]
     [String]$ApiName,
-    [Parameter(Mandatory=$true)]
-    [String]$SwaggerSpecificationUrl
+    [Parameter(Mandatory=$true, ParameterSetName="Url")]
+    [String]$SwaggerSpecificationUrl,
+    [Parameter(Mandatory=$true, ParameterSetName="File")]
+    [String]$SwaggerSpecificationFile
 )
 
 try {
@@ -44,7 +46,12 @@ try {
 
     # --- Import swagger definition
     Write-Host "Updating API $ApiId\$InstanceName from definition $SwaggerSpecficiationUrl"
-    Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
+    if($PSCmdlet.ParameterSetName -eq "Url") {
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
+    }
+    elseif ($PSCmdlet.ParameterSetName -eq "File") {
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationFile $SwaggerSpecificationFile -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
+    }
 } catch {
    throw $_
 }
