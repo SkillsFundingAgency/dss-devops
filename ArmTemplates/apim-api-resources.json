@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "AdminEmail": {
+      "type": "string"
+    },
+    "ApiName": {
+      "type": "string"
+    },
+    "EnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
+      }
+    },
+    "OrganizationName": {
+      "type": "string",
+      "defaultValue": "National Careers Service"
+    },
+    "ProductDisplayName": {
+      "type": "string",
+      "defaultValue": "Data Sharing Service"
+    },
+    "SkuTier": {
+      "type": "string",
+      "allowedValues": [
+        "Developer",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Developer"
+    }
+  },
+  "variables": {
+    "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
+    "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]"
+
+  },
+  "resources": [
+    {
+      "name": "[variables('apimServiceName')]",
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2018-01-01",
+      "tags": {},
+      "properties": {
+        "publisherEmail": "[parameters('AdminEmail')]",
+        "publisherName": "[parameters('OrganizationName')]"
+      },
+      "sku": {
+        "name": "[parameters('SkuTier')]",
+        "capacity": 1
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "name": "[parameters('ApiName')]",
+          "type": "apis",
+          "apiVersion": "2018-01-01",
+          "properties": {
+            "displayName": "[parameters('ApiName')]",
+            "path": "api",
+            "protocols": [
+              "https"
+            ]
+          },
+          "dependsOn": [
+            "[variables('apimServiceName')]"
+          ]
+        },
+        {
+          "name": "[variables('apimProductInstanceName')]",
+          "type": "products",
+          "apiVersion": "2018-01-01",
+          "properties": {
+            "description": "string",
+            "terms": "string",
+            "subscriptionRequired": true,
+            "approvalRequired": true,
+            "subscriptionsLimit": 1,
+            "state": "published",
+            "displayName": "[variables('apimProductInstanceName')]"
+          },
+          "resources": [
+            {
+              "name": "Developers",
+              "type": "groups",
+              "apiVersion": "2018-01-01",
+              "dependsOn": [
+                "[variables('apimServiceName')]",
+                "[variables('apimProductInstanceName')]"
+              ]
+            },
+            {
+              "name": "[parameters('ApiName')]",
+              "type": "apis",
+              "apiVersion": "2018-01-01",
+              "dependsOn": [
+                "[variables('apimServiceName')]",
+                "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/apis/', parameters('ApiName'))]",
+                "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/products/', variables('apimProductInstanceName'))]"
+              ]
+            }
+          ],
+          "dependsOn": [
+            "[variables('apimServiceName')]"
+          ]
+        }
+      ]
+    }
+  ],
+  "outputs": {
+  }
+}
