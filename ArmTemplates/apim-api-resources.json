@@ -63,7 +63,7 @@
           "apiVersion": "2018-01-01",
           "properties": {
             "displayName": "[parameters('ApiName')]",
-            "path": "api",
+            "path": "[parameters('ApiName')]",
             "protocols": [
               "https"
             ]
