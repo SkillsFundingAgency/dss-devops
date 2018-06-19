@@ -26,4 +26,5 @@ Write-Verbose -Message "OutputFile: $($OutputFile.FullName)"
 Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
 
 # store the filename in a VSTS variable to be consumed by a later task
-Write-Output "##vso[task.setvariable variable=SwaggerFile;]$FileName"
+Write-Host "##vso[task.setvariable variable=SwaggerFile]$FileName"
+
