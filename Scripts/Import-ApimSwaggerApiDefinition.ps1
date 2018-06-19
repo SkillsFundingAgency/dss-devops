@@ -29,7 +29,7 @@ Param(
     [Parameter(Mandatory=$true, ParameterSetName="Url")]
     [String]$SwaggerSpecificationUrl,
     [Parameter(Mandatory=$true, ParameterSetName="File")]
-    [Switch]$SwaggerSpecificationFile
+    [Switch]$SwaggerSpecificationFile,
     [Parameter(Mandatory=$true, ParameterSetName="File")]
 	[string]$ModulePath,
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
