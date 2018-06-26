@@ -14,13 +14,31 @@
         "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
       }
     },
+    "HostnameRoot": {
+      "type": "string",
+      "metadata": {
+        "description": "The hostname used by the API (Proxy) and Developer Portal (Portal)"
+      }
+    },
     "OrganizationName": {
       "type": "string",
       "defaultValue": "National Careers Service"
     },
+    "PortalKeyVaultCertificatePath": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate identifier, eg https://dss-dev-shared-kv.vault.azure.net/certificates/wildcard-dss-nationalcareersservice-direct-gov-uk/identifierstringabc123"
+      }
+    },
     "ProductDisplayName": {
       "type": "string",
       "defaultValue": "Data Sharing Service"
+    },
+    "ProxyKeyVaultCertificatePath": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate identifier, eg https://dss-dev-shared-kv.vault.azure.net/certificates/wildcard-dss-nationalcareersservice-direct-gov-uk/identifierstringabc123"
+      }
     },
     "SkuTier": {
       "type": "string",
@@ -36,7 +54,6 @@
   "variables": {
     "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
     "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]"
-
   },
   "resources": [
     {
@@ -46,7 +63,22 @@
       "tags": {},
       "properties": {
         "publisherEmail": "[parameters('AdminEmail')]",
-        "publisherName": "[parameters('OrganizationName')]"
+        "publisherName": "[parameters('OrganizationName')]",
+        "hostnameConfigurations": [
+          {
+            "type": "Proxy",
+            "hostName": "[concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot'))]",
+            "keyVaultId": "[parameters('ProxyKeyVaultCertificatePath')]",
+            "defaultSslBinding": true,
+            "negotiateClientCertificate": false
+          },
+          {
+            "type": "Portal",
+            "hostName": "[concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot'))]",
+            "keyVaultId": "[parameters('PortalKeyVaultCertificatePath')]",
+            "negotiateClientCertificate": false
+          }
+        ]
       },
       "sku": {
         "name": "[parameters('SkuTier')]",
@@ -113,6 +145,5 @@
       ]
     }
   ],
-  "outputs": {
-  }
+  "outputs": {}
 }
