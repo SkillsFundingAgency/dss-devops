@@ -49,9 +49,9 @@ function Get-KuduApiAuthorisationHeaderValueAzure($resourceGroupName, $functionA
 }
 
 #function to get the Master Key using End point and passing bearer tocken in Authorization Header
-function Get-MasterAPIKey($kuduApiAuthorisationToken, $functionAppName ){
+function Get-MasterAPIKey($kuduApiAuthorisationToken, $functionAppName, $FunctionAppDomain ){
  
-    $apiUrl = "https://$functionAppName.scm.azurewebsites.net/api/functions/admin/masterkey"
+    $apiUrl = "https://$functionAppName.scm.$FunctionAppDomain/api/functions/admin/masterkey"
     
     $result = Invoke-RestMethod -Uri $apiUrl -Headers @{"Authorization"=$kuduApiAuthorisationToken;"If-Match"="*"} -UseBasicParsing
      
@@ -59,9 +59,9 @@ function Get-MasterAPIKey($kuduApiAuthorisationToken, $functionAppName ){
 }
  
 #function to get the Admin keys
-function Get-HostAPIKeys($kuduApiAuthorisationToken, $functionAppName, $masterKey ){
+function Get-HostAPIKeys($kuduApiAuthorisationToken, $functionAppName, $FunctionAppDomain, $masterKey ){
      $masterKey
-     $apiUrl2 = "https://$functionAppName.azurewebsites.net/admin/host/keys?code="
+     $apiUrl2 = "https://$functionAppName.$FunctionAppDomain/admin/host/keys?code="
      $apiUrl=$apiUrl2 + $masterKey.masterKey.ToString()
      $apiUrl
      $result = Invoke-WebRequest $apiUrl -UseBasicParsing

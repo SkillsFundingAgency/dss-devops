@@ -11,6 +11,8 @@ function Get-Swagger{
         [Parameter(Mandatory=$true)]
         [string]$FunctionAppName,
         [Parameter(Mandatory=$true)]
+        [string]$FunctionAppDomain,
+        [Parameter(Mandatory=$true)]
         [string]$ApiResourceName,
         [Parameter(Mandatory=$true)]
         [string]$ResourceGroupName
@@ -18,7 +20,7 @@ function Get-Swagger{
 
     $MasterKey = Get-FunctionAppMasterkey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName
     
-    $Uri = "https://$FunctionAppName.azurewebsites.net/api/$ApiResourceName/api-definition?code=$($MasterKey)"
+    $Uri = "https://$FunctionAppName.$FunctionAppDomain/api/$ApiResourceName/api-definition?code=$($MasterKey)"
     $Swagger = Invoke-RestMethod -Method GET -Uri $Uri -UseBasicParsing
     $Swagger
 }

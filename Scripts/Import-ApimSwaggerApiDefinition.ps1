@@ -33,7 +33,9 @@ Param(
     [Parameter(Mandatory=$true, ParameterSetName="File")]
 	[string]$ModulePath,
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
-	[string]$FunctionAppName,
+    [string]$FunctionAppName,
+    [Parameter(Mandatory=$false, ParameterSetName="File")]
+    [string]$FunctionAppDomain = "azurewebsites.net",
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
 	[string]$ApiResourceName,
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
@@ -46,7 +48,7 @@ Param(
 if ($PSCmdlet.ParameterSetName -eq "File") {
     Import-Module $ModulePath
 
-    $Swagger = Get-Swagger -FunctionAppName $FunctionAppName -ApiResourceName $ApiResourceName -ResourceGroupName $FunctionAppResourceGroup
+    $Swagger = Get-Swagger -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -ApiResourceName $ApiResourceName -ResourceGroupName $FunctionAppResourceGroup
     Write-Verbose -Message $($Swagger | ConvertTo-Json -Depth 20)
 
     $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
