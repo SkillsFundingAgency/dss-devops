@@ -72,7 +72,8 @@ function Get-HostAPIKeys($kuduApiAuthorisationToken, $functionAppName, $Function
 function Get-FunctionAppMasterKey{
     param(
         $ResourceGroupName,
-        $FunctionAppName 
+        $FunctionAppName,
+        $FunctionAppDomain 
     )
 
     #login to account if not running from VSTS
@@ -84,10 +85,10 @@ function Get-FunctionAppMasterKey{
     #$accessToken
     
     #get master key
-    $masterKey=Get-MasterAPIKey $accessToken $functionAppName
+    $masterKey=Get-MasterAPIKey $accessToken $functionAppName -FunctionAppDomain $FunctionAppDomain
     
     #get host key
-    $allkeys=Get-HostAPIKeys $accessToken $functionAppName $masterkey
+    $allkeys=Get-HostAPIKeys $accessToken $functionAppName $FunctionAppDomain $masterkey
     $MasterKey = $allkeys[0].masterKey
     $MasterKey
 }
