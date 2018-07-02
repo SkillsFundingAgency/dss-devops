@@ -49,11 +49,31 @@
         "Premium"
       ],
       "defaultValue": "Developer"
+    },
+    "SubnetName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "SubnetResourceGroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "VnetName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
     "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
-    "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]"
+    "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
+    "apimVnetId": "[if(equals(parameters('SubnetName'), ''), '', resourceId(parameters('SubnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VnetName')))]",
+    "apimSubnetId": "[if(equals(parameters('SubnetName'), ''), '',concat(variables('apimVnetId'), '/subnets/', parameters('SubnetName')))]",
+    "apimSubnetConfig": {
+      "withSubnet": {
+        "subnetResourceId": "[variables('apimSubnetId')]"
+      },
+      "withoutSubnet": null
+    }
   },
   "resources": [
     {
@@ -78,7 +98,9 @@
             "keyVaultId": "[parameters('PortalKeyVaultCertificatePath')]",
             "negotiateClientCertificate": false
           }
-        ]
+        ],
+        "virtualNetworkType": "[if(equals(parameters('SubnetName'), ''), 'None' ,'External')]",
+        "virtualNetworkConfiguration": "[if(equals(parameters('SubnetName'), ''), variables('apimSubnetConfig').withoutSubnet ,variables('apimSubnetConfig').withSubnet)]"
       },
       "sku": {
         "name": "[parameters('SkuTier')]",
