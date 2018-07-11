@@ -20,7 +20,7 @@ https://sit-manage-vacancy.apprenticeships.sfa.bis.gov.uk/swagger/docs/v1
 #>
 [CmdletBinding()]
 Param(
-    [Parameter(Mandatory=$true)]    
+    [Parameter(Mandatory=$true)]
     [String]$ApimResourceGroup,
     [Parameter(Mandatory=$true)]
     [String]$InstanceName,
@@ -41,7 +41,7 @@ Param(
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
 	[string]$FunctionAppResourceGroup,
 	[Parameter(Mandatory=$true, ParameterSetName="File")]
-	[string]$OutputFilePath    
+	[string]$OutputFilePath
 
 )
 
@@ -75,7 +75,7 @@ try {
     # --- Import swagger definition
     Write-Host "Updating API $ApiId\$InstanceName from definition $SwaggerSpecficiationUrl"
     if($PSCmdlet.ParameterSetName -eq "Url") {
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiName -ErrorAction Stop -Verbose:$VerbosePreference
     }
     elseif ($PSCmdlet.ParameterSetName -eq "File") {
         Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
