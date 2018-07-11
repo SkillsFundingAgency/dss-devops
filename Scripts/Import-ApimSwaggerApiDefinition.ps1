@@ -78,7 +78,7 @@ try {
         Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiName -ErrorAction Stop -Verbose:$VerbosePreference
     }
     elseif ($PSCmdlet.ParameterSetName -eq "File") {
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $ApiId -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $ApiId -Path $ApiName -ErrorAction Stop -Verbose:$VerbosePreference
     }
 } catch {
    throw $_
