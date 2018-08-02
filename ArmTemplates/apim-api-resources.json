@@ -20,6 +20,9 @@
         "description": "The hostname used by the API (Proxy) and Developer Portal (Portal)"
       }
     },
+    "OauthAuthenticationServer": {
+      "type": "string"
+    },
     "OrganizationName": {
       "type": "string",
       "defaultValue": "National Careers Service"
@@ -73,7 +76,17 @@
         "subnetResourceId": "[variables('apimSubnetId')]"
       },
       "withoutSubnet": null
-    }
+    },
+    "noAuthenticationProvider": {
+      "oAuth2": null,
+      "openid": null
+    },
+    "oauthAuthenticationProvider": {
+      "oAuth2": {
+        "authorizationServerId": "[parameters('OauthAuthenticationServer')]"
+      }
+    },
+    "authenticationProvider": "[if(equals(parameters('OauthAuthenticationServer'), ''), variables('noAuthenticationProvider'), variables('oauthAuthenticationProvider'))]"
   },
   "resources": [
     {
@@ -116,6 +129,7 @@
           "type": "apis",
           "apiVersion": "2018-01-01",
           "properties": {
+            "authenticationSettings": "[variables('authenticationProvider')]",
             "displayName": "[parameters('ApiName')]",
             "path": "[parameters('ApiName')]",
             "protocols": [
