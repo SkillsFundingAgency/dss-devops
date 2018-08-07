@@ -149,6 +149,7 @@
             {
               "name": "policy",
               "type": "policies",
+              "condition": "[not(equals(parameters('OauthAuthenticationServer'), ''))]",
               "apiVersion": "2018-01-01",
               "properties": {
                 "policyContent": "[concat('<policies><inbound><validate-jwt header-name=\"Authorization\" failed-validation-httpcode=\"401\" failed-validation-error-message=\"Unauthorized. Access token is missing or invalid.\"><openid-config url=\"https:\/\/login.microsoftonline.com\/', parameters('OauthB2CInstance'), '\/v2.0\/.well-known\/openid-configuration?p=', parameters('OauthB2CPolicy'), '\" \/><required-claims><claim name=\"aud\"><value>', parameters('OauthB2CFunctionAppApplicationId'), '<\/value><\/claim><\/required-claims><\/validate-jwt><base \/><\/inbound><backend><base \/><\/backend><outbound><base \/><\/outbound><on-error><base \/><\/on-error><\/policies>')]",
