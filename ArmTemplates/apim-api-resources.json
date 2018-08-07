@@ -21,16 +21,20 @@
       }
     },
     "OauthAuthenticationServer": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "OauthB2CFunctionAppApplicationId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "OauthB2CInstance": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "OauthB2CPolicy": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "OrganizationName": {
       "type": "string",
