@@ -1,0 +1,128 @@
+[CmdletBinding()]
+param(
+    # An array of URIs representing the ABC Endpoints
+    [Parameter(Mandatory=$true)]
+    [string[]]$EndpointUris,
+    [Parameter(Mandatory=$true)]
+    [string]$ContentPushServiceUri,
+    [Parameter(Mandatory=$true)]
+    [string]$KeyVault
+)
+
+Write-Verbose -Message "Getting AzureAdApplications"
+$AdApplications = Get-AzureAdApplication
+Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) applications"
+
+# Create app registrations for DSS endpoints
+$Endpoints = @()
+foreach ($EndpointUri in $EndpointUris) {
+
+    $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUri }}
+    
+    if(!$EndpointRegistration) {
+
+        Write-Verbose -Message "Found no app registration for $EndpointUri, creating app registration"
+        $NewAppRegistrationParams = @{
+            DisplayName = "$($EndpointUri.Split("/")[2].ToLower())-endpoint"
+            Homepage = $EndpointUri
+            ReplyUrls = $EndpointUri
+        }
+    
+        $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
+        New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+        $Endpoints += $AppRegistration
+    
+    }
+    else {
+
+        # Check ServicePrincipal registered
+        Write-Verbose -Message "App registration for $EndpointUri already exists"
+        $ServicePrincipal = Get-AzureADServicePrincipal -SearchString $EndpointRegistration.DisplayName
+        if (!$ServicePrincipal) {
+
+            Write-Verbose "Creating ServicePrincipal for $($EndpointRegistration.DisplayName)"
+            New-AzureADServicePrincipal -AccountEnabled $true -AppId $EndpointRegistration.AppId -DisplayName $EndpointRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+
+        }
+
+        $Endpoints += $EndpointRegistration
+
+    }
+
+}
+
+# Create permissions object
+$RequiredResourceAccessList = @()
+foreach ($Endpoint in $Endpoints) {
+
+    Write-Verbose -Message "Creating ResourceAccess object for $($Endpoint.DisplayName)"
+    $RequiredResourceAccess = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
+    $RequiredResourceAccess.ResourceAppId = $Endpoint.AppId
+    $ResourceAccessId = ($Endpoint.Oauth2Permissions | Where-Object { $_.Value -eq "user_impersonation" }).Id
+    $RequiredResourceAccess.ResourceAccess = New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $ResourceAccessId, "Scope"
+    $RequiredResourceAccessList += $RequiredResourceAccess
+
+}
+
+$ContentPushRegistration =  $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $ContentPushServiceUri }}
+if (!$ContentPushRegistration) {
+
+    Write-Verbose -Message "Found no app registration for $ContentPushServiceUri, creating app registration"
+    # Register new app with permissions
+    $NewAppRegistrationParams = @{
+        DisplayName = $ContentPushServiceUri.Split("/")[2].ToLower()
+        Homepage = $ContentPushServiceUri
+        RequiredResourceAccess = $RequiredResourceAccessList
+        ReplyUrls = $ContentPushServiceUri
+    }
+    $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
+    New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+
+}
+elseif ($ContentPushRegistration.Count -eq 1) {
+
+    Write-Verbose -Message "Found 1 app registration for $ContentPushServiceUri, updating app registration"
+    # Set permissions on existing app
+    $SetAppRegistrationParams = @{
+        ObjectId = $ContentPushRegistration.ObjectId
+        RequiredResourceAccess = $RequiredResourceAccessList
+    }
+    Set-AzureADApplication @SetAppRegistrationParams
+
+    # Check ServicePrincipal registered
+    $ServicePrincipal = Get-AzureADServicePrincipal -SearchString $ContentPushRegistration.DisplayName
+    if (!$ServicePrincipal) {
+
+        Write-Verbose "Creating ServicePrincipal for $($ContentPushRegistration.DisplayName)"
+        New-AzureADServicePrincipal -AccountEnabled $true -AppId $ContentPushRegistration.AppId -DisplayName $ContentPushRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+
+    }
+
+
+}
+else {
+
+    throw "ERROR: Found more than 1 app registration for $ContentPushServiceUri, exiting"
+
+}
+
+# Create PasswordCredential (API Access Key) and store in KeyVault
+$KeyVaultSecretName = "$(($ContentPushRegistration.DisplayName).Replace(".", "-"))-api-key"
+$KeyVaultSecret = Get-AzureKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -ErrorAction SilentlyContinue
+if (!$KeyVaultSecret) {
+
+    if ($ContentPushRegistration.PasswordCredential.Count -ne 0) {
+        $ExistingSecret = $ContentPushRegistration.PasswordCredential | ForEach-Object { [System.Text.Encoding]::ASCII.GetString($_.CustomKeyIdentifier) -eq "ContentPushKey"}
+    }
+    
+    if (!$ExistingSecret) {
+
+        Write-Verbose -Message "Creating credential"
+        $CredentialObject = New-AzureADApplicationPasswordCredential -ObjectId $ContentPushRegistration.ObjectId -EndDate "31/12/2299 00:00:00" -CustomKeyIdentifier "ContentPushKey"
+        Write-Verbose -Message "Adding credential $KeyVaultSecretName to KeyVault $KeyVault"
+        $SecureSecret = $CredentialObject.Value | ConvertTo-SecureString -AsPlainText -Force
+        Set-AzureKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -SecretValue $SecureSecret
+
+    }
+
+}
