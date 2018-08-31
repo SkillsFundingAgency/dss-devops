@@ -6,8 +6,36 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ContentPushServiceUri,
     [Parameter(Mandatory=$true)]
-    [string]$KeyVault
+    [string]$KeyVault,
+    [Parameter(Mandatory=$true)]
+    [string]$TenantId,
+    [Parameter(Mandatory=$true)]
+    [string]$AzureAadAdminUserName,
+    [Parameter(Mandatory=$true)]
+    [string]$AzureAadAdminPwd
 )
+
+try {
+
+    if(!($ENV:TF_BUILD)) {
+
+        Connect-AzureAD -TenantId $TenantId
+    
+    }
+    else {
+    
+        $SecurePassword = $AzureAadAdminPwd | ConvertTo-SecureString -AsPlainText -Force
+        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($AzureAadAdminUserName, $SecurePassword)
+        Connect-AzureAD -Credential $Credential -TenantId $TenantId
+    
+    }
+
+}
+catch {
+
+    throw "ERROR: unable to login to Active Directory with user $AzureAadAdminUserName"
+
+}
 
 Write-Verbose -Message "Getting AzureAdApplications"
 $AdApplications = Get-AzureAdApplication
