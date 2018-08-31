@@ -15,7 +15,17 @@ param(
     [string]$AzureAadAdminPwd
 )
 
-Import-Module AzureAd
+
+if (!(Get-Module AzureAd)) {
+
+    if (!(Get-InstalledModule AzureAd -ErrorAction SilentlyContinue)) {
+
+        Install-Module AzureAd -Scope CurrentUser -Force
+
+    }
+    Import-Module AzureAd
+    
+}
 
 try {
 
