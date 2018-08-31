@@ -2,7 +2,7 @@
 param(
     # An array of URIs representing the ABC Endpoints
     [Parameter(Mandatory=$true)]
-    [string[]]$EndpointUris,
+    [hashtable]$EndpointUris,
     [Parameter(Mandatory=$true)]
     [string]$ContentPushServiceUri,
     [Parameter(Mandatory=$true)]
@@ -15,17 +15,18 @@ Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) a
 
 # Create app registrations for DSS endpoints
 $Endpoints = @()
-foreach ($EndpointUri in $EndpointUris) {
+foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
-    $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUri }}
+    $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
     
     if(!$EndpointRegistration) {
 
-        Write-Verbose -Message "Found no app registration for $EndpointUri, creating app registration"
+        Write-Verbose -Message "Found no app registration for $($EndpointUris[$EndpointUriKey]), creating app registration"
         $NewAppRegistrationParams = @{
-            DisplayName = "$($EndpointUri.Split("/")[2].ToLower())-endpoint"
-            Homepage = $EndpointUri
-            ReplyUrls = $EndpointUri
+            DisplayName = "$($EndpointUris[$EndpointUriKey].Split("/")[2].ToLower())-endpoint"
+            Homepage = $EndpointUris[$EndpointUriKey]
+            ReplyUrls = $EndpointUris[$EndpointUriKey]
+            IdentifierUris = "https://$((Get-AzureADTenantDetail)[0].VerifiedDomains[0].Name)/$(New-Guid)"
         }
     
         $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
@@ -36,7 +37,7 @@ foreach ($EndpointUri in $EndpointUris) {
     else {
 
         # Check ServicePrincipal registered
-        Write-Verbose -Message "App registration for $EndpointUri already exists"
+        Write-Verbose -Message "App registration for $($EndpointUris[$EndpointUriKey]) already exists"
         $ServicePrincipal = Get-AzureADServicePrincipal -SearchString $EndpointRegistration.DisplayName
         if (!$ServicePrincipal) {
 
@@ -74,9 +75,10 @@ if (!$ContentPushRegistration) {
         Homepage = $ContentPushServiceUri
         RequiredResourceAccess = $RequiredResourceAccessList
         ReplyUrls = $ContentPushServiceUri
+        IdentifierUris = "https://$((Get-AzureADTenantDetail)[0].VerifiedDomains[0].Name)/$(New-Guid)"
     }
-    $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
-    New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+    $ContentPushRegistration = New-AzureADApplication @NewAppRegistrationParams
+    New-AzureADServicePrincipal -AccountEnabled $true -AppId $ContentPushRegistration.AppId -DisplayName $ContentPushRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
 }
 elseif ($ContentPushRegistration.Count -eq 1) {
@@ -125,4 +127,13 @@ if (!$KeyVaultSecret) {
 
     }
 
+}
+
+# Set VSTS variables
+Write-Host "##vso[task.setvariable variable=Authentication_PushServiceClientId]$($ContentPushRegistration.AppId)"
+foreach ($EndpointUriKey in $EndpointUris.Keys) {
+
+    $AppIdUri = ($Endpoints | ForEach-Object { $_ | Where-Object { $_.ReplyUrls.Contains($EndpointUris[$EndpointUriKey]) -eq $true } }).IdentifierUris[0]
+    Write-Host "##vso[task.setvariable variable=$($EndpointUriKey)_AppIdUri]$AppIdUri" 
+    
 }
