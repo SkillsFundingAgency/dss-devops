@@ -15,6 +15,8 @@ param(
     [string]$AzureAadAdminPwd
 )
 
+Import-Module AzureAd
+
 try {
 
     if(!($ENV:TF_BUILD)) {
