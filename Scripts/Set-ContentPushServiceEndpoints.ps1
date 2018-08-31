@@ -33,7 +33,7 @@ try {
 }
 catch {
 
-    throw "ERROR: unable to login to Active Directory with user $AzureAadAdminUserName"
+    throw "ERROR: unable to login to Active Directory tenant $TenantId with user $AzureAadAdminUserName`n$($Error[0])"
 
 }
 
