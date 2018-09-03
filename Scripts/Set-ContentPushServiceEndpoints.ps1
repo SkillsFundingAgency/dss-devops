@@ -24,7 +24,7 @@ if (!(Get-Module AzureAd)) {
 
     }
     Import-Module AzureAd
-    
+
 }
 
 try {
@@ -58,6 +58,12 @@ $Endpoints = @()
 foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
     $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
+    Write-Verbose -Message "$($EndpointRegistration.Count) app registrations with ReplyUrls matching $($EndpointUris[$EndpointUriKey]) found"
+    if ($EndpointRegistration.Count -gt 1) {
+
+        throw "ERROR: Multiple app registrations matching $($EndpointUris[$EndpointUriKey]) found.  Delete duplicate app registrations."
+        
+    }
     
     if(!$EndpointRegistration) {
 
