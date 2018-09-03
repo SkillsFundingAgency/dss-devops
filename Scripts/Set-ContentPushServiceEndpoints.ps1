@@ -178,7 +178,7 @@ if (!$KeyVaultSecret) {
     if (!$ExistingSecret) {
 
         Write-Verbose -Message "Creating credential"
-        $CredentialObject = New-AzureADApplicationPasswordCredential -ObjectId $ContentPushRegistration.ObjectId -EndDate "31/12/2299 00:00:00" -CustomKeyIdentifier "ContentPushKey"
+        $CredentialObject = New-AzureADApplicationPasswordCredential -ObjectId $ContentPushRegistration.ObjectId -EndDate [DateTime]::new(2299, 12, 31, 0, 0, 0) -CustomKeyIdentifier "ContentPushKey"
         Write-Verbose -Message "Adding credential $KeyVaultSecretName to KeyVault $KeyVault"
         $SecureSecret = $CredentialObject.Value | ConvertTo-SecureString -AsPlainText -Force
         Set-AzureKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -SecretValue $SecureSecret
