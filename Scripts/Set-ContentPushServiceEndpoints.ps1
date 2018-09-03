@@ -92,7 +92,19 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
         }
 
-        $Endpoints += $EndpointRegistration
+        # Check if $Endpoints collection already contains an endpoint with this ReplyUrl
+        if ($Endpoints | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}) {
+
+            Write-Verbose -Message "Endpoint registration for ReplyUrl $($EndpointUris[$EndpointUriKey]) already exists in Endpoints collection"
+
+        }
+        else {
+
+            Write-Verbose -Message "Adding endpoint registration for ReplyUrl $($EndpointUris[$EndpointUriKey]) to Endpoints collection"
+            $Endpoints += $EndpointRegistration
+
+        }
+        
 
     }
 
