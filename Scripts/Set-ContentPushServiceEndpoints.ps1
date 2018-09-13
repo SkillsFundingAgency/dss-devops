@@ -57,7 +57,14 @@ Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) a
 $Endpoints = @()
 foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
+    # Check for an existing app registration
     $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
+    if (!$EndpointRegistration) {
+
+        # Check for an app registration created in this run
+        $EndpointRegistration = $Endpoints | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
+
+    }
     Write-Verbose -Message "$($EndpointRegistration.Count) app registrations with ReplyUrls matching $($EndpointUris[$EndpointUriKey]) found"
     if ($EndpointRegistration.Count -gt 1) {
 
@@ -78,7 +85,7 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
         $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
         New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
         $Endpoints += $AppRegistration
-    
+
     }
     else {
 
@@ -104,7 +111,6 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
             $Endpoints += $EndpointRegistration
 
         }
-        
 
     }
 
