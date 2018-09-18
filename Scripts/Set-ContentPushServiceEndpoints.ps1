@@ -49,7 +49,7 @@ try {
         $Token = $Response.access_token
         
         Write-Verbose "Login to AzureAD with same application as endpoint"
-        $null = Connect-AzureAD -AadAccessToken $Token -AccountId $ClientId -TenantId $TenantId
+        $null = Connect-AzureAD -AadAccessToken $Token -AccountId $EndpointClientId -TenantId $TenantId
     
     }
 
