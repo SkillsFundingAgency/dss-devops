@@ -61,7 +61,7 @@ catch {
 }
 
 Write-Verbose -Message "Getting AzureAdApplications"
-$AdApplications = Get-AzureRmADApplication
+$AdApplications = Get-AzureADApplication
 Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) applications"
 
 # Create app registrations for DSS endpoints
@@ -93,8 +93,8 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
             IdentifierUris = "https://$((Get-AzureADTenantDetail)[0].VerifiedDomains[0].Name)/$(New-Guid)"
         }
     
-        $AppRegistration = New-AzureRmADApplication @NewAppRegistrationParams
-        New-AzureRmADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+        $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
+        New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
         $Endpoints += $AppRegistration
 
     }
@@ -102,11 +102,11 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
         # Check ServicePrincipal registered
         Write-Verbose -Message "App registration for $($EndpointUris[$EndpointUriKey]) already exists"
-        $ServicePrincipal = Get-AzureRmADServicePrincipal -SearchString $EndpointRegistration.DisplayName
+        $ServicePrincipal = Get-AzureADServicePrincipal -SearchString $EndpointRegistration.DisplayName
         if (!$ServicePrincipal) {
 
             Write-Verbose "Creating ServicePrincipal for $($EndpointRegistration.DisplayName)"
-            New-AzureRmADServicePrincipal -AccountEnabled $true -AppId $EndpointRegistration.AppId -DisplayName $EndpointRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
+            New-AzureADServicePrincipal -AccountEnabled $true -AppId $EndpointRegistration.AppId -DisplayName $EndpointRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
 
         }
 
