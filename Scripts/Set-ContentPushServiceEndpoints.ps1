@@ -61,7 +61,7 @@ catch {
 }
 
 Write-Verbose -Message "Getting AzureAdApplications"
-$AdApplications = Get-AzureADApplication
+$AdApplications = Get-AzureADApplication -All $true
 Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) applications"
 
 # Create app registrations for DSS endpoints
