@@ -81,6 +81,8 @@
   },
   "variables": {
     "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
+    "apimPortalHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat('portal.', parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot')))]",
+    "apimProxyHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat(parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot')))]",
     "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
     "apimVnetId": "[if(equals(parameters('SubnetName'), ''), '', resourceId(parameters('SubnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VnetName')))]",
     "apimSubnetId": "[if(equals(parameters('SubnetName'), ''), '',concat(variables('apimVnetId'), '/subnets/', parameters('SubnetName')))]",
@@ -113,14 +115,14 @@
         "hostnameConfigurations": [
           {
             "type": "Proxy",
-            "hostName": "[concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot'))]",
+            "hostName": "[variables('apimProxyHostname')]",
             "keyVaultId": "[parameters('ProxyKeyVaultCertificatePath')]",
             "defaultSslBinding": true,
             "negotiateClientCertificate": false
           },
           {
             "type": "Portal",
-            "hostName": "[concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot'))]",
+            "hostName": "[variables('apimPortalHostname')]",
             "keyVaultId": "[parameters('PortalKeyVaultCertificatePath')]",
             "negotiateClientCertificate": false
           }
