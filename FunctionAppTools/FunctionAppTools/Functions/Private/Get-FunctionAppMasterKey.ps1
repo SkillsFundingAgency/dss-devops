@@ -1,96 +1,34 @@
-
- 
-#functions definations
-
-function Test-LoggedIn {
-    $needLogin = $true
-    Try 
-    {
-        $content = Get-AzureRmContext
-        if ($content) 
-        {
-            $needLogin = ([string]::IsNullOrEmpty($content.Account))
-        } 
-    } 
-    Catch 
-    {
-        if ($_ -like "*Login-AzureRmAccount to login*") 
-        {
-            $needLogin = $true
-        } 
-        else 
-        {
-            throw
-        }
-    }
-
-    if ($needLogin)
-    {
-        Login-AzureRmAccount
-    }
-}
-#function to get publishing profile
- function Get-PublishingProfileCredentialsAzure($resourceGroupName, $functionAppName){   
- 
-    $resourceType = "Microsoft.Web/sites/config"
-    $resourceName = "$functionAppName/publishingcredentials"
- 
-    $publishingCredentials = Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType $resourceType -ResourceName $resourceName -Action list -ApiVersion 2015-08-01 -Force
- 
-    return $publishingCredentials
-}
- 
-#function to get bearer token from publishing profile
-function Get-KuduApiAuthorisationHeaderValueAzure($resourceGroupName, $functionAppName){
- 
-    $publishingCredentials = Get-PublishingProfileCredentialsAzure $resourceGroupName $functionAppName
- 
-    return ("Basic {0}" -f [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $publishingCredentials.Properties.PublishingUserName, $publishingCredentials.Properties.PublishingPassword))))
-}
-
-#function to get the Master Key using End point and passing bearer tocken in Authorization Header
-function Get-MasterAPIKey($kuduApiAuthorisationToken, $functionAppName, $FunctionAppDomain ){
- 
-    $apiUrl = "https://$functionAppName.scm.$FunctionAppDomain/api/functions/admin/masterkey"
-    
-    $result = Invoke-RestMethod -Uri $apiUrl -Headers @{"Authorization"=$kuduApiAuthorisationToken;"If-Match"="*"} -UseBasicParsing
-     
-    return $result
-}
- 
-#function to get the Admin keys
-function Get-HostAPIKeys($kuduApiAuthorisationToken, $functionAppName, $FunctionAppDomain, $masterKey ){
-     $masterKey
-     $apiUrl2 = "https://$functionAppName.$FunctionAppDomain/admin/host/keys?code="
-     $apiUrl=$apiUrl2 + $masterKey.masterKey.ToString()
-     $apiUrl
-     $result = Invoke-WebRequest $apiUrl -UseBasicParsing
-    return $result
-}
-
-#Get and print the accesstocken
+<#
+    .SUMMARY
+    Get and print the accesstocken
+#>
 function Get-FunctionAppMasterKey{
+    [CmdletBinding()]
     param(
+        [Parameter(Mandatory=$true)]
         $ResourceGroupName,
+        [Parameter(Mandatory=$true)]
         $FunctionAppName,
+        [Parameter(Mandatory=$true)]
         $FunctionAppDomain 
     )
 
-    #login to account if not running from VSTS
+    # Login to account if not running from VSTS
     if (!$env:MSDEPLOY_HTTP_USER_AGENT) {
         Test-LoggedIn
     }
 
-    $accessToken = Get-KuduApiAuthorisationHeaderValueAzure $resourceGroupName $functionAppName
-    #$accessToken
+    $AccessToken = Get-KuduApiAuthorisationHeaderValueAzure -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName
     
-    #get master key
-    $masterKey=Get-MasterAPIKey $accessToken $functionAppName -FunctionAppDomain $FunctionAppDomain
+    # Get master key
+    $MasterKey = Get-MasterAPIKey -KuduApiAuthorisationToken $AccessToken -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain
     
-    #get host key
-    $allkeys=Get-HostAPIKeys $accessToken $functionAppName $FunctionAppDomain $masterkey
-    $MasterKey = $allkeys[0].masterKey
+    # Get host key
+    $AllKeys = Get-HostAPIKeys -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -MasterKey $Masterkey
+    $MasterKey = $AllKeys[0].masterKey
     $MasterKey
 }
+
+Get-FunctionAppMasterkey -ResourceGroupName "dss-at-cust-rg" -FunctionAppName "dss-at-cust-fa" -FunctionAppDomain "azurewebsites.net"
 
  
