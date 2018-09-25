@@ -15,7 +15,7 @@ function Get-HostAPIKeys{
 
     $ApiUrl = "https://$FunctionAppName.$FunctionAppDomain/admin/host/keys?code=$($MasterKey.masterKey.ToString())"
 
-    $Result = Invoke-WebRequest $ApiUrl -UseBasicParsing
+    $Result = Invoke-RestMethod $ApiUrl -UseBasicParsing
 
-    return $Result
+    return $Result.keys
 }

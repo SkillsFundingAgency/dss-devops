@@ -2,7 +2,7 @@
     .SUMMARY
     Get and print the accesstocken
 #>
-function Get-FunctionAppMasterKey{
+function Get-FunctionAppDefaultKey{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -25,10 +25,8 @@ function Get-FunctionAppMasterKey{
     
     # Get host key
     $AllKeys = Get-HostAPIKeys -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -MasterKey $Masterkey
-    $MasterKey = $AllKeys[0].masterKey
+    $MasterKey = $AllKeys[0].value
     $MasterKey
 }
-
-Get-FunctionAppMasterkey -ResourceGroupName "dss-at-cust-rg" -FunctionAppName "dss-at-cust-fa" -FunctionAppDomain "azurewebsites.net"
 
  
