@@ -51,7 +51,7 @@ function Get-AzureApiBearerToken {
   
     $Token = Invoke-RestMethod @Params
     # Show the raw token and expiration date converted in readable format: #
-    $Token | Select-Object *, @{L='Expires';E={[timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($_.expires_on))}} | Format-List *
+    $Token
   }
 
 function New-Password {
