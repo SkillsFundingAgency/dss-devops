@@ -19,7 +19,7 @@ param(
     [Guid]$ApplicationId,
     
     [Parameter(Mandatory=$true)]
-    [System.Security.SecureString]$AppRegistrationKey
+    [String]$AppRegistrationKey
 )
 
 Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
