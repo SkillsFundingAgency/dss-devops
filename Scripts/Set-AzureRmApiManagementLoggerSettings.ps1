@@ -26,7 +26,7 @@ Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
 $SecurePassword = ConvertTo-SecureString $AppRegistrationKey -Force -AsPlainText
 
-$BearerToken = Get-AzureApiBearerToken -TenantId $TenantId -ApplicationId $ApplicationId -AppPassword $SecurePassword
+$BearerToken = Get-AzureApiBearerToken -TenantId $TenantId -ApplicationId $ApplicationId -AppRegistrationKey $SecurePassword
 
 $Uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/diagnostics/$ApimLoggerId?api-version=2018-06-01-preview"
 
