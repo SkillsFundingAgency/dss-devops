@@ -1,26 +1,32 @@
 function Get-AzureApiBearerToken {
-<#    .SYNOPSIS
-
-    .DESCRIPTION
+<#   
+    .SYNOPSIS
+    Requests a bearer token from AAD for use with the Azure REST API https://docs.microsoft.com/en-us/rest/api/azure/
 
     .EXAMPLE
 
     .NOTES
+    https://docs.microsoft.com/en-us/rest/api/azure/#create-the-request
 #>    
     [CmdletBinding()]
     param (
-      [string]$SubscriptionName,
-      [Guid]$ApplicationId,
-      [System.Security.SecureString]$AppPassword
+
+        #Required.  The ApplicationId of the AAD registered application that will be requesting the bearer token.
+        [Parameter(Mandatory=$true)]
+        [Guid]$ApplicationId,
+
+        #Required.  They key for the AAD registered application application that will be requesting the bearer token.
+        [Parameter(Mandatory=$true)]
+        [System.Security.SecureString]$AppRegistrationKey
     )
   
     Write-Host "Logging preference: $VerbosePreference"
-  
-    $Subscription = Get-AzureRmSubscription -SubscriptionName $SubscriptionName
     
-    Write-Verbose -Message "SubscriptionId: $($Subscription.Id)"
+    $TenantId = (Get-AzureRmContext).TenantId
+    
+    Write-Verbose -Message "TenantIdd: $TenantId"
    
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AppPassword)
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AppRegistrationKey)
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
   
     $Body = @{
