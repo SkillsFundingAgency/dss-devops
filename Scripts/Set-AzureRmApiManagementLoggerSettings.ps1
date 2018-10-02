@@ -31,6 +31,7 @@ $BearerToken = Get-AzureApiBearerToken -TenantId $TenantId -ApplicationId $Appli
 Write-Verbose "Bearer token obtained`n$($BearerToken.access_token)"
 
 $Uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/diagnostics/$($ApimLoggerId)?api-version=2018-06-01-preview"
+$Uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/diagnostics?api-version=2018-06-01-preview"
 Write-Verbose "Calling Azure REST API method`n$Uri"
 Invoke-RestMethod -Method GET -Uri $Uri -Headers @{Authorization = "Bearer $($BearerToken.access_token)"}
 
