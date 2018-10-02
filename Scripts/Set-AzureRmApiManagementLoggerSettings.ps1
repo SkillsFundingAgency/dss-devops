@@ -11,19 +11,22 @@ param(
     
     [Parameter(Mandatory=$true)]
     [string]$ApimLoggerId,
-    
+
+    [Parameter(Mandatory=$true)]
+    [Guid]$TenantId,
+
     [Parameter(Mandatory=$true)]
     [Guid]$ApplicationId,
     
     [Parameter(Mandatory=$true)]
-    [System.Security.SecureString]$AppPassword
+    [System.Security.SecureString]$AppRegistrationKey
 )
 
 Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
-$SecurePassword = ConvertTo-SecureString $AppPassword -Force -AsPlainText
+$SecurePassword = ConvertTo-SecureString $AppRegistrationKey -Force -AsPlainText
 
-$BearerToken = Get-AzureApiBearerToken -ApplicationId $ApplicationId -AppPassword $SecurePassword
+$BearerToken = Get-AzureApiBearerToken -TenantId $TenantId -ApplicationId $ApplicationId -AppPassword $SecurePassword
 
 $Uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/diagnostics/$ApimLoggerId?api-version=2018-06-01-preview"
 
