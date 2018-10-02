@@ -10,6 +10,9 @@ function Get-AzureApiBearerToken {
 #>    
     [CmdletBinding()]
     param (
+        #Required.  The tenant id for the AAD tenant supplying the bearer token.
+        [Parameter(Mandatory=$true)]
+        [Guid]$TenantId,
 
         #Required.  The ApplicationId of the AAD registered application that will be requesting the bearer token.
         [Parameter(Mandatory=$true)]
@@ -21,11 +24,7 @@ function Get-AzureApiBearerToken {
     )
   
     Write-Host "Logging preference: $VerbosePreference"
-    
-    $TenantId = (Get-AzureRmContext).TenantId
-    
-    Write-Verbose -Message "TenantIdd: $TenantId"
-   
+  
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AppRegistrationKey)
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
   
@@ -37,7 +36,7 @@ function Get-AzureApiBearerToken {
     }
     Write-Debug $Body
   
-    $TokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $Subscription.TenantId
+    $TokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $TenantId
     Write-Verbose $TokenEndpoint
   
     $Params = @{
