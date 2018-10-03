@@ -95,7 +95,7 @@ $Body = @{
     }
 }
 
-
 $Uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/apis/$ApiName/diagnostics/$($ApimApiLoggerId)?api-version=2018-06-01-preview"
 Write-Verbose "Calling Azure REST API method`n$Uri"
+Write-Verbose -Message "Sending Body: `n$Body"
 Invoke-RestMethod -Method PUT -Uri $Uri -Headers @{Authorization = "Bearer $($BearerToken.access_token)"} -Body $Body -ContentType "application/json"
