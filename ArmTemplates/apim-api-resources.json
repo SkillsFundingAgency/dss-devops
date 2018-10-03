@@ -169,7 +169,8 @@
             }
           ],
           "dependsOn": [
-            "[variables('apimServiceName')]"
+            "[variables('apimServiceName')]",
+            "[parameters('ApiName')]"
           ]
         },
         {
