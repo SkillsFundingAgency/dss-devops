@@ -163,14 +163,19 @@
                 {
                   "name": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
                   "type": "loggers",
-                  "apiVersion": "2018-01-01"
+                  "apiVersion": "2018-01-01",
+                  "dependsOn": [
+                    "applicationinsights"
+                  ]
                 }
+              ],
+              "dependsOn": [
+                "[parameters('ApiName')]"
               ]
             }
           ],
           "dependsOn": [
-            "[variables('apimServiceName')]",
-            "[parameters('ApiName')]"
+            "[variables('apimServiceName')]"
           ]
         },
         {
