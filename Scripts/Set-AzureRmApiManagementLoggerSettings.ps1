@@ -1,7 +1,9 @@
 <#   
     .SYNOPSIS
+    Uses the Azure REST API to set the Sampling Percentage of a APIM API logger
 
     .EXAMPLE
+    Set-AzureRmApiManagementLoggerSettings.ps1 -SubscriptionId "962cae10-2950-412a-93e3-d8ae92b17896" -ResourceGroupName "dss-at-shared-rg" -ApimInstanceName "dss-at-shared-apim" -ApiName "ActionPlans" -ApimLoggerId "dss-at-apim-ai-logger" -ApimApiLoggerId "applicationinsights" -SamplingPercentage 100 -TenantId "1a92889b-8ea1-4a16-8132-347814051567" -ApplicationId "6ea292bf-3532-4c09-9be7-668aaee20b8d" -AppRegistrationKey $AppRegistrationKey -Verbose
 
     .NOTES
     https://docs.microsoft.com/en-us/rest/api/apimanagement/diagnostic/createorupdate
@@ -31,15 +33,19 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ApimApiLoggerId,
 
+    #Required.  Between 0 and 100%, the sampling percentage will have a performance impact - https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-app-insights#performance-implications-and-log-sampling
     [Parameter(Mandatory=$true)]
     [int]$SamplingPercentage,
 
+    #Required.  The tenant id for the AAD tenant supplying the bearer token.
     [Parameter(Mandatory=$true)]
     [Guid]$TenantId,
 
+    #Required.  The ApplicationId of the AAD registered application that will be requesting the bearer token.
     [Parameter(Mandatory=$true)]
     [Guid]$ApplicationId,
     
+    #Required.  They key for the AAD registered application application that will be requesting the bearer token.
     [Parameter(Mandatory=$true)]
     [string]$AppRegistrationKey
 )
