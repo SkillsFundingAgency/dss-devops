@@ -20,6 +20,7 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ApiName,
 
+    #The name of the APIM instance logger, found in the portal under {APIM instance} > Monitoring > Application Insights or using PowerShell cmdlet Get-AzureRmApiManagementLogger
     [Parameter(Mandatory=$true)]
     [string]$ApimLoggerId,
 
@@ -54,7 +55,7 @@ Write-Verbose "Bearer token obtained`n$($BearerToken.access_token)"
 $Body = @{
     "properties" = @{
         "alwaysLog" = "allErrors"
-        "loggerId" = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApiName/loggers/$ApimLoggerId"
+        "loggerId" = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/loggers/$ApimLoggerId"
         "sampling" = @{
             "samplingType" = "fixed"
             "percentage" = $SamplingPercentage
