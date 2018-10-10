@@ -10,9 +10,9 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$TenantId,
     [Parameter(Mandatory=$true)]
-    [string]$AzureAadAdminUserName,
+    [string]$EndpointClientId,
     [Parameter(Mandatory=$true)]
-    [string]$AzureAadAdminPwd
+    [string]$EndpointClientSecret
 )
 
 
@@ -36,28 +36,46 @@ try {
     }
     else {
     
-        $SecurePassword = $AzureAadAdminPwd | ConvertTo-SecureString -AsPlainText -Force
-        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($AzureAadAdminUserName, $SecurePassword)
-        Connect-AzureAD -Credential $Credential -TenantId $TenantId
+        $AADTokenUrl = "https://login.microsoftonline.com/$TenantId/oauth2/token"
+        
+        $Body = @{
+            grant_type    = "client_credentials"
+            client_id     = $EndpointClientId
+            client_secret = $EndpointClientSecret
+            resource      = "https://graph.windows.net/"
+        }
+        
+        $Response = Invoke-RestMethod -Method POST -Uri $AADTokenUrl -ContentType "application/x-www-form-urlencoded" -Body $Body
+        $Token = $Response.access_token
+        
+        Write-Verbose "Login to AzureAD with same application as endpoint"
+        $null = Connect-AzureAD -AadAccessToken $Token -AccountId $EndpointClientId -TenantId $TenantId
     
     }
 
 }
 catch {
 
-    throw "ERROR: unable to login to Active Directory tenant $TenantId with user $AzureAadAdminUserName`n$($Error[0])"
+    throw "ERROR: unable to login to Active Directory tenant $TenantId with app registration ApplicationId $EndpointClientId`n$($Error[0])"
 
 }
 
 Write-Verbose -Message "Getting AzureAdApplications"
-$AdApplications = Get-AzureAdApplication
+$AdApplications = Get-AzureADApplication -All $true
 Write-Verbose -Message "Got AzureAdApplication, found $($AdApplications.Count) applications"
 
 # Create app registrations for DSS endpoints
 $Endpoints = @()
 foreach ($EndpointUriKey in $EndpointUris.Keys) {
 
+    # Check for an existing app registration
     $EndpointRegistration = $AdApplications | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
+    if (!$EndpointRegistration) {
+
+        # Check for an app registration created in this run
+        $EndpointRegistration = $Endpoints | ForEach-Object { $_ | Where-Object { $_.ReplyUrls -eq $EndpointUris[$EndpointUriKey] }}
+
+    }
     Write-Verbose -Message "$($EndpointRegistration.Count) app registrations with ReplyUrls matching $($EndpointUris[$EndpointUriKey]) found"
     if ($EndpointRegistration.Count -gt 1) {
 
@@ -78,7 +96,7 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
         $AppRegistration = New-AzureADApplication @NewAppRegistrationParams
         New-AzureADServicePrincipal -AccountEnabled $true -AppId $AppRegistration.AppId -DisplayName $AppRegistration.DisplayName -Tags {WindowsAzureActiveDirectoryIntegratedApp}
         $Endpoints += $AppRegistration
-    
+
     }
     else {
 
@@ -104,7 +122,6 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
             $Endpoints += $EndpointRegistration
 
         }
-        
 
     }
 

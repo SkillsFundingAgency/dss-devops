@@ -81,6 +81,8 @@
   },
   "variables": {
     "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
+    "apimPortalHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat('portal.', parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot')))]",
+    "apimProxyHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat(parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot')))]",
     "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
     "apimVnetId": "[if(equals(parameters('SubnetName'), ''), '', resourceId(parameters('SubnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VnetName')))]",
     "apimSubnetId": "[if(equals(parameters('SubnetName'), ''), '',concat(variables('apimVnetId'), '/subnets/', parameters('SubnetName')))]",
@@ -113,14 +115,14 @@
         "hostnameConfigurations": [
           {
             "type": "Proxy",
-            "hostName": "[concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot'))]",
+            "hostName": "[variables('apimProxyHostname')]",
             "keyVaultId": "[parameters('ProxyKeyVaultCertificatePath')]",
             "defaultSslBinding": true,
             "negotiateClientCertificate": false
           },
           {
             "type": "Portal",
-            "hostName": "[concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot'))]",
+            "hostName": "[variables('apimPortalHostname')]",
             "keyVaultId": "[parameters('PortalKeyVaultCertificatePath')]",
             "negotiateClientCertificate": false
           }
@@ -151,14 +153,22 @@
           },
           "resources": [
             {
-              "name": "policy",
-              "type": "policies",
-              "condition": "[not(equals(parameters('OauthAuthenticationServer'), ''))]",
+              "name": "applicationinsights",
+              "type": "diagnostics",
               "apiVersion": "2018-01-01",
               "properties": {
-                "policyContent": "[concat('<policies><inbound><validate-jwt header-name=\"Authorization\" failed-validation-httpcode=\"401\" failed-validation-error-message=\"Unauthorized. Access token is missing or invalid.\"><openid-config url=\"https:\/\/login.microsoftonline.com\/', parameters('OauthB2CInstance'), '\/v2.0\/.well-known\/openid-configuration?p=', parameters('OauthB2CPolicy'), '\" \/><required-claims><claim name=\"aud\"><value>', parameters('OauthB2CFunctionAppApplicationId'), '<\/value><\/claim><\/required-claims><\/validate-jwt><base \/><\/inbound><backend><base \/><\/backend><outbound><base \/><\/outbound><on-error><base \/><\/on-error><\/policies>')]",
-                "contentFormat": "xml"
+                "enabled": true
               },
+              "resources": [
+                {
+                  "name": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
+                  "type": "loggers",
+                  "apiVersion": "2018-01-01",
+                  "dependsOn": [
+                    "applicationinsights"
+                  ]
+                }
+              ],
               "dependsOn": [
                 "[parameters('ApiName')]"
               ]

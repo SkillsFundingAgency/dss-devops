@@ -1,3 +1,59 @@
+function Get-AzureApiBearerToken {
+<#   
+    .SYNOPSIS
+    Requests a bearer token from AAD for use with the Azure REST API https://docs.microsoft.com/en-us/rest/api/azure/
+
+    .EXAMPLE
+
+    .NOTES
+    https://docs.microsoft.com/en-us/rest/api/azure/#create-the-request
+#>    
+    [CmdletBinding()]
+    param (
+        #Required.  The tenant id for the AAD tenant supplying the bearer token.
+        [Parameter(Mandatory=$true)]
+        [Guid]$TenantId,
+
+        #Required.  The ApplicationId of the AAD registered application that will be requesting the bearer token.
+        [Parameter(Mandatory=$true)]
+        [Guid]$ApplicationId,
+
+        #Required.  They key for the AAD registered application application that will be requesting the bearer token.
+        [Parameter(Mandatory=$true)]
+        [System.Security.SecureString]$AppRegistrationKey
+    )
+  
+    Write-Host "Logging preference: $VerbosePreference"
+  
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AppRegistrationKey)
+    $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+  
+    $Body = @{
+      'resource'= "https://management.core.windows.net/"
+      'client_id' = $ApplicationId
+      'grant_type' = 'client_credentials'
+      'client_secret' = $UnsecurePassword
+    }
+    Write-Debug $Body
+  
+    $TokenEndpoint = {https://login.windows.net/{0}/oauth2/token} -f $TenantId
+    Write-Verbose $TokenEndpoint
+  
+    $Params = @{
+        ContentType = 'application/x-www-form-urlencoded'
+        Headers = @{'accept'='application/json'}
+        Body = $Body
+        Method = 'Post'
+        URI = $TokenEndpoint
+        UseBasicParsing = $true
+    }
+    Write-Debug $Params
+  
+    $Token = Invoke-RestMethod @Params
+    # Show the raw token and expiration date converted in readable format: #
+    $Token
+  }
+
 function New-Password {
     <#
 
