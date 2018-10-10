@@ -1,8 +1,8 @@
 <#
     .SUMMARY
-    Get and print the accesstocken
+    Get and print the access token
 #>
-function Get-FunctionAppDefaultKey{
+function Get-FunctionAppHostKey{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -10,7 +10,9 @@ function Get-FunctionAppDefaultKey{
         [Parameter(Mandatory=$true)]
         $FunctionAppName,
         [Parameter(Mandatory=$true)]
-        $FunctionAppDomain 
+        $FunctionAppDomain,
+        [Parameter(Mandatory=$false)]
+        $KeyName = "default"
     )
 
     # Login to account if not running from VSTS
@@ -25,8 +27,8 @@ function Get-FunctionAppDefaultKey{
     
     # Get host key
     $AllKeys = Get-HostAPIKeys -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -MasterKey $Masterkey
-    $MasterKey = $AllKeys[0].value
-    $MasterKey
+    $Key = ($AllKeys | Where-Object { $_.name -eq $KeyName }).value
+    $Key
 }
 
  

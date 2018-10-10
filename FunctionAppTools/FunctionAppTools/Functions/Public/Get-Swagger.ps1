@@ -18,7 +18,7 @@ function Get-Swagger{
         [string]$ResourceGroupName
     )
 
-    $MasterKey = Get-FunctionAppDefaultkey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain
+    $MasterKey = Get-FunctionAppHostKey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain
     
     $Uri = "https://$FunctionAppName.$FunctionAppDomain/api/$ApiResourceName/api-definition?code=$($MasterKey)"
     $Swagger = Invoke-RestMethod -Method GET -Uri $Uri -UseBasicParsing
