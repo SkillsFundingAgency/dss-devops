@@ -3,6 +3,9 @@
     <set-header name="apimurl">
       <value>@(String.Format(@"{0}://{1}{2}", context.Request.OriginalUrl.Scheme, context.Request.OriginalUrl.Host, context.Request.OriginalUrl.Path))</value>
     </set-header>
+    <set-header name="x-functions-key">
+      <value>__FunctionHostKey__</value>
+    </set-header>
     <base />
   </inbound>
   <backend>
