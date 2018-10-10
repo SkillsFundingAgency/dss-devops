@@ -1,4 +1,4 @@
-$Private = Get-ChildItem -Path "..\FunctionAppTools\Functions\Private\*.ps1" -Verbose
+$Private = Get-ChildItem -Path "..\dss-devops\FunctionAppTools\FunctionAppTools\Functions\Private\*.ps1" -Verbose
 
 foreach($Function in $Private) {
 
@@ -15,7 +15,7 @@ foreach($Function in $Private) {
 
 }
 
-$Public = Get-ChildItem -Path "..\FunctionAppTools\Functions\Public\*.ps1" -Recurse -Verbose
+$Public = Get-ChildItem -Path "..\dss-devops\FunctionAppTools\FunctionAppTools\Functions\Public\*.ps1" -Recurse -Verbose
 
 foreach($Function in $Public) {
 

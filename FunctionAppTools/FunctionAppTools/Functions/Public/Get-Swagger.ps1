@@ -21,7 +21,7 @@ function Get-Swagger{
     )
 
     if($AuthenticationKeyRequired.IsPresent) {
-        $MasterKey = Get-FunctionAppMasterkey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain
+        $MasterKey = Get-FunctionAppHostKey -ResourceGroupName $ResourceGroupName -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain
     }
     
     $Uri = "https://$FunctionAppName.$FunctionAppDomain/api/$ApiResourceName/api-definition?code=$($MasterKey)"
