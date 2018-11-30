@@ -21,14 +21,14 @@ if ($Continue -eq "Y") {
         
         Write-Host "Getting documents from $Database"
         $Docs = Get-CosmosDbDocument -Context $CosmosDbContext -CollectionId $Database
-        Write-Host "Retrieved $($docs.Count) documents, deleting documents"
+        Write-Host "Retrieved $($docs.Count) documents, deleting documents (number of documents returned may be limited by RU allocation)"
         foreach ($Doc in $Docs) {
 
             Remove-CosmosDbDocument -Context $CosmosDbContext -CollectionId $Database -Id $Doc.id
 
         }
         $Docs = Get-CosmosDbDocument -Context $CosmosDbContext -CollectionId $Database
-        Write-Host "$($docs.Count) documents remaining"
+        Write-Host "$($docs.Count) documents remaining (number of documents returned may be limited by RU allocation)"
     
     }
 
