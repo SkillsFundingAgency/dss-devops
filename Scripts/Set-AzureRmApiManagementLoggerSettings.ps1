@@ -61,6 +61,7 @@ Write-Verbose "Bearer token obtained`n$($BearerToken.access_token)"
 $Body = @{
     "properties" = @{
         "alwaysLog" = "allErrors"
+        "enableHttpCorrelationHeaders" = "true"
         "loggerId" = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ApimInstanceName/loggers/$ApimLoggerId"
         "sampling" = @{
             "samplingType" = "fixed"
