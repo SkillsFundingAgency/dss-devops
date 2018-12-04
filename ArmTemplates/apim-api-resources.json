@@ -157,13 +157,19 @@
               "type": "diagnostics",
               "apiVersion": "2018-06-01-preview",
               "properties": {
-                "enabled": true
+                "alwaysLog": "allErrors",
+                "loggerId": "applicationinsights",
+                "sampling": {
+                  "samplingType": "fixed",
+                  "percentage": "100"
+                },
+                "enableHttpCorrelationHeaders": true
               },
               "resources": [
                 {
                   "name": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
                   "type": "loggers",
-                  "apiVersion": "2018-06-01-preview",
+                  "apiVersion": "2018-01-01",
                   "dependsOn": [
                     "applicationinsights"
                   ]
