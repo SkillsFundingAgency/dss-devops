@@ -56,7 +56,8 @@ $SecurePassword = ConvertTo-SecureString $AppRegistrationKey -Force -AsPlainText
 
 Write-Verbose "Requesting bearer token"
 $BearerToken = Get-AzureApiBearerToken -TenantId $TenantId -ApplicationId $ApplicationId -AppRegistrationKey $SecurePassword
-Write-Verbose "Bearer token obtained`n$($BearerToken.access_token)"
+Write-Verbose "Bearer token obtained"
+Write-Debug "Bearer token:`n$($BearerToken.access_token)"
 
 $Body = @{
     "properties" = @{
