@@ -81,6 +81,7 @@
   },
   "variables": {
     "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
+    "apimLoggerName": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
     "apimPortalHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat('portal.', parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot')))]",
     "apimProxyHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat(parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot')))]",
     "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
@@ -158,7 +159,7 @@
               "apiVersion": "2018-06-01-preview",
               "properties": {
                 "alwaysLog": "allErrors",
-                "loggerId": "applicationinsights",
+                "loggerId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.ApiManagement/service/', variables('apimServiceName'), '/loggers/', variables('apimLoggerName'))]",
                 "sampling": {
                   "samplingType": "fixed",
                   "percentage": "100"
@@ -167,7 +168,7 @@
               },
               "resources": [
                 {
-                  "name": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
+                  "name": "[variables('apimLoggerName')]",
                   "type": "loggers",
                   "apiVersion": "2018-01-01",
                   "dependsOn": [
