@@ -22,7 +22,9 @@
     },
     "LoggerSamplingPercentage": {
       "type": "int",
-      "defaultValue": "100",
+      "defaultValue": 100,
+      "minValue": 0,
+      "maxValue": 100,
       "metadata": {
         "description": "The percentage of requests to APIM to be sampled by Application Insights"
       }
