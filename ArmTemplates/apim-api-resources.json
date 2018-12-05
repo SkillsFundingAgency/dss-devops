@@ -20,6 +20,13 @@
         "description": "The hostname used by the API (Proxy) and Developer Portal (Portal)"
       }
     },
+    "LoggerSamplingPercentage": {
+      "type": "int",
+      "defaultValue": "100",
+      "metadata": {
+        "description": "The percentage of requests to APIM to be sampled by Application Insights"
+      }
+    },
     "OauthAuthenticationServer": {
       "type": "string",
       "defaultValue": ""
@@ -162,7 +169,7 @@
                 "loggerId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.ApiManagement/service/', variables('apimServiceName'), '/loggers/', variables('apimLoggerName'))]",
                 "sampling": {
                   "samplingType": "fixed",
-                  "percentage": "100"
+                  "percentage": "[parameters('LoggerSamplingPercentage')]"
                 },
                 "enableHttpCorrelationHeaders": true
               },
