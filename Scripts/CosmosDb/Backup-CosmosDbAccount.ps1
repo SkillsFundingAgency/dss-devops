@@ -19,7 +19,9 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ContainerUrl,
     [Parameter(Mandatory=$true)]
-    [string]$SecondaryStorageKey
+    [string]$SecondaryStorageKey,
+    [Parameter(Mandatory=$false)]
+    [string]$DataMigrationToolLocation = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe'
 )
 
 foreach ($Database in $Databases) {
@@ -27,7 +29,7 @@ foreach ($Database in $Databases) {
     Write-Verbose -Message "Backing up collection $Database"
     $parameters = "/s:DocumentDB /s.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database /s.Collection:$Database /t:JsonFile /t.File:blobs://$SecondaryStorageKey@$($ContainerUrl.Replace('https://', ''))/$([DateTime]::Now.ToString("yyyy-MM-dd_HHmm"))-$Database-backup.json"
     Write-Verbose -Message "Parameters: $parameters"
-    $cmd = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe'
+    $cmd = $DataMigrationToolLocation
     $params = $parameters.Split(" ")
     & $cmd $params
 
