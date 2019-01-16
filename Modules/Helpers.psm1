@@ -75,11 +75,11 @@ function Get-AzureRmStorageContainerSasToken {
         [string]$ContainerName
     )
 
-    $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $ResourceGroupName -Name $StorageAccountName
+    $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $($ResourceGroupName.ToLower()) -Name $($StorageAccountName.ToLower())
 
-    $Context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $Key[0].Value
+    $Context = New-AzureStorageContext -StorageAccountName $($StorageAccountName.ToLower()) -StorageAccountKey $Key[0].Value
 
-    $SasToken = New-AzureStorageContainerSASToken -Name $ContainerName -Permission r -Context $Context
+    $SasToken = New-AzureStorageContainerSASToken -Name $($ContainerName.ToLower()) -Permission r -Context $Context
 
     $SasToken
 }
