@@ -72,17 +72,27 @@ function Get-AzureRmStorageContainerSasToken {
         [string]$StorageAccountName,
         #Required.  Container name
         [Parameter(Mandatory=$true)]
-        [string]$ContainerName
+        [string]$ContainerName,
+        #Optional.  If the SAS token is going to be consumed in a SQL script to create a Data Source the leading question mark will need to be removed.  Add this switch to do that.
+        [Parameter(Mandatory=$false)]
+        [switch]$RemoveLeadingQuestionMark
     )
 
     $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $($ResourceGroupName.ToLower()) -Name $($StorageAccountName.ToLower())
-
     $Context = New-AzureStorageContext -StorageAccountName $($StorageAccountName.ToLower()) -StorageAccountKey $Key[0].Value
-
     $SasToken = New-AzureStorageContainerSASToken -Name $($ContainerName.ToLower()) -Permission r -Context $Context
 
-    $SasToken
+    if ($RemoveLeadingQuestionMark.IsPresent) {
+        $SasToken.Substring(1)
+    }
+    else {
+
+        $SasToken
+
+    }
+
 }
+
 function New-Password {
     <#
 
