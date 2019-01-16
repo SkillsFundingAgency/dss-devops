@@ -39,7 +39,7 @@ $InvokeSqlCommonParams = @{
 # Create the SQL Data Source
 Write-Verbose -Message "Creating the SQL Data Source"
 try {
-    Invoke-SqlCmd -InputFile .\SqlScripts\CreateBlobStorageSource.sql -ErrorAction Stop -Verbose:$VerbosePreference @InvokeSqlCommonParams
+    Invoke-SqlCmd -InputFile $PSScriptRoot\..\..\SqlScripts\CreateBlobStorageSource.sql -ErrorAction Stop -Verbose:$VerbosePreference @InvokeSqlCommonParams
 }
 catch {
     throw "Failed to create the SQL Data Source`n$_"
@@ -54,5 +54,5 @@ foreach ($db in $CosmosDatabases) {
 
 # Delete the SQL Data Source
 Write-Verbose -Message "Deleting the SQL Data Source"
-Invoke-SqlCmd -InputFile .\SqlScripts\DeleteBlobStorgageSource.sql -Verbose:$VerbosePreference @InvokeSqlCommonParams
+Invoke-SqlCmd -InputFile $PSScriptRoot\..\..\SqlScripts\DeleteBlobStorgageSource.sql -Verbose:$VerbosePreference @InvokeSqlCommonParams
 
