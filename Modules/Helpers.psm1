@@ -54,6 +54,35 @@ function Get-AzureApiBearerToken {
     $Token
   }
 
+function Get-AzureRmStorageContainerSasToken {
+<#
+    .SYNOPSIS
+    Creates a SAS token with read permissions and default duration for an Azure Storage container
+
+    .EXAMPLE
+    Get-AzureRmStorageContainerSasToken -ResourceGroup dfc-my-shared-rg -StorageAccountName dfcmysharedstr -ContainerName mycontainer
+#>
+    [CmdletBinding()]
+    param(
+        #Required.  Resource group containing the storage account
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true)]
+        #Required.  Storage account name
+        [string]$StorageAccountName,
+        #Required.  Container name
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName
+    )
+
+    $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $ResourceGroupName -Name $StorageAccountName
+
+    $Context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $Key[0].Value
+
+    $SasToken = New-AzureStorageContainerSASToken -Name $ContainerName -Permission r -Context $Context
+
+    $SasToken
+}
 function New-Password {
     <#
 
