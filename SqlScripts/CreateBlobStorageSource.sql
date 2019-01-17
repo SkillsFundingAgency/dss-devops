@@ -11,6 +11,6 @@ SECRET = '__CosmosBackupContainerSasToken__';
 
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
     TYPE = BLOB_STORAGE, 
-    LOCATION = 'https://__BackupStorageContainerUrl__/cosmosbackups',
+    LOCATION = '__BackupStorageContainerUrl__',
     CREDENTIAL = BlobCredential
 );
