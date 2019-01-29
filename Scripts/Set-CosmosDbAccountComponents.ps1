@@ -78,7 +78,9 @@ if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "2.1.3.528"
 Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
 Write-Verbose -Message "Searching for existing account"
-if ((((Get-Module AzureRM -ListAvailable | Sort-Object { $_.Version.Major } -Descending).Version.Major))[0] -gt 5) {
+$AzureRmMajorVersion = (((Get-Module AzureRM -ListAvailable | Sort-Object { $_.Version.Major } -Descending).Version.Major))[0]
+Write-Verbose "AzureRm Major Version: $AzureRmMajorVersion"
+if ($AzureRmMajorVersion -gt 5) {
     $GetCosmosDbAccountParameters = @{
         Name              = $CosmosDbAccountName
         ResourceGroupName = $ResourceGroupName
