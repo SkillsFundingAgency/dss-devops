@@ -177,7 +177,7 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             Write-Verbose -Message "Collection: $($Collection.CollectionName) already exists, retrieving offer"
             try {
                 $CollectionOffer = $null
-                $CollectionOffer = Get-CosmosDbOffer -Context $Context -Query ('SELECT * FROM root WHERE (root["resource"] = "{0}")' -f $($ExistingCollection._self))
+                $CollectionOffer = Get-CosmosDbOffer -Context $CosmosDbContext -Query ('SELECT * FROM root WHERE (root["resource"] = "{0}")' -f $($ExistingCollection._self))
             }
             catch {
                 throw "Unable to retrieve offer for $($Collection.CollectionName)`n$_"
