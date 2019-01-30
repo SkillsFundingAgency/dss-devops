@@ -75,7 +75,6 @@ if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "2.1.3.528"
     Install-Module CosmosDB -RequiredVersion "2.1.3.528" -Scope CurrentUser -Force
     Import-Module CosmosDB -RequiredVersion "2.1.3.528"
 }
-Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
 Write-Verbose -Message "Searching for existing account"
 $AzureRmMajorVersion = (((Get-Module AzureRM -ListAvailable | Sort-Object { $_.Version.Major } -Descending).Version.Major))[0]
@@ -99,14 +98,14 @@ else {
 }
 
 if (!$ExistingAccount -or $ExistingAccount.Properties.provisioningState -ne "Succeeded") {
-    Write-Log -Message "CosmosDb Account could not be found, make sure it has been deployed." -LogLevel Error
+    Write-Error -Message "CosmosDb Account could not be found, make sure it has been deployed." -LogLevel Error
     throw "$_"
 }
 
 try {
     if ($PSCmdlet.ParameterSetName -eq "AsFilePath") {
         if (!(Test-Path $CosmosDbConfigurationFilePath)) {
-            Write-Log -Message "Configuration File Path can not be found" -LogLevel Error
+            Write-Error -Message "Configuration File Path can not be found"
             throw "$_"
         }
         $CosmosDbConfiguration = [CosmosDbSchema](Get-Content $CosmosDbConfigurationFilePath | ConvertFrom-Json)
@@ -116,7 +115,7 @@ try {
     }
 }
 catch {
-    Write-Log -Message "Config deserialization failed, check JSON is valid" -LogLevel Error
+    Write-Error -Message "Config deserialization failed, check JSON is valid"
     throw "$_"
 }
 
@@ -218,12 +217,12 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
 
             $StoredProcedureFile = Get-ChildItem @FindStoredProcFileParameters | ForEach-Object { $_.FullName }
             if (!$StoredProcedureFile) {
-                Write-Log -Message "Stored Procedure name $($StoredProcedure.StoredProcedureName) could not be found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
+                Write-Error -Message "Stored Procedure name $($StoredProcedure.StoredProcedureName) could not be found in $(Resolve-Path $CosmosDbProjectFolderPath)"
                 throw "$_"
             }
 
             if ($StoredProcedureFile.GetType().Name -ne "String") {
-                Write-Log -Message "Multiple Stored Procedures with name $($StoredProcedure.StoredProcedureName) found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
+                Write-Error -Message "Multiple Stored Procedures with name $($StoredProcedure.StoredProcedureName) found in $(Resolve-Path $CosmosDbProjectFolderPath)"
                 throw "$_"
             }
 
