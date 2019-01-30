@@ -189,7 +189,8 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
                 InputObject = $CollectionOffer
                 OfferThroughput = $Collection.OfferThroughput
             }
-            Set-CosmosDbOffer @SetCosmosDbOfferParameters
+            $Result = Set-CosmosDbOffer @SetCosmosDbOfferParameters
+            Write-Verbose -Message "OfferThroughput set to $($Result.content.offerThroughput)  on Offer: $($Result.id) for Resource: $($Result.resource)"
         }
 
         foreach ($StoredProcedure in $Collection.StoredProcedures) {
