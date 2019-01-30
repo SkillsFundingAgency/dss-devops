@@ -129,10 +129,15 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
         $ExistingDatabase = Get-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
     }
     catch {
+        Write-Error -Message "Error retrieving database: $($Database.DatabaseName)"
     }
+    
     if (!$ExistingDatabase) {
         Write-Verbose -Message "Creating Database: $($Database.DatabaseName)"
         $null = New-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
+    }
+    else {
+        Write-Verbose -Message "Database: $($Database.DatabaseName) already exists"
     }
 
     foreach ($Collection in $Database.Collections) {
@@ -147,7 +152,9 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             $ExistingCollection = Get-CosmosDbCollection @GetCosmosDbDatabaseParameters
         }
         catch {
+            Write-Error "Error retrieving collection: $($Collection.CollectionName)"
         }
+
         if (!$ExistingCollection) {
             Write-Verbose -Message "Creating Collection: $($Collection.CollectionName) in $($Database.DatabaseName)"
             $NewCosmosDbCollectionParameters = @{
@@ -166,6 +173,9 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             }
             $null = New-CosmosDbCollection @NewCosmosDbCollectionParameters
         }
+        else {
+            Write-Verbose -Message "Collection: $($Collection.CollectionName) already exists"
+        }
 
         foreach ($StoredProcedure in $Collection.StoredProcedures) {
             # --- Create Stored Procedure
@@ -180,22 +190,27 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
                 $ExistingStoredProcedure = Get-CosmosDbStoredProcedure @GetCosmosDbStoredProcParameters
             }
             catch {
+                Write-Error -Message "Error retrieving stored procedure: $($StoredProcedure.StoredProcedureName)"
             }
+
             $FindStoredProcFileParameters = @{
                 Path    = (Resolve-Path $CosmosDbProjectFolderPath)
                 Filter  = "$($StoredProcedure.StoredProcedureName)*"
                 Recurse = $true
                 File    = $true
             }
+
             $StoredProcedureFile = Get-ChildItem @FindStoredProcFileParameters | ForEach-Object { $_.FullName }
             if (!$StoredProcedureFile) {
                 Write-Log -Message "Stored Procedure name $($StoredProcedure.StoredProcedureName) could not be found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
                 throw "$_"
             }
+
             if ($StoredProcedureFile.GetType().Name -ne "String") {
                 Write-Log -Message "Multiple Stored Procedures with name $($StoredProcedure.StoredProcedureName) found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
                 throw "$_"
             }
+
             if (!$ExistingStoredProcedure) {
                 Write-Verbose -Message "Creating Stored Procedure: $($StoredProcedure.StoredProcedureName) in $($Collection.CollectionName) in $($Database.DatabaseName)"
                 $NewCosmosDbStoredProcParameters = @{
