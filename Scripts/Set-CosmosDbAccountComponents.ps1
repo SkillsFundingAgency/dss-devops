@@ -131,7 +131,7 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
     catch {
         Write-Error -Message "Error retrieving database: $($Database.DatabaseName)"
     }
-    
+
     if (!$ExistingDatabase) {
         Write-Verbose -Message "Creating Database: $($Database.DatabaseName)"
         $null = New-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
@@ -174,7 +174,22 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             $null = New-CosmosDbCollection @NewCosmosDbCollectionParameters
         }
         else {
-            Write-Verbose -Message "Collection: $($Collection.CollectionName) already exists"
+            Write-Verbose -Message "Collection: $($Collection.CollectionName) already exists, retrieving offer"
+            try {
+                $CollectionOffer = $null
+                $CollectionOffer = Get-CosmosDbOffer -Context $Context -Query ('SELECT * FROM root WHERE (root["resource"] = "{0}")' -f $($ExistingCollection._self))
+            }
+            catch {
+                throw "Unable to retrieve offer for $($Collection.CollectionName)`n$_"
+            }
+
+            Write-Verbose -Message "Setting OfferThroughput on Offer: $($CollectionOffer.id) for Resource: $($CollectionOffer.resource) to $($Collection.OfferThroughput)"
+            $SetCosmosDbOfferParameters = @{
+                Context = $CosmosDbContext
+                InputObject = $CollectionOffer
+                OfferThroughput = $Collection.OfferThroughput
+            }
+            Set-CosmosDbOffer @SetCosmosDbOfferParameters
         }
 
         foreach ($StoredProcedure in $Collection.StoredProcedures) {
