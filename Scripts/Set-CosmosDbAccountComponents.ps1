@@ -75,10 +75,11 @@ if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "2.1.3.528"
     Install-Module CosmosDB -RequiredVersion "2.1.3.528" -Scope CurrentUser -Force
     Import-Module CosmosDB -RequiredVersion "2.1.3.528"
 }
-Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
-Write-Log -Message "Searching for existing account" -LogLevel Verbose
-if ((((Get-Module AzureRM -ListAvailable | Sort-Object { $_.Version.Major } -Descending).Version.Major))[0] -gt 5) {
+Write-Verbose -Message "Searching for existing account"
+$AzureRmMajorVersion = (((Get-Module AzureRM -ListAvailable | Sort-Object { $_.Version.Major } -Descending).Version.Major))[0]
+Write-Verbose "AzureRm Major Version: $AzureRmMajorVersion"
+if ($AzureRmMajorVersion -gt 5) {
     $GetCosmosDbAccountParameters = @{
         Name              = $CosmosDbAccountName
         ResourceGroupName = $ResourceGroupName
@@ -97,14 +98,14 @@ else {
 }
 
 if (!$ExistingAccount -or $ExistingAccount.Properties.provisioningState -ne "Succeeded") {
-    Write-Log -Message "CosmosDb Account could not be found, make sure it has been deployed." -LogLevel Error
+    Write-Error -Message "CosmosDb Account could not be found, make sure it has been deployed."
     throw "$_"
 }
 
 try {
     if ($PSCmdlet.ParameterSetName -eq "AsFilePath") {
         if (!(Test-Path $CosmosDbConfigurationFilePath)) {
-            Write-Log -Message "Configuration File Path can not be found" -LogLevel Error
+            Write-Error -Message "Configuration File Path can not be found"
             throw "$_"
         }
         $CosmosDbConfiguration = [CosmosDbSchema](Get-Content $CosmosDbConfigurationFilePath | ConvertFrom-Json)
@@ -114,7 +115,7 @@ try {
     }
 }
 catch {
-    Write-Log -Message "Config deserialization failed, check JSON is valid" -LogLevel Error
+    Write-Error -Message "Config deserialization failed, check JSON is valid"
     throw "$_"
 }
 
@@ -127,10 +128,15 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
         $ExistingDatabase = Get-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
     }
     catch {
+        Write-Error -Message "Error retrieving database: $($Database.DatabaseName)"
     }
+
     if (!$ExistingDatabase) {
-        Write-Log -Message "Creating Database: $($Database.DatabaseName)" -LogLevel Information
+        Write-Verbose -Message "Creating Database: $($Database.DatabaseName)"
         $null = New-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
+    }
+    else {
+        Write-Verbose -Message "Database: $($Database.DatabaseName) already exists"
     }
 
     foreach ($Collection in $Database.Collections) {
@@ -145,9 +151,11 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             $ExistingCollection = Get-CosmosDbCollection @GetCosmosDbDatabaseParameters
         }
         catch {
+            Write-Error "Error retrieving collection: $($Collection.CollectionName)"
         }
+
         if (!$ExistingCollection) {
-            Write-Log -Message "Creating Collection: $($Collection.CollectionName) in $($Database.DatabaseName)" -LogLevel Information
+            Write-Verbose -Message "Creating Collection: $($Collection.CollectionName) in $($Database.DatabaseName)"
             $NewCosmosDbCollectionParameters = @{
                 Context         = $CosmosDbContext
                 Database        = $Database.DatabaseName
@@ -164,6 +172,25 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             }
             $null = New-CosmosDbCollection @NewCosmosDbCollectionParameters
         }
+        else {
+            Write-Verbose -Message "Collection: $($Collection.CollectionName) already exists, retrieving offer"
+            try {
+                $CollectionOffer = $null
+                $CollectionOffer = Get-CosmosDbOffer -Context $CosmosDbContext -Query ('SELECT * FROM root WHERE (root["resource"] = "{0}")' -f $($ExistingCollection._self))
+            }
+            catch {
+                throw "Unable to retrieve offer for $($Collection.CollectionName)`n$_"
+            }
+
+            Write-Verbose -Message "Setting OfferThroughput on Offer: $($CollectionOffer.id) for Resource: $($CollectionOffer.resource) to $($Collection.OfferThroughput)"
+            $SetCosmosDbOfferParameters = @{
+                Context = $CosmosDbContext
+                InputObject = $CollectionOffer
+                OfferThroughput = $Collection.OfferThroughput
+            }
+            $Result = Set-CosmosDbOffer @SetCosmosDbOfferParameters
+            Write-Verbose -Message "OfferThroughput set to $($Result.content.offerThroughput)  on Offer: $($Result.id) for Resource: $($Result.resource)"
+        }
 
         foreach ($StoredProcedure in $Collection.StoredProcedures) {
             # --- Create Stored Procedure
@@ -178,24 +205,29 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
                 $ExistingStoredProcedure = Get-CosmosDbStoredProcedure @GetCosmosDbStoredProcParameters
             }
             catch {
+                Write-Error -Message "Error retrieving stored procedure: $($StoredProcedure.StoredProcedureName)"
             }
+
             $FindStoredProcFileParameters = @{
                 Path    = (Resolve-Path $CosmosDbProjectFolderPath)
                 Filter  = "$($StoredProcedure.StoredProcedureName)*"
                 Recurse = $true
                 File    = $true
             }
+
             $StoredProcedureFile = Get-ChildItem @FindStoredProcFileParameters | ForEach-Object { $_.FullName }
             if (!$StoredProcedureFile) {
-                Write-Log -Message "Stored Procedure name $($StoredProcedure.StoredProcedureName) could not be found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
+                Write-Error -Message "Stored Procedure name $($StoredProcedure.StoredProcedureName) could not be found in $(Resolve-Path $CosmosDbProjectFolderPath)"
                 throw "$_"
             }
+
             if ($StoredProcedureFile.GetType().Name -ne "String") {
-                Write-Log -Message "Multiple Stored Procedures with name $($StoredProcedure.StoredProcedureName) found in $(Resolve-Path $CosmosDbProjectFolderPath)" -LogLevel Error
+                Write-Error -Message "Multiple Stored Procedures with name $($StoredProcedure.StoredProcedureName) found in $(Resolve-Path $CosmosDbProjectFolderPath)"
                 throw "$_"
             }
+
             if (!$ExistingStoredProcedure) {
-                Write-Log -Message "Creating Stored Procedure: $($StoredProcedure.StoredProcedureName) in $($Collection.CollectionName) in $($Database.DatabaseName)" -LogLevel Information
+                Write-Verbose -Message "Creating Stored Procedure: $($StoredProcedure.StoredProcedureName) in $($Collection.CollectionName) in $($Database.DatabaseName)"
                 $NewCosmosDbStoredProcParameters = @{
                     Context             = $CosmosDbContext
                     Database            = $Database.DatabaseName
@@ -206,7 +238,7 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
                 $null = New-CosmosDbStoredProcedure @NewCosmosDbStoredProcParameters
             }
             elseif ($ExistingStoredProcedure.body -ne (Get-Content $StoredProcedureFile -Raw)) {
-                Write-Log -Message "Updating Stored Procedure: $($StoredProcedure.StoredProcedureName) in $($Collection.CollectionName) in $($Database.DatabaseName)" -LogLevel Information
+                Write-Verbose -Message "Updating Stored Procedure: $($StoredProcedure.StoredProcedureName) in $($Collection.CollectionName) in $($Database.DatabaseName)"
                 $SetCosmosDbStoredProcParameters = @{
                     Context             = $CosmosDbContext
                     Database            = $Database.DatabaseName
