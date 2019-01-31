@@ -98,7 +98,7 @@ else {
 }
 
 if (!$ExistingAccount -or $ExistingAccount.Properties.provisioningState -ne "Succeeded") {
-    Write-Error -Message "CosmosDb Account could not be found, make sure it has been deployed." -LogLevel Error
+    Write-Error -Message "CosmosDb Account could not be found, make sure it has been deployed."
     throw "$_"
 }
 
