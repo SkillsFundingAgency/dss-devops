@@ -54,6 +54,45 @@ function Get-AzureApiBearerToken {
     $Token
   }
 
+function Get-AzureRmStorageContainerSasToken {
+<#
+    .SYNOPSIS
+    Creates a SAS token with read permissions and default duration for an Azure Storage container
+
+    .EXAMPLE
+    Get-AzureRmStorageContainerSasToken -ResourceGroup dfc-my-shared-rg -StorageAccountName dfcmysharedstr -ContainerName mycontainer
+#>
+    [CmdletBinding()]
+    param(
+        #Required.  Resource group containing the storage account
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroupName,
+        [Parameter(Mandatory=$true)]
+        #Required.  Storage account name
+        [string]$StorageAccountName,
+        #Required.  Container name
+        [Parameter(Mandatory=$true)]
+        [string]$ContainerName,
+        #Optional.  If the SAS token is going to be consumed in a SQL script to create a Data Source the leading question mark will need to be removed.  Add this switch to do that.
+        [Parameter(Mandatory=$false)]
+        [switch]$RemoveLeadingQuestionMark
+    )
+
+    $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $($ResourceGroupName.ToLower()) -Name $($StorageAccountName.ToLower())
+    $Context = New-AzureStorageContext -StorageAccountName $($StorageAccountName.ToLower()) -StorageAccountKey $Key[0].Value
+    $SasToken = New-AzureStorageContainerSASToken -Name $($ContainerName.ToLower()) -Permission r -Context $Context
+
+    if ($RemoveLeadingQuestionMark.IsPresent) {
+        $SasToken.Substring(1)
+    }
+    else {
+
+        $SasToken
+
+    }
+
+}
+
 function New-Password {
     <#
 
