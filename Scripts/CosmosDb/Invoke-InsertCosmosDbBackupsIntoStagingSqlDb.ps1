@@ -34,6 +34,7 @@ $InvokeSqlCommonParams = @{
     Database = $SqlStagingDatabase
     Username = $SqlServerAdminAccount
     Password = $SqlServerAdminPassword
+    QueryTimeout = 0
 }
 
 # Create the SQL Data Source
