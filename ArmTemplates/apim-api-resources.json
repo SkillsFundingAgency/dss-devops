@@ -206,8 +206,8 @@
             ]
         },
         {
-            "name": "[concat(parameters('ApiName'), '-versionset')]",
-            "type": "api-version-sets",
+            "name": "[concat(variables('apimServiceName'), '/', parameters('ApiName'), '-versionset')]",
+            "type": "Microsoft.ApiManagement/service/api-version-sets",
             "apiVersion": "2018-01-01",
             "properties": {
               "description": "[concat('The ', parameters('ApiName'), ' API version set')]",
