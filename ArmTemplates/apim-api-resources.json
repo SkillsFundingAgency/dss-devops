@@ -8,6 +8,13 @@
         "ApiName": {
             "type": "string"
         },
+        "DssApiVersion": {
+            "type":"string",
+            "metadata": {
+              "description": "The version of the API, must be in the format v1, v2 ... v10, etc"
+            },
+            "defaultValue": "v2"
+        },
         "EnvironmentName": {
             "type": "string",
             "metadata": {
@@ -89,11 +96,13 @@
         }
     },
     "variables": {
-        "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
+        "apimApiVersionName": "[concat(parameters('ApiName'), '-', parameters('DssApiVersion'))]",
+
         "apimLoggerName": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
         "apimPortalHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat('portal.', parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '-portal.', parameters('HostnameRoot')))]",
         "apimProxyHostname": "[if(equals(parameters('EnvironmentName'), 'PRD'), concat(parameters('HostnameRoot')), concat(toLower(parameters('EnvironmentName')), '.', parameters('HostnameRoot')))]",
         "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
+        "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
         "apimVnetId": "[if(equals(parameters('SubnetName'), ''), '', resourceId(parameters('SubnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VnetName')))]",
         "apimSubnetId": "[if(equals(parameters('SubnetName'), ''), '',concat(variables('apimVnetId'), '/subnets/', parameters('SubnetName')))]",
         "apimSubnetConfig": {
@@ -115,12 +124,14 @@
     },
     "resources": [
         {
-            "name": "[concat(variables('apimServiceName'), '/', parameters('ApiName'))]",
+            "name": "[concat(variables('apimServiceName'), '/', variables('apimApiVersionName'))]",
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2018-01-01",
             "properties": {
+                "apiVersion": "[parameters('DssApiVersion')]",
+                "apiVersionSetId": "",
                 "authenticationSettings": "[variables('authenticationProvider')]",
-                "displayName": "[parameters('ApiName')]",
+                "displayName": "[variables('apimApiVersionName')]",
                 "path": "[parameters('ApiName')]",
                 "protocols": [
                     "https"
@@ -156,7 +167,7 @@
                 }
             ],
             "dependsOn": [
-                
+                "[concat(parameters('ApiName'), '-versionset')]"
             ]
         },
         {
@@ -193,7 +204,20 @@
             ],
             "dependsOn": [
             ]
-        }
+        },
+        {
+            "name": "[concat(parameters('ApiName'), '-versionset')]",
+            "type": "api-version-sets",
+            "apiVersion": "2018-01-01",
+            "properties": {
+              "description": "[concat('The ', parameters('ApiName'), ' API version set')]",
+              "versionHeaderName": "version",
+              "displayName": "[parameters('ApiName')]",
+              "versioningScheme": "Header"
+            },
+            "dependsOn": [
+            ]
+          }
     ],
     "outputs": {}
 }
