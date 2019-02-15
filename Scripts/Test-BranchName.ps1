@@ -31,7 +31,7 @@ function Write-FunctionAppName {
     }
 
     Write-Verbose -Message "Setting FunctionAppName to $FunctionAppName"
-    $Output = "##vso[task.setvariable variable=FunctionAppName;isOutput=$IsOutput]$FunctionAppName"
+    $Output = "##vso[task.setvariable variable=FunctionAppName;isOutput=false]$FunctionAppName"
     $Output
 
 }
