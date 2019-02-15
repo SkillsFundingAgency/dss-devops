@@ -120,7 +120,8 @@
                 "authorizationServerId": "[parameters('OauthAuthenticationServer')]"
             }
         },
-        "authenticationProvider": "[if(equals(parameters('OauthAuthenticationServer'), ''), variables('noAuthenticationProvider'), variables('oauthAuthenticationProvider'))]"
+        "authenticationProvider": "[if(equals(parameters('OauthAuthenticationServer'), ''), variables('noAuthenticationProvider'), variables('oauthAuthenticationProvider'))]",
+        "versionSetName": "[concat(variables('apimServiceName'), '/', parameters('ApiName'), '-versionset')]"
     },
     "resources": [
         {
@@ -129,7 +130,7 @@
             "apiVersion": "2018-01-01",
             "properties": {
                 "apiVersion": "[parameters('DssApiVersion')]",
-                "apiVersionSetId": "",
+                "apiVersionSetId": "[resourceId('Microsoft.ApiManagement/service/api-version-sets', variables('versionSetName'))]",
                 "authenticationSettings": "[variables('authenticationProvider')]",
                 "displayName": "[variables('apimApiVersionName')]",
                 "path": "[parameters('ApiName')]",
@@ -206,7 +207,7 @@
             ]
         },
         {
-            "name": "[concat(variables('apimServiceName'), '/', parameters('ApiName'), '-versionset')]",
+            "name": "[variables('versionSetName')]",
             "type": "Microsoft.ApiManagement/service/api-version-sets",
             "apiVersion": "2018-01-01",
             "properties": {
