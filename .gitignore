@@ -1,3 +1,4 @@
 .vscode/*
 .vs/*
 ArmTemplates/apim-api-parameters.json
+Tests/TEST-*.xml
