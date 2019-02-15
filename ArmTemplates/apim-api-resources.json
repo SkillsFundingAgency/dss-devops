@@ -121,7 +121,7 @@
             }
         },
         "authenticationProvider": "[if(equals(parameters('OauthAuthenticationServer'), ''), variables('noAuthenticationProvider'), variables('oauthAuthenticationProvider'))]",
-        "versionSetName": "[concat(variables('apimServiceName'), '/', parameters('ApiName'), '-versionset')]"
+        "versionSetName": "[concat(parameters('ApiName'), '-versionset')]"
     },
     "resources": [
         {
@@ -207,7 +207,7 @@
             ]
         },
         {
-            "name": "[variables('versionSetName')]",
+            "name": "[concat(variables('apimServiceName'), '/', variables('versionSetName'))]",
             "type": "Microsoft.ApiManagement/service/api-version-sets",
             "apiVersion": "2018-01-01",
             "properties": {
