@@ -115,7 +115,7 @@
     },
     "resources": [
         {
-            "name": "[concat('dss-at-shared-apim/', parameters('ApiName'))]",
+            "name": "[concat(variables('apimServiceName'), '/', parameters('ApiName'))]",
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2018-01-01",
             "properties": {
@@ -160,7 +160,7 @@
             ]
         },
         {
-            "name": "[concat('dss-at-shared-apim/', variables('apimProductInstanceName'))]",
+            "name": "[concat(variables('apimServiceName'), '/', variables('apimProductInstanceName'))]",
             "type": "Microsoft.ApiManagement/service/products",
             "apiVersion": "2018-01-01",
             "properties": {
@@ -178,7 +178,6 @@
                     "type": "groups",
                     "apiVersion": "2018-01-01",
                     "dependsOn": [
-                        "[variables('apimServiceName')]",
                         "[variables('apimProductInstanceName')]"
                     ]
                 },
@@ -187,14 +186,12 @@
                     "type": "apis",
                     "apiVersion": "2018-01-01",
                     "dependsOn": [
-                        "[variables('apimServiceName')]",
                         "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/apis/', parameters('ApiName'))]",
                         "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/products/', variables('apimProductInstanceName'))]"
                     ]
                 }
             ],
             "dependsOn": [
-                "[variables('apimServiceName')]"
             ]
         }
     ],
