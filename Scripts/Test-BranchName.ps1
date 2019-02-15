@@ -40,8 +40,8 @@ function Write-FunctionAppName {
 $V1MasterBranchRegEx = "^master$"
 $V1FeatureBranchRegEx = "^CDS-\d+-\w+[-v\d]{0}$"
 
-$V2OrHigherMasterBranchRegEx = "^master-(v\d)$"
-$V2OrHigherFeatureBranchRegEx = "^CDS-\d+-\w+-(v\d)$"
+$V2OrHigherMasterBranchRegEx = "^master-(v\d+)$"
+$V2OrHigherFeatureBranchRegEx = "^CDS-\d+-\w+-(v\d+)$"
 
 if ($PSCmdlet.ParameterSetName -eq "Release") {
 
