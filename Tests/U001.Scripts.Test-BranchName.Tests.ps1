@@ -15,6 +15,38 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
 
     }
 
+    It "Should write Version1 given a valid version 1 branch name" -TestCases @(
+        @{ BranchName = "master"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "master"; PipelineType = "Release"; ExpectedOutputType = "false" }
+        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Release"; ExpectedOutputType = "false" }
+    ) {
+        param ($BranchName, $PipelineType, $ExpectedOutputType)
+
+        $Expected = "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]Version1"
+
+        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
+        $Output | Should be $Expected
+    }
+
+    It "Should write Version2+ given a valid version 2 or higher branch name" -TestCases @(
+        @{ BranchName = "master-v2"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "master-v2"; PipelineType = "Release"; ExpectedOutputType = "false" }
+        @{ BranchName = "master-v3"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "master-v3"; PipelineType = "Release"; ExpectedOutputType = "false" }
+        @{ BranchName = "CDS-321-ThisIsAChangeToV2-v2"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "CDS-321-ThisIsAChangeToV2-v2"; PipelineType = "Release"; ExpectedOutputType = "false" }
+        @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Build"; ExpectedOutputType = "true" }
+        @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Release"; ExpectedOutputType = "false" }
+    ) {
+        param ($BranchName, $PipelineType, $ExpectedOutputType)
+
+        $Expected = "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]Version2+"
+
+        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
+        $Output | Should be $Expected
+    }
+
 }
 
 Push-Location -Path $PSScriptRoot
