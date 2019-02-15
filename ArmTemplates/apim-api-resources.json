@@ -162,7 +162,7 @@
                         }
                     ],
                     "dependsOn": [
-                        "[parameters('ApiName')]"
+                        "[variables('apimApiVersionName')]"
                     ]
                 }
             ],
@@ -197,7 +197,7 @@
                     "type": "apis",
                     "apiVersion": "2018-01-01",
                     "dependsOn": [
-                        "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/apis/', parameters('ApiName'))]",
+                        "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/apis/', variables('apimApiVersionName'))]",
                         "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'), '/products/', variables('apimProductInstanceName'))]"
                     ]
                 }
