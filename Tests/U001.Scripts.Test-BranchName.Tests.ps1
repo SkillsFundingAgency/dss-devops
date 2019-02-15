@@ -47,6 +47,22 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         $Output | Should be $Expected
     }
 
+    It "Should write FunctionAppVersion and FunctionAppName given a valid FunctionAppBaseName" -TestCases @(
+        @{ BranchName = "master"; PipelineType = "Build"; FunctionAppBaseName = "dss-at-foo-fa"; ExpectedOutputType = "true"; ApiVersion = "v1"; FunctionAppVersion = "Version1" }
+        @{ BranchName = "master-v2"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ExpectedOutputType = "false"; ApiVersion = "v2"; FunctionAppVersion = "Version2+" }
+        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Build"; FunctionAppBaseName = "dss-at-foo-fa"; ExpectedOutputType = "true"; ApiVersion = "v1"; FunctionAppVersion = "Version1" }
+        @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ExpectedOutputType = "false"; ApiVersion = "v3"; FunctionAppVersion = "Version2+" }
+    ) {
+        param ($BranchName, $PipelineType, $ExpectedOutputType, $ApiVersion, $FunctionAppVersion)
+
+        $FunctionAppName = "dss-at-foo-$ApiVersion-fa"
+        $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]$($FunctionAppVersion)",
+            "##vso[task.setvariable variable=FunctionAppName;isOutput=$ExpectedOutputType]$FunctionAppName")
+
+        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -FunctionAppBaseName "dss-at-foo-fa"
+        $Output | Should be $Expected
+    }
+
 }
 
 Push-Location -Path $PSScriptRoot
