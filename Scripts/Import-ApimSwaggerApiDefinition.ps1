@@ -65,22 +65,22 @@ try {
     Write-Host "Building APIM context for $ApimResourceGroup\$InstanceName"
     $Context = New-AzureRmApiManagementContext -ResourceGroupName $ApimResourceGroup -ServiceName $InstanceName
     Write-Host "Retrieving ApiId for API $ApiName"
-    $ApiId = (Get-AzureRmApiManagementApi -Context $Context -ApiId $ApiName).ApiId
+    $Api = (Get-AzureRmApiManagementApi -Context $Context -ApiId $ApiName).ApiId
 
-    # --- Throw if ApiId is null
-    if (!$ApiId) {
-        throw "Could not retrieve ApiId for API $ApiName"
+    # --- Throw if Api is null
+    if (!$Api) {
+        throw "Could not retrieve Api for API $ApiName"
     }
 
     # --- Import swagger definition
     
     if($PSCmdlet.ParameterSetName -eq "Url") {
         Write-Host "Updating API $InstanceName\$ApiId from definition $SwaggerSpecficiationUrl"
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiName -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
     }
     elseif ($PSCmdlet.ParameterSetName -eq "File") {
         Write-Host "Updating API $InstanceName\$ApiId from definition $($OutputFile.FullName)"
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $ApiId -Path $ApiName -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
     }
 } catch {
    throw $_
