@@ -76,6 +76,7 @@ if ($BranchName -match $V1MasterBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
+        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]v1"
         $Output = Write-FunctionAppName -NameParts $NameParts -Version1
         Write-Output $Output
 
@@ -88,6 +89,7 @@ elseif ($BranchName -match $V1FeatureBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
+        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]v1"
         $Output = Write-FunctionAppName -NameParts $NameParts -Version1
         Write-Output $Output
 
@@ -100,6 +102,7 @@ elseif ($BranchName -match $V2OrHigherMasterBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
+        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
         Write-Output $Output
 
@@ -112,6 +115,7 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
+        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
         Write-Output $Output
         
