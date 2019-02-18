@@ -65,7 +65,7 @@ try {
     Write-Host "Building APIM context for $ApimResourceGroup\$InstanceName"
     $Context = New-AzureRmApiManagementContext -ResourceGroupName $ApimResourceGroup -ServiceName $InstanceName
     Write-Host "Retrieving ApiId for API $ApiName"
-    $Api = (Get-AzureRmApiManagementApi -Context $Context -ApiId $ApiName).ApiId
+    $Api = Get-AzureRmApiManagementApi -Context $Context -ApiId $ApiName
 
     # --- Throw if Api is null
     if (!$Api) {
