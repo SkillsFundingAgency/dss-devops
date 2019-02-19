@@ -2,7 +2,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$BranchName,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$PullRequestBranchName,
     [ValidateSet("Build", "Release")]
     [Parameter(Mandatory=$true)]
