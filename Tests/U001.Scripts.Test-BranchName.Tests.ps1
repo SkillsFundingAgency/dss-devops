@@ -64,6 +64,20 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         $Output | Should be $Expected
     }
 
+    it "Should write FunctionAppVersion based on the PullRequestBranchName param if BranchName is merge" -TestCases @(
+        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "master"; ExpectedOutputType = "true"; FunctionAppVersion = "Version1" }
+        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "master-v2"; ExpectedOutputType = "true"; FunctionAppVersion = "Version2+" }
+        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "CDS-101-ThisIsAChangeToV1"; ExpectedOutputType = "true"; FunctionAppVersion = "Version1" }
+        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "CDS-456-ThisIsAChangeToV3-v3"; ExpectedOutputType = "true"; FunctionAppVersion = "Version2+" }
+    ) {
+        param ($BranchName, $PipelineType, $PullRequestBranchName, $ExpectedOutputType, $FunctionAppVersion)
+
+        $Expected = "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]$($FunctionAppVersion)"
+
+        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -PullRequestBranchName $PullRequestBranchName
+        $Output | Should be $Expected
+    }
+
 }
 
 Push-Location -Path $PSScriptRoot
