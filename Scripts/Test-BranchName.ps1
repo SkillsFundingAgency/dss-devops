@@ -1,3 +1,22 @@
+<#
+    .SYNOPSIS
+    Checks that a branch name confirms to agreed DSS naming convention and writes variables to Azure DevOps Pipelines to be consumed by later steps
+
+    .EXAMPLE
+    Test-BranchName -BranchName $(Build.SourceBranchName) -PullRequestBranchName $(if ("$(Build.SourceBranchName)" -eq "merge") { "$(System.PullRequest.SourceBranch)" } else { "NotAPullRequest" } ) -PipelineType Build -Verbose
+
+    .PARAMETER BranchName
+    The name of a branch
+
+    .PARAMETER PullRequestBranchName
+    Required if Build definition will be triggered by Pull Requests.  See example for how to implement this.
+
+    .PARAMETER PipelineType
+    Either Build or Release
+
+    .PARAMETER FunctionAppBaseName
+    The function app name minus the version, eg dss-at-cust-fa rather than dss-at-cust-v2-fa
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
