@@ -2,6 +2,8 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$BranchName,
+    [Parameter(Mandatory=$true)]
+    [string]$PullRequestBranchName,
     [ValidateSet("Build", "Release")]
     [Parameter(Mandatory=$true)]
     [string]$PipelineType,
@@ -118,6 +120,31 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
         Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
         Write-Output $Output
+        
+    }
+
+}
+elseif ($BranchName -match "merge") {
+
+    Write-Verbose -Message "This build was triggered by a pull request"
+    if ($PullRequestBranchName -match $V1MasterBranchRegEx) {
+
+        Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
+
+    }
+    elseif ($PullRequestBranchName -match $V1FeatureBranchRegEx) {
+
+        Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
+
+    }
+    elseif ($PullRequestBranchName -match $V2OrHigherMasterBranchRegEx) {
+
+        Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
+
+    }
+    elseif ($PullRequestBranchName -match $V2OrHigherFeatureBranchRegEx) {
+
+        Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
         
     }
 
