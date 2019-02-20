@@ -125,7 +125,7 @@
                     ]
                 },
                 {
-                    "name": "[parameters('ApiName')]",
+                    "name": "[variables('apimApiVersionName')]",
                     "type": "apis",
                     "apiVersion": "2018-01-01",
                     "dependsOn": [
