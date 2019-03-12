@@ -97,7 +97,7 @@ if ($BranchName -match $V1MasterBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]v1"
+        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]"
         $Output = Write-FunctionAppName -NameParts $NameParts -Version1
         Write-Output $Output
 
