@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory=$false)]
-    $DssApiVersion,
+    [Parameter(Mandatory=$true)]
+    [AllowNull()]
+    [AllowEmptyString()]
+    [string]$DssApiVersion,
     [Parameter(Mandatory=$true)]
     [string]$ApimApiName
 )
