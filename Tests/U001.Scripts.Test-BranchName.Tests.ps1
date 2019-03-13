@@ -55,7 +55,6 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     ) {
         param ($BranchName, $PipelineType, $DssApiVersion, $FunctionAppVersion, $FunctionAppName)
 
-        #$FunctionAppName = "dss-at-foo-$ApiVersion-fa"
         $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=false]$FunctionAppVersion",
             "##vso[task.setvariable variable=DssApiVersion;isOutput=false]$DssApiVersion",
             "##vso[task.setvariable variable=FunctionAppName;isOutput=false]$FunctionAppName")
