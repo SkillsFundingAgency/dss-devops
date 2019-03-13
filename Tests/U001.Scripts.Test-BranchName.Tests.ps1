@@ -48,16 +48,15 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     }
 
     It "Should write FunctionAppVersion and FunctionAppName given a valid FunctionAppBaseName" -TestCases @(
-        @{ BranchName = "master"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ApiVersion = "v1"; FunctionAppVersion = "Version1" }
-        @{ BranchName = "master-v2"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ApiVersion = "v2"; FunctionAppVersion = "Version2+" }
-        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ApiVersion = "v1"; FunctionAppVersion = "Version1" }
-        @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; ApiVersion = "v3"; FunctionAppVersion = "Version2+" }
+        @{ BranchName = "master"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = ""; FunctionAppVersion = "Version1"; FunctionAppName = "dss-at-foo-v1-fa" }
+        @{ BranchName = "master-v2"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = "v2"; FunctionAppVersion = "Version2+"; FunctionAppName = "dss-at-foo-v2-fa" }
+        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = ""; FunctionAppVersion = "Version1"; FunctionAppName = "dss-at-foo-v1-fa" }
+        @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = "v3"; FunctionAppVersion = "Version2+"; FunctionAppName = "dss-at-foo-v3-fa" }
     ) {
-        param ($BranchName, $PipelineType, $ApiVersion, $FunctionAppVersion)
+        param ($BranchName, $PipelineType, $DssApiVersion, $FunctionAppVersion, $FunctionAppName)
 
-        $FunctionAppName = "dss-at-foo-$ApiVersion-fa"
-        $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=false]$($FunctionAppVersion)",
-            "##vso[task.setvariable variable=DssApiVersion;isOutput=false]$($ApiVersion)",
+        $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=false]$FunctionAppVersion",
+            "##vso[task.setvariable variable=DssApiVersion;isOutput=false]$DssApiVersion",
             "##vso[task.setvariable variable=FunctionAppName;isOutput=false]$FunctionAppName")
 
         $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -FunctionAppBaseName "dss-at-foo-fa"
