@@ -37,7 +37,7 @@
         }
     },
     "variables": {
-        "apimApiVersionName": "[if(equals(parameters('DssApiVersion'), ''), parameters('ApiName'), concat(parameters('ApiName'), '-', parameters('DssApiVersion')))]",
+        "apimApiVersionName": "[concat(parameters('ApiName'), '-', parameters('DssApiVersion'))]",
         "apimLoggerName": "[concat('dss-', toLower(parameters('EnvironmentName')), '-apim-ai', '-logger')]",
         "apimProductInstanceName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
         "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]",
