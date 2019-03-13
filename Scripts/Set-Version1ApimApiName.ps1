@@ -13,10 +13,10 @@ param(
 
 if (!$DssApiVersion) { 
 
-    Write-Verbose "Overriding ApimApiName variable"
+    Write-Verbose "Overriding ApimApiFullName variable"
     $Version1ApimApiName = $ApimApiName.Replace("-", "")
-    Write-Verbose "Setting ApimApiName value to $Version1ApimApiName"
-    Write-Output "##vso[task.setvariable variable=ApimApiName]$Version1ApimApiName" 
-    Write-Verbose "ApimApiName value set to $ApimApiName"
+    Write-Verbose "Setting ApimApiFullName value to $Version1ApimApiName"
+    Write-Output "##vso[task.setvariable variable=ApimApiFullName]$Version1ApimApiName" 
+    Write-Verbose "ApimApiFullName value set to $ApimApiName"
     
 }
