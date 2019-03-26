@@ -75,3 +75,8 @@ foreach ($db in $CosmosDatabases) {
 Write-Verbose -Message "Deleting the SQL Data Source"
 Invoke-SqlCmd -InputFile $PSScriptRoot\..\..\SqlScripts\DeleteBlobStorgageSource.sql -Verbose:$VerbosePreference @InvokeSqlCommonParams
 
+# Execute the CreateReferenceData stored procedure
+$Query = "DECLARE @return_value int; EXEC @return_value = [dbo].[CreateReferenceData]; SELECT 'Return Value' = @return_value"
+Write-Verbose -Message "Executing query:`n$Query"
+$Result = Invoke-Sqlcmd -Query $Query @InvokeSqlCommonParams
+Write-Verbose -Message "Query result:`n$($Result.'Return Value')"
