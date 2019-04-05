@@ -20,7 +20,7 @@ param(
 
 Import-Module $ModulePath
 
-if ($PrimaryArtefactBranchName -match "^/refs/heads/master*") {
+if ($PrimaryArtefactBranchName -match "^refs/heads/master*") {
 
     $NewSerialDeploymentParams = @{
         EnvironmentName = "$EnvironmentName"
@@ -37,6 +37,6 @@ if ($PrimaryArtefactBranchName -match "^/refs/heads/master*") {
 }
 else {
 
-    throw "$PrimaryArtefactBranchName is not a valid master branch reference.  PrimaryArtefactBranchName must start /refs/heads/master.  Version suffixes are allowed, eg /refs/heads/master-v1"
+    throw "$PrimaryArtefactBranchName is not a valid master branch reference.  PrimaryArtefactBranchName must start /refs/heads/master.  Version suffixes are allowed, eg /refs/heads/master-v2"
     
 }
