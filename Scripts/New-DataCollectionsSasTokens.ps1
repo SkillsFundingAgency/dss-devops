@@ -7,4 +7,4 @@ param(
 )
 
 $Context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $StorageAccountKey
-New-AzureStorageContainerSASToken -Name "collections" -Permission lc -StartTime $([DateTime]::Now.ToString()) -ExpiryTime $([DateTime]::Now.AddDays(365).ToString()) -Context $Context -Verbose
+New-AzureStorageContainerSASToken -Name "collections" -Permission lw -StartTime $([DateTime]::Now.ToString()) -ExpiryTime $([DateTime]::Now.AddDays(365).ToString()) -Context $Context -Verbose
