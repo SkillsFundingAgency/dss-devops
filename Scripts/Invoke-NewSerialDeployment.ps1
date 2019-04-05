@@ -20,14 +20,23 @@ param(
 
 Import-Module $ModulePath
 
-$NewSerialDeploymentParams = @{
-    EnvironmentName = "$EnvironmentName"
-    ReleaseFolderPath = "$ReleaseFolderPath"
-    ThisRelease = "$ThisRelease"
-    PrimaryArtefactBranchName = "$PrimaryArtefactBranchName"
-    Instance = "$Instance"
-    PatToken = "$PatToken"
-    ProjectName = "$ProjectName"
-}
+if ($PrimaryArtefactBranchName -match "^/refs/heads/master*") {
 
-New-SerialDeployment @NewSerialDeploymentParams
+    $NewSerialDeploymentParams = @{
+        EnvironmentName = "$EnvironmentName"
+        ReleaseFolderPath = "$ReleaseFolderPath"
+        ThisRelease = "$ThisRelease"
+        PrimaryArtefactBranchName = "$PrimaryArtefactBranchName"
+        Instance = "$Instance"
+        PatToken = "$PatToken"
+        ProjectName = "$ProjectName"
+    }
+    
+    New-SerialDeployment @NewSerialDeploymentParams
+
+}
+else {
+
+    throw "$PrimaryArtefactBranchName is not a valid master branch reference.  PrimaryArtefactBranchName must start /refs/heads/master.  Version suffixes are allowed, eg /refs/heads/master-v1"
+    
+}
