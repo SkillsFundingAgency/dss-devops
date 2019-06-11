@@ -2,3 +2,11 @@
 .vs/*
 ArmTemplates/apim-api-parameters.json
 Tests/TEST-*.xml
+/Applications/GeoCoding/GeoCodeBulkUpdate/.vs/GeoCodeBulkUpdate
+/Applications/GeoCoding/.vs/GeoCodeBulkUpdate
+/Applications/GeoCoding/GeoCodeBulkUpdate/bin/Debug/netcoreapp2.1
+/Applications/GeoCoding/GeoCodeBulkUpdate/obj
+/Applications/GeoCodeBulkUpdate/.vs/GeoCodeBulkUpdate
+/Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/.vs/GeoCodeBulkUpdate
+/Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/bin/Debug/netcoreapp2.1
+/Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/obj
