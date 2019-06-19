@@ -10,3 +10,4 @@ Tests/TEST-*.xml
 /Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/.vs/GeoCodeBulkUpdate
 /Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/bin/Debug/netcoreapp2.1
 /Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/obj
+/Applications/GeoCodeBulkUpdate/.vs/*
