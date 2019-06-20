@@ -95,9 +95,9 @@ if ($BranchName -match $V1MasterBranchRegEx) {
 
     Write-Verbose -Message "$BranchName is a a version 1 master branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
         $Output = Write-FunctionAppName -NameParts $NameParts -Version1
         Write-Output $Output
 
@@ -108,9 +108,9 @@ elseif ($BranchName -match $V1FeatureBranchRegEx) {
 
     Write-Verbose -Message "$BranchName is a version 1 feature branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version1"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
         $Output = Write-FunctionAppName -NameParts $NameParts -Version1
         Write-Output $Output
 
@@ -121,9 +121,9 @@ elseif ($BranchName -match $V2OrHigherMasterBranchRegEx) {
     
     Write-Verbose -Message "$BranchName is a version 2 or higher master branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
         Write-Output $Output
 
@@ -134,9 +134,9 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
 
     Write-Verbose -Message "$BranchName is a version 2 or higher feature branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
         Write-Output $Output
         
