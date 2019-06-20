@@ -8,7 +8,7 @@ param(
 $AppSettings = Get-Content -Path $PSScriptRoot\..\..\GeoCodeBulkUpdate\GeoCodeBulkUpdate\appsettings.json
 
 try {
-    $mapsKeys = Invoke-AzResourceAction -Action listKeys -ResourceType "Microsoft.Maps/accounts" -ApiVersion "2018-05-01" -ResourceGroupName "dss-at-shared-rg" -ResourceName "dss-at-shared-maps" -Force
+    $mapsKeys = Invoke-AzResourceAction -Action listKeys -ResourceType "Microsoft.Maps/accounts" -ApiVersion "2018-05-01" -ResourceGroupName "dss-$Environment-shared-rg" -ResourceName "dss-$Environment-shared-maps" -Force
     $AzureMapSubscriptionKey = $mapsKeys.secondaryKey
 }
 catch {
