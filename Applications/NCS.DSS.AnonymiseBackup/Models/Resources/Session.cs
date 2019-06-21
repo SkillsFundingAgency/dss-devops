@@ -25,9 +25,6 @@ namespace NCS.DSS.AnonymiseBackup.Models.Resources
 
         public void Anonymise()
         {
-            VenuePostCode = RandomiseText(VenuePostCode);
-            Latitude = null;
-            Longitude = null;
         }
 
     }
