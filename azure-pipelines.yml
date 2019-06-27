@@ -42,6 +42,7 @@ jobs:
       command: 'publish'
       projects: 'Applications\NCS.DSS.AnonymiseBackup\NCS.DSS.AnonymiseBackup.csproj'
       arguments: '-o "$(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\\" -c $(BuildConfiguration) -r $(BuildPlatform)'
+      publishWebProjects: false
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: NCS.DSS.AnonymiseBackup'
     inputs:
