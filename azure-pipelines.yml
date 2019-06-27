@@ -1,3 +1,7 @@
+variables:
+    BuildPlatform: 'any cpu'
+    BuildConfiguration: 'release'
+
 resources:
   repositories:
   - repository: self
@@ -8,6 +12,7 @@ jobs:
   pool: Continuous Integration 02 - SSD - 160ACU
 
   steps:
+  # Run PowerShell tests and publish results
   - task: PowerShell@2
     name: InvokeTests
     displayName: 'Invoke-Tests'
@@ -30,6 +35,17 @@ jobs:
      targetType: 'filePath'
      filePath: $(System.DefaultWorkingDirectory)/Tests/Out-TestResults.ps1
      arguments: '-CoveragePercent 10'
-
-
+  # Build and publish NCS.DSS.AnonymiseBackup
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet publish application'
+    inputs:
+      command: 'publish'
+      projects: 'Applications\NCS.DSS.AnonymiseBackup\NCS.DSS.AnonymiseBackup.csproj'
+      arguments: '-o "$(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\\" -c ${{ parameters.BuildConfiguration }} -r ${{ parameters.BuildPlatform }}'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: NCS.DSS.AnonymiseBackup'
+    inputs:
+      pathtoPublish: $(build.artifactstagingdirectory)\Artifact\
+      artifactName: NCS.DSS.AnonymiseBackup
+      publishLocation: container
 
