@@ -4,8 +4,8 @@ Add the storage account secondary SAS token to your environment settings as dssa
 
 Open a PowerShell window at the root of this spike (/V3 Sprint 3/NCS.DSS.AnonymiseBackup/) and run the following cmds
 
-dotnet publish -o ./module
-Import-Module ".\module\NCS.DSS.AnonymiseBackup.dll"
+dotnet publish -o ./bin/Publish
+Import-Module "./bin/Publish/NCS.DSS.AnonymiseBackup.dll"
 
 Attach the debugger to the PowerShell process before running this cmd
 

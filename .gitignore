@@ -6,3 +6,4 @@ Tests/TEST-*.xml
 /Applications/GeoCodeBulkUpdate
 /Applications/NCS.DSS.AnonymiseBackup/.vs/NCS.DSS.AnonymiseBackup
 /Applications/NCS.DSS.AnonymiseBackup/obj
+/Applications/NCS.DSS.AnonymiseBackup/bin

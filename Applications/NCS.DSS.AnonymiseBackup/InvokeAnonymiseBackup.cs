@@ -77,7 +77,7 @@ namespace NCS.DSS.AnonymiseBackup
                 BackupDate = DateTime.Today;
 
             // get files
-            Console.WriteLine("Listing blobs in container.");
+            WriteVerbose("Listing blobs in container.");
             IDictionary<string, string> filesToAnonymise = new Dictionary<string, string>();
             BlobContinuationToken blobContinuationToken = null;
             do
@@ -131,7 +131,7 @@ namespace NCS.DSS.AnonymiseBackup
                     {
                         if (Array.Exists(CosmosCollectionNames, name => name == itemCollection))
                         {
-                            Console.WriteLine("Adding {0} to files to anonymise", item.Uri);
+                            WriteVerbose(String.Format("Adding {0} to files to anonymise", item.Uri));
                             filesToAnonymise.Add(itemName, itemCollection);
                         }
                     }
@@ -142,10 +142,9 @@ namespace NCS.DSS.AnonymiseBackup
             // if BackupDate == null then select most recent else parse date from file and select BackupDate
 
             // loop through files
-            // loop through files
             foreach (var file in filesToAnonymise)
             {
-                Console.WriteLine("Anonymising file {0} ...", file.Key);
+                WriteVerbose(String.Format("Anonymising file {0} ...", file.Key));
 
                 // get filename from item
                 var filename = file.Key;
@@ -157,16 +156,19 @@ namespace NCS.DSS.AnonymiseBackup
                 if (string.IsNullOrEmpty(backupDataBlob))
                     continue;
 
-                Console.WriteLine("Anonymise Back Up Data");
+                WriteVerbose("Anonymise Back Up Data");
                 var anonymisedBackUpData = AnonymiseResourceHelper.AnonymiseBackUpData(file.Key, file.Value, backupDataBlob);
 
                 //anonymised data is null so continue to the next file.
                 if (anonymisedBackUpData == null)
                     continue;
 
-                Console.WriteLine("Write Data to a new File in Destination Blob Storage");
+                WriteVerbose("Write Data to a new File in Destination Blob Storage");
                 AzureStorageHelper.WriteDataToStorageContainer(anonymisedBackUpData, filename, destinationBlobContainer);
             }
+
+            WriteVerbose("Processed pipeline input.");
+            return;
         }
 
         // This method will be called once at the end of pipeline execution; if no input is received, this method is not called
