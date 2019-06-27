@@ -71,7 +71,7 @@ namespace NCS.DSS.AnonymiseBackup
         }
 
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
-        protected async override void ProcessRecord()
+        protected override void ProcessRecord()
         {
             if (!BackupDate.HasValue)
                 BackupDate = DateTime.Today;
@@ -85,7 +85,7 @@ namespace NCS.DSS.AnonymiseBackup
                 BlobResultSegment resultSegment;
                 try
                 {
-                    resultSegment = await sourceBlobContainer.ListBlobsSegmentedAsync(blobContinuationToken);
+                    resultSegment = sourceBlobContainer.ListBlobsSegmentedAsync(blobContinuationToken).Result;
                 }
                 catch (Exception e)
                 {
@@ -150,7 +150,7 @@ namespace NCS.DSS.AnonymiseBackup
                 var filename = file.Key;
 
                 //read data for blob
-                var backupDataBlob = await AzureStorageHelper.ReadBlobDataFromStorageContainerAsync(sourceBlobContainer, filename);
+                var backupDataBlob = AzureStorageHelper.ReadBlobDataFromStorageContainerAsync(sourceBlobContainer, filename).Result;
 
                 // if backup data is null go to the next file
                 if (string.IsNullOrEmpty(backupDataBlob))
