@@ -2,11 +2,11 @@
 param(
     [Parameter(Mandatory=$true)]
     [string[]]$CosmosCollections,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$DestinationContainer = "anon-backups",
     [Parameter(Mandatory=$true)]
     [string]$ResourceGroup,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$SourceContainer = "cosmosbackups",
     [Parameter(Mandatory=$true)]
     [string]$StorageAcountName
