@@ -5,12 +5,16 @@ param(
     [Parameter(Mandatory=$false)]
     [string]$DestinationContainer = "anon-backups",
     [Parameter(Mandatory=$true)]
+    [string]$PathToModule,
+    [Parameter(Mandatory=$true)]
     [string]$ResourceGroup,
     [Parameter(Mandatory=$false)]
     [string]$SourceContainer = "cosmosbackups",
     [Parameter(Mandatory=$true)]
     [string]$StorageAcountName
 )
+
+Import-Module $PathToModule
 
 $Keys = Get-AzStorageAccountKey -ResourceGroupName $ResourceGroup -Name $StorageAcountName
 $Context = New-AzStorageContext -StorageAccountName $StorageAcountName -StorageAccountKey $Keys[0].Value
