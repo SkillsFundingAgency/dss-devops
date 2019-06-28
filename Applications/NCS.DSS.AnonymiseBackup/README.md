@@ -7,16 +7,13 @@ Open a PowerShell Core window at the root of this solution (\dss-devops\Applicat
 dotnet publish -o ./bin/Publish
 Import-Module "./bin/Publish/NCS.DSS.AnonymiseBackup.dll"
 
-## Create Container SAS tokens
+## Login to the tenant
 Login-AzAccount
 Select-AzSubscription -Subscription SFA-CDH-Dev/Test
-$Keys = Get-AzStorageAccountKey -ResourceGroupName "dss-at-shared-rg" -Name dssatshdarmstr
-$Context = New-AzStorageContext -StorageAccountName dssatshdarmstr -StorageAccountKey $Keys[0].Value
-$ReadSAS = New-AzStorageContainerSASToken -Permission rl -StartTime $([DateTime]::Now) -ExpiryTime $([DateTime]::Now.AddHours(2)) -Context $context -Name cosmosbackups
-$WriteSAS = New-AzStorageContainerSASToken -Permission adw -StartTime $([DateTime]::Now) -ExpiryTime $([DateTime]::Now.AddHours(2)) -Context $context -Name anon-backups
+Remove-Module NCS.DSS.AnonymiseBackup
 
 ## Debug
 
 Attach the debugger to the PowerShell process before running this cmd
 
-Invoke-AnonymiseBackup "adviserdetails" -DestinationContainerName "anon-backups" -DestinationContainerSASToken $WriteSAS -SourceContainerName "cosmosbackups" -SourceContainerSASToken $ReadSAS -StorageAccountName "dssatshdarmstr" -Verbose
+..\..\Scripts\Start-AnonymiseBackup.ps1 -CosmosCollections "outcomes" -PathToModule "./bin/Publish/NCS.DSS.AnonymiseBackup.dll" -ResourceGroup "dss-at-shared-rg" -StorageAcountName "dssatshdarmstr"
