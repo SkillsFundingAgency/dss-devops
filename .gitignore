@@ -2,6 +2,11 @@
 .vs/*
 ArmTemplates/apim-api-parameters.json
 Tests/TEST-*.xml
+/Applications/NCS.DSS.AnonymiseBackup/module
+/Applications/GeoCodeBulkUpdate
+/Applications/NCS.DSS.AnonymiseBackup/.vs/NCS.DSS.AnonymiseBackup
+/Applications/NCS.DSS.AnonymiseBackup/obj
+/Applications/NCS.DSS.AnonymiseBackup/bin
 /Applications/GeoCoding/GeoCodeBulkUpdate/.vs/GeoCodeBulkUpdate
 /Applications/GeoCoding/.vs/GeoCodeBulkUpdate
 /Applications/GeoCoding/GeoCodeBulkUpdate/bin/Debug/netcoreapp2.1
