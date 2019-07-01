@@ -1,6 +1,11 @@
 variables:
-    BuildPlatform: 'any cpu'
-    BuildConfiguration: 'release'
+- group: DssBuildVariables
+- name: BuildPlatform
+  value: 'any cpu'
+- name: BuildConfiguration
+  value: 'release'
+- name: DssGeoCodeImageName
+  value: DssGeoCodeBulkUpdate
 
 resources:
   repositories:
@@ -69,4 +74,11 @@ jobs:
       pathtoPublish: $(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\
       artifactName: NCS.DSS.AnonymiseBackup
       publishLocation: container
+  # Build and publish GeoCodeBulkUpdate
+  - script: |
+      cd .\Applications\GeoCodeBulkUpdate
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(DssGeoCodeImageName) .
+  - script: |
+      docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(DssGeoCodeImageName)
 
