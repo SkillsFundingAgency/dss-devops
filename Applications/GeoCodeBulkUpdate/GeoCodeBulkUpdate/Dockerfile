@@ -1,6 +1,6 @@
 FROM microsoft/aspnetcore-build:2.0 AS build
-WORKDIR /GeoCodeBulkUpdate
-COPY ["GeoCodeBulkUpdate.csproj", "/GeoCodeBulkUpdate"]
+WORKDIR /Applications/GeoCodeBulkUpdate
+COPY ["/GeoCodeBulkUpdate"]
 RUN dotnet restore "GeoCodeBulkUpdate/GeoCodeBulkUpdate.csproj"
 COPY . .
 

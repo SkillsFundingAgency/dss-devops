@@ -82,7 +82,7 @@ jobs:
 
   steps:
   - script: |
-      cd .\Applications\GeoCodeBulkUpdate
+      cd .\Applications\GeoCodeBulkUpdate\GeoCodeBulkUpdate
       docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(DssGeoCodeImageName) .
   - script: |
       docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
