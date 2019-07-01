@@ -6,8 +6,6 @@ variables:
   value: 'release'
 - name: DssGeoCodeImageName
   value: DssGeoCodeBulkUpdate
-- name: PublishGeoCoding
-  value: true
 
 resources:
   repositories:
@@ -80,7 +78,6 @@ jobs:
 # Build and publish GeoCodeBulkUpdate
 - job: PublishDssGeoCodeImageName
   displayName: 'Publish DssGeoCodeImageName'
-  condition: PublishGeoCoding
   pool: 'Hosted VS2017'
 
   steps:
