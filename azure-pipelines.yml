@@ -6,6 +6,8 @@ variables:
   value: 'release'
 - name: DssGeoCodeImageName
   value: DssGeoCodeBulkUpdate
+- name: PublishGeoCoding
+  value: true
 
 resources:
   repositories:
@@ -74,11 +76,17 @@ jobs:
       pathtoPublish: $(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\
       artifactName: NCS.DSS.AnonymiseBackup
       publishLocation: container
-  # Build and publish GeoCodeBulkUpdate
+
+# Build and publish GeoCodeBulkUpdate
+- job: PublishDssGeoCodeImageName
+  displayName: 'Publish DssGeoCodeImageName'
+  condition: PublishGeoCoding
+  pool: 'Hosted VS2017'
+
+  steps:
   - script: |
       cd .\Applications\GeoCodeBulkUpdate
       docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(DssGeoCodeImageName) .
   - script: |
       docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
       docker push $(ContainerRegistryAdminUser).azurecr.io/$(DssGeoCodeImageName)
-
