@@ -5,7 +5,7 @@ variables:
 - name: BuildConfiguration
   value: 'release'
 - name: DssGeoCodeImageName
-  value: DssGeoCodeBulkUpdate
+  value: dssgeocodebulkupdate
 
 resources:
   repositories:
