@@ -35,7 +35,7 @@ namespace NCS.DSS.AnonymiseBackup.Helpers
 
         }
 
-        public static async Task<string> ReadBlobDataFromStorageContainerAsync(CloudBlobContainer sourceBlobContainer, string fileName)
+        public static string ReadBlobDataFromStorageContainer(CloudBlobContainer sourceBlobContainer, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentNullException("fileName");
@@ -48,7 +48,7 @@ namespace NCS.DSS.AnonymiseBackup.Helpers
             string blobData;
             using (var memoryStream = new MemoryStream())
             {
-                await blob.DownloadToStreamAsync(memoryStream);
+                blob.DownloadToStream(memoryStream);
                 blobData = Encoding.UTF8.GetString(memoryStream.ToArray());
             }
 
