@@ -79,10 +79,11 @@ $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStora
 $AllBackupFiles = Get-AzureStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
 Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found: $($AllBackupFiles.Count)"
 $FilesToRestoreFrom = @()
+Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Finding files to restore from $($DateToRestoreFrom.ToString("yyyy-MM-dd")) ..."
 foreach ($Blob in $AllBackupFiles) {
-
+    
     $FileDate = $Blob.Name.Split("_")[0]
-    if($FileDate -eq $DateToRestoreFrom.ToString("yyyy-mm-dd")) {
+    if($FileDate -eq $DateToRestoreFrom.ToString("yyyy-MM-dd")) {
 
         Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Adding $($Blob.Name) to files to restore from"
         $FilesToRestoreFrom += $Blob
@@ -90,6 +91,7 @@ foreach ($Blob in $AllBackupFiles) {
     }
     
 }
+Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found to restore: $($FilesToRestoreFrom.Count)"
 
 foreach ($BackupFile in $FilesToRestoreFrom) {
 
@@ -123,4 +125,3 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Database\collection $DatabaseName\$CollectionId reset"
 
 }
-
