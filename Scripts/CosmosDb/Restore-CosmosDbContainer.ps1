@@ -39,7 +39,7 @@ $UrlParts[0] += ":443"
 $ContainerUrlPort = $UrlParts -join "/"
 
 $parameters = "/s:JsonFile /s.Files:blobs://$SecondaryStorageKey@$ContainerUrlPort/$BackupFileName /t:DocumentDBBulk /t.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database $UpdtExstng/t.Collection:$Database"
-Write-Verbose "Parameters: $parameters"
+Write-Debug "Parameters: $parameters"
 $cmd = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe'
 $params = $parameters.Split(" ")
 & $cmd $params
