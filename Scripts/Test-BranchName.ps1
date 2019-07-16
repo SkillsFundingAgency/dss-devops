@@ -59,10 +59,10 @@ function Write-FunctionAppName {
 
 # --- RegEx Patterns
 $V1MasterBranchRegEx = "^master$"
-$V1FeatureBranchRegEx = "^(CDS|SDD)-\d+-\w+[-v\d]{0}$"
+$V1FeatureBranchRegEx = "^(?:CDS|SDD)-\d+-\w+[-v\d]{0}$"
 
 $V2OrHigherMasterBranchRegEx = "^master-(v\d+)$"
-$V2OrHigherFeatureBranchRegEx = "^(CDS|SDD)-\d+-\w+-(v\d+)$"
+$V2OrHigherFeatureBranchRegEx = "^(?:CDS|SDD)-\d+-\w+-(v\d+)$"
 
 if ($PSCmdlet.ParameterSetName -eq "Release") {
 
@@ -134,7 +134,7 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
 
     Write-Verbose -Message "$BranchName is a version 2 or higher feature branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
-    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[2])"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
