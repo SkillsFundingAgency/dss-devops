@@ -134,7 +134,7 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
 
     Write-Verbose -Message "$BranchName is a version 2 or higher feature branch"
     Write-Output "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$IsOutput]Version2+"
-    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
+    Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[2])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
         $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
