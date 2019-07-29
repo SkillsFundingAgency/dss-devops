@@ -128,7 +128,7 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
         $ExistingDatabase = Get-CosmosDbDatabase -Context $CosmosDbContext -Id $Database.DatabaseName
     }
     catch {
-        Write-Error -Message "Error retrieving database: $($Database.DatabaseName)"
+        Write-Verbose -Message "Unable to retrieve database: $($Database.DatabaseName)"
     }
 
     if (!$ExistingDatabase) {
@@ -151,7 +151,7 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
             $ExistingCollection = Get-CosmosDbCollection @GetCosmosDbDatabaseParameters
         }
         catch {
-            Write-Error "Error retrieving collection: $($Collection.CollectionName)"
+            Write-Verbose "Unable to retrieve collection: $($Collection.CollectionName)"
         }
 
         if (!$ExistingCollection) {
