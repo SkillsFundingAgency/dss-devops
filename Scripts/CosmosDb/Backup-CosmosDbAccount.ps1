@@ -28,7 +28,12 @@ foreach ($Database in $Databases) {
     
     Write-Verbose -Message "Backing up collection $Database"
     $parameters = "/s:DocumentDB /s.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database /s.Collection:$Database /t:JsonFile /t.File:blobs://$SecondaryStorageKey@$($ContainerUrl.Replace('https://', ''))/$([DateTime]::Now.ToString("yyyy-MM-dd_HHmm"))-$Database-backup.json"
-    Write-Verbose -Message "Parameters: $parameters"
+    if ($VerbosePreference -eq $true) {
+
+        $parameters += " /ErrorDetails:All"
+        
+    }
+    Write-Debug -Message "Parameters: $parameters"
     $cmd = $DataMigrationToolLocation
     $params = $parameters.Split(" ")
     & $cmd $params
