@@ -63,7 +63,7 @@ jobs:
   displayName: Build and publish NCS.DSS.AnonymiseBackup container
   pool: 'Hosted Ubuntu 1604'
   variables:
-    AppImageName: $(Build.SourceBranchName)-$(Build.BuildId)
+    AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildId)
   steps:
   - script: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
