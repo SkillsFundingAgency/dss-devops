@@ -66,11 +66,10 @@ jobs:
     AppImageName: $(Build.SourceBranchName)-$(Build.BuildId)
   steps:
   - script: |
-      cd .\Applications\NCS.DSS.AnonymiseBackup
-      AppImageName=${$(AppImageName),,}
-      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName .
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName) .
     displayName: 'Build anonapp container'
   - script: |
       docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
-      docker push $(ContainerRegistryAdminUser).azurecr.io/$AppImageName
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName)
     displayName: 'Publish anonapp container'
