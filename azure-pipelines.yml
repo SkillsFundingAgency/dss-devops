@@ -73,5 +73,8 @@ jobs:
     displayName: 'Build anonapp container'
   - script: |
       docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      AppImageName=$(AppImageName)
+      AppImageName=${AppImageName,,}
       docker push $(ContainerRegistryAdminUser).azurecr.io/$AppImageName
     displayName: 'Publish anonapp container'
