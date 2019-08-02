@@ -10,6 +10,7 @@
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0-preview-06">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <EmbeddedResource Include="NCS.DSS.AnonymiseBackup.psd1" />
   </ItemGroup>
 
 </Project>
