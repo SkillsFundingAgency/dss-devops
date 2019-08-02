@@ -1,6 +1,10 @@
 variables:
-    BuildPlatform: 'any cpu'
-    BuildConfiguration: 'release'
+  - name: BuildPlatform
+    value: 'any cpu'
+  - name: BuildConfiguration
+    value: 'release'
+  - group: AT Shared Resources
+  - group: KeyVault - dss-at-shared-kv
 
 resources:
   repositories:
@@ -54,19 +58,18 @@ jobs:
       pathtoPublish: Scripts
       artifactName: Scripts
       publishLocation: container       
-  # Build and publish NCS.DSS.AnonymiseBackup
-  - task: DotNetCoreCLI@2
-    displayName: 'dotnet publish application'
-    inputs:
-      command: 'publish'
-      projects: 'Applications\NCS.DSS.AnonymiseBackup\NCS.DSS.AnonymiseBackup.csproj'
-      arguments: '-o "$(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\\" -c "$(BuildConfiguration)" -r "$(BuildPlatform)"'
-      publishWebProjects: false
-      zipAfterPublish: false
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: NCS.DSS.AnonymiseBackup'
-    inputs:
-      pathtoPublish: $(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\
-      artifactName: NCS.DSS.AnonymiseBackup
-      publishLocation: container
 
+- job: BuildNCSDSSAnonymiseBackup
+  displayName: Build and publish NCS.DSS.AnonymiseBackup container
+  pool: 'Hosted Ubuntu 1604'
+  variables:
+    AppImageName: $(Build.SourceBranchName)-$(Build.BuildId)
+  steps:
+  - script: |
+      cd .\Applications\NCS.DSS.AnonymiseBackup
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName) .
+    displayName: 'Build anonapp container'
+  - script: |
+      docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName)
+    displayName: 'Publish anonapp container'
