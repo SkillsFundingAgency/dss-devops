@@ -9,6 +9,11 @@ variables:
 resources:
   repositories:
   - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (CDH)'
+    ref: refs/tags/v1.5.0
 
 jobs:
 - job: BuildAndTest
