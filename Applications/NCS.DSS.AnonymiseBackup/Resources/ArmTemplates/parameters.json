@@ -3,29 +3,29 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appContainerRegistryImage": {
-            "value": "__appContainerRegistryImage__"
+            "value": "__AppContainerRegistryImage__"
         },
         "containerRegistryPassword": {
-            "value": "__containerRegistryPassword__"
+            "value": "__ContainerRegistryPassword__"
         },
         "containerRegistryServer": {
-            "value": "__containerRegistryServer__"
+            "value": "__ContainerRegistryAdminUser__.azurecr.io"
         },
         "containerRegistryUsername": {
-            "value": "__containerRegistryUsername__"
+            "value": "__ContainerRegistryAdminUser__"
         },
         "containerCpu": {
-            "value": __containerCpu__
+            "value": __ContainerCpu__
         },
         "containerMemoryInGb": {
-            "value": "__containerMemoryInGb__"
+            "value": "__ContainerMemoryInGb__"
         },
         "environment": {
-            "value": "__environment__"
+            "value": "__ReleaseEnvironmentName__"
         },
         "environmentVariables": {
             "value": {
-                "variables": __environmentVariables__
+                "variables": __ContainerEnvironmentVariables__
             }
         }
     }
