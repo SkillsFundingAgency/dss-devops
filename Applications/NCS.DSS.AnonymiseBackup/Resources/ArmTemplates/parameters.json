@@ -1,0 +1,32 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appContainerRegistryImage": {
+            "value": "__appContainerRegistryImage__"
+        },
+        "containerRegistryPassword": {
+            "value": "__containerRegistryPassword__"
+        },
+        "containerRegistryServer": {
+            "value": "__containerRegistryServer__"
+        },
+        "containerRegistryUsername": {
+            "value": "__containerRegistryUsername__"
+        },
+        "containerCpu": {
+            "value": __containerCpu__
+        },
+        "containerMemoryInGb": {
+            "value": "__containerMemoryInGb__"
+        },
+        "environment": {
+            "value": "__environment__"
+        },
+        "environmentVariables": {
+            "value": {
+                "variables": __environmentVariables__
+            }
+        }
+    }
+}

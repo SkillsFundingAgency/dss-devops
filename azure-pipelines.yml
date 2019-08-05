@@ -57,7 +57,11 @@ jobs:
     inputs:
       pathtoPublish: Scripts
       artifactName: Scripts
-      publishLocation: container       
+      publishLocation: container
+  # Test NCS.DSS.AnonymiseBackup ARM template
+  - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+    parameters:
+      ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'  
 
 - job: BuildNCSDSSAnonymiseBackup
   displayName: Build and publish NCS.DSS.AnonymiseBackup container
