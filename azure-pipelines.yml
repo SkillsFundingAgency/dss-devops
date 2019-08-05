@@ -16,8 +16,8 @@ resources:
     ref: refs/tags/v1.5.0
 
 jobs:
-- job: BuildAndTest
-  displayName: BuildAndTest
+- job: BuildAndTestPS
+  displayName: 'Build and Test PowerShell'
   pool: Continuous Integration 02 - SSD - 160ACU
 
   steps:
@@ -71,6 +71,7 @@ jobs:
 
 - job: BuildNCSDSSAnonymiseBackup
   displayName: Build and publish NCS.DSS.AnonymiseBackup container
+  dependsOn: BuildAndTestPS
   pool: 'Hosted Ubuntu 1604'
   variables:
     AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildId)
