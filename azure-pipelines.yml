@@ -66,7 +66,8 @@ jobs:
   # Test NCS.DSS.AnonymiseBackup ARM template
   - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
     parameters:
-      ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'  
+      ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
+      AzureSubscription: SFA-DSS-DevTest
 
 - job: BuildNCSDSSAnonymiseBackup
   displayName: Build and publish NCS.DSS.AnonymiseBackup container
