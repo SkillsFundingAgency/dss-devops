@@ -16,4 +16,4 @@ COPY PSScripts .
 SHELL ["pwsh", "-Command"]
 RUN Install-Module Az -Force
 ##TO DO: remove WhatIf switch
-CMD ./Start-AnonymiseBackup.ps1 -CosmosCollections $env:CosmosCollections -PathToModule /app/NCS.DSS.AnonymiseBackup -ResourceGroup $env:ResourceGroup -StorageAcountName $env:StorageAcountName -WhatIf
+CMD ./Start-AnonymiseBackup.ps1 -CosmosCollections $env:CosmosCollections -PathToModule /app/NCS.DSS.AnonymiseBackup -ResourceGroup $env:ResourceGroup -StorageAcountName $env:StorageAcountName -WhatIf -Verbose

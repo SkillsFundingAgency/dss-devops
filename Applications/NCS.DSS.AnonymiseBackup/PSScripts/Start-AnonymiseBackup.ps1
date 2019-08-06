@@ -28,6 +28,8 @@ if ($PSCmdlet.ShouldProcess("$StorageAcountName", "Getting SAS tokens")) {
 
 if ($PSCmdlet.ShouldProcess("$CosmosCollections", "Starting Invoke-AnonymiseBackup")) {
 
+    Write-Verbose "$([DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")) Starting Invoke-AnonymiseBackup."
     Invoke-AnonymiseBackup -CosmosCollectionNames $CosmosCollections -DestinationContainerName $DestinationContainer -DestinationContainerSASToken $WriteSAS -SourceContainerName $SourceContainer -SourceContainerSASToken $ReadSAS -StorageAccountName $StorageAcountName -Verbose
+    Write-Verbose "$([DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")) Invoke-AnonymiseBackup completed."
 
 }
