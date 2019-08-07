@@ -77,7 +77,7 @@
     "outputs": {
         "ManagedIdentityObjectId": {
             "type": "string",
-            "value": "[reference(variables('ContainerName')).ManagedIdentityObjectId.value]"
+            "value": "[reference(variables('ContainerName')).outputs.ManagedIdentityObjectId.value]"
         }
     }
 }
