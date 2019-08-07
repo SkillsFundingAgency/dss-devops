@@ -18,7 +18,7 @@ if ($ExistingAssignment) {
 else {
 
     Write-Verbose "Assigning 'Storage Blob Data Contributor' to $ManagedIdentityObjectId"
-    New-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName 'Storage Blob Data Contributor'
+    New-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName 'Storage Blob Data Contributor' -Verbose:$VerbosePreference
 
 }
 
