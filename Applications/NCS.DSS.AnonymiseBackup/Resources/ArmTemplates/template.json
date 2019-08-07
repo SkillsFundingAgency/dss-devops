@@ -66,10 +66,18 @@
                     },
                     "environmentVariables": {
                         "value": "[parameters('environmentVariables')]"
+                    },
+                    "restartPolicy": {
+                        "value": "OnFailure"
                     }
                 }
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "ManagedIdentityObjectId": {
+            "type": "string",
+            "value": "[reference(variables('ContainerName')).ManagedIdentityObjectId.value]"
+        }
+    }
 }
