@@ -22,11 +22,17 @@ else {
     Write-Verbose "Assigning 'Storage Blob Data Contributor' to $ManagedIdentityObjectId"
     $Result = New-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName 'Storage Blob Data Contributor'
     Write-Verbose "New-AzRoleAssignment returned:"
-    if ($VerbosePreference) {
+    if ($VerbosePreference -ne "SilentlyContinue") {
 
         $Result
         
     }
+
+}
+
+function Test-Verbose {
+    [CmdletBinding()]
+    param()
 
 }
 
