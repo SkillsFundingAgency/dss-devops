@@ -6,10 +6,12 @@ param(
     [string]$ResourceGroup
 )
 
+Write-Verbose "Getting AzRoleAssignment in $ResourceGroup for $ManagedIdentityObjectId"
 $ExistingAssignment = Get-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup
 
 if ($ExistingAssignment) {
 
+    Write-Verbose "RoleAssignments exist for $($ExistingAssignment[0].DisplayName)"
     $Roles = ""
     $Roles += For-EachObject ($ExistingAssignment) { $_.RoleDefinitionName.ToString() }
     Write-Verbose "$($ExistingAssignment[0].DisplayName) has been assigned $($Roles)"
