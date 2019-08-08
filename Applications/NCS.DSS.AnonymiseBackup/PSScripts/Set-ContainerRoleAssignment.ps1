@@ -11,10 +11,19 @@ $ExistingAssignment = Get-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -R
 
 if ($ExistingAssignment) {
 
-    Write-Verbose "RoleAssignments exist for $($ExistingAssignment[0].DisplayName)"
-    $Roles = ""
-    $Roles += For-EachObject ($ExistingAssignment) { $_.RoleDefinitionName.ToString() }
-    Write-Verbose "$($ExistingAssignment[0].DisplayName) has been assigned $($Roles)"
+    if ($ExistingAssignment.Count -gt 1) {
+
+        Write-Verbose "RoleAssignments exist for $($ExistingAssignment[0].DisplayName)"
+        $Roles = ""
+        $Roles += foreach ($Role in $ExistingAssignment) { $Role.RoleDefinitionName.ToString() }
+        Write-Verbose "$($ExistingAssignment[0].DisplayName) has been assigned $($Roles)"
+
+    }
+    else {
+
+        Write-Verbose "$($ExistingAssignment.DisplayName) has been assigned $($ExistingAssignment.RoleDefinitionName)"
+
+    }
 
 }
 else {
