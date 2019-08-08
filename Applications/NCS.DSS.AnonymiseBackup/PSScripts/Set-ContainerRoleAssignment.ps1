@@ -1,3 +1,9 @@
+<#
+
+ .NOTES
+ ServicePrincipal requires Delegated API Permission: Microsoft.Graph Group.ReadWrite.All
+#>
+
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
@@ -5,6 +11,8 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ResourceGroup
 )
+
+$DebugPreference = "Continue"
 
 Write-Verbose "Getting AzRoleAssignment in $ResourceGroup for $ManagedIdentityObjectId"
 $ExistingAssignment = Get-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup
