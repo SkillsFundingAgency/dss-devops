@@ -29,10 +29,3 @@ else {
     }
 
 }
-
-function Test-Verbose {
-    [CmdletBinding()]
-    param()
-
-}
-
