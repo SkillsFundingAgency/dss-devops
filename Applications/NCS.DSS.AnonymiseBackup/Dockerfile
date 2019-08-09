@@ -6,9 +6,10 @@ COPY . .
 RUN dotnet publish NCS.DSS.AnonymiseBackup.csproj -c Release --framework netstandard2.0 -o /app/NCS.DSS.AnonymiseBackup
 
 FROM mcr.microsoft.com/powershell:ubuntu-18.04 AS app
-ENV CosmosCollections=""
-ENV ResourceGroup=""
-ENV StorageAcountName=""
+ENV CosmosCollections="none"
+ENV ResourceGroup="dss-foo-shared-rg"
+ENV StorageAcountName="dssfooshdarmstr"
+WORKDIR /app
 COPY --from=build /app .
 COPY PSScripts .
 SHELL ["pwsh", "-Command"]
