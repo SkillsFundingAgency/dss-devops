@@ -145,6 +145,7 @@ namespace NCS.DSS.AnonymiseBackup
             } while (blobContinuationToken != null); // Loop while the continuation token is not null.
 
             // if BackupDate == null then select most recent else parse date from file and select BackupDate
+            WriteVerbose(String.Format("Retrieved {0} files to anonymise", filesToAnonymise.Count));
 
             // loop through files
             foreach (var file in filesToAnonymise)

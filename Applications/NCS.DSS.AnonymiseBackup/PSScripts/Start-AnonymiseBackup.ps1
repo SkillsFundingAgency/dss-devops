@@ -43,9 +43,16 @@ if ($PSCmdlet.ShouldProcess("$StorageAcountName", "Getting SAS tokens")) {
 
 }
 
+if ($CosmosCollections.Count -eq 1) {
+
+    Write-Verbose "Splitting CosmosCollections parameter"
+    $CosmosCollections = $CosmosCollections.Replace('"', '').Split(", ")
+
+}
+
 if ($PSCmdlet.ShouldProcess("$CosmosCollections", "Starting Invoke-AnonymiseBackup")) {
 
-    Write-Verbose "$([DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")) Starting Invoke-AnonymiseBackup."
+    Write-Verbose "$([DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")) Starting Invoke-AnonymiseBackup on $CosmosCollections"
     Invoke-AnonymiseBackup -CosmosCollectionNames $CosmosCollections -DestinationContainerName $DestinationContainer -DestinationContainerSASToken $WriteSAS -SourceContainerName $SourceContainer -SourceContainerSASToken $ReadSAS -StorageAccountName $StorageAcountName -Verbose
     Write-Verbose "$([DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")) Invoke-AnonymiseBackup completed."
 
