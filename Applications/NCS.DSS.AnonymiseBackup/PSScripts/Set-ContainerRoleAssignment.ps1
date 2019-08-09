@@ -1,7 +1,16 @@
 <#
+ .SYNOPSIS
+ Adds the 'Storage Blob Data Contributor' Role Assignment to an App Registration
+
+ .DESCRIPTION
+ Adds the 'Storage Blob Data Contributor' Role Assignment to an App Registration
+
+ .EXAMPLE
+ .\Set-ContainerRoleAssignment.ps1 -ManagedIdentityObjectId 960c2fa2-d8d4-4168-a854-417d3d9e2e40 -ResourceGroup dss-foo-shared-rg -Verbose
 
  .NOTES
- ServicePrincipal requires Delegated API Permission: Microsoft.Graph Group.ReadWrite.All
+ Service Principl needs to be assigned to the 'User Access Administrator' role on the ResourceGroup (or parent Subscription)
+ ServicePrincipal requires Delegated API Permission: Azure Active Directory Graph Directory.Read.All
 #>
 
 [CmdletBinding()]
