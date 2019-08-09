@@ -17,6 +17,8 @@ param(
 Write-Verbose "Importing module from $PathToModule"
 Import-Module $PathToModule
 
+Write-Host $env:HOSTNAME
+
 if ($PSCmdlet.ShouldProcess("$StorageAcountName", "Getting SAS tokens")) {
 
     try {
