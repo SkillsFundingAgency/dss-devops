@@ -21,8 +21,7 @@ Import-Module $PathToModule
 
 if ($TenantId) {
 
-    $Credential = Get-Credential
-    Connect-AzAccount -Credential $Credential -Tenant $TenantId -ServicePrincipal
+    Connect-AzAccount -Identity
 
 }
 
