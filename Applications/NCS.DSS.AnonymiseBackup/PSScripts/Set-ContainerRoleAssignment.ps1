@@ -18,28 +18,33 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$ManagedIdentityObjectId,
     [Parameter(Mandatory=$true)]
-    [string]$ResourceGroup
+    [string]$ResourceGroup,
+    [Parameter(Mandatory=$true)]
+    [string[]]$RoleDefinitionNames
 )
 
-$RoleDefinitionName = 'Storage Blob Data Contributor'
+foreach ($RoleDefinitionName in $RoleDefinitionNames) {
 
-Write-Verbose "Getting AzRoleAssignment in $ResourceGroup for $ManagedIdentityObjectId"
-$ExistingAssignment = Get-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName $RoleDefinitionName
+    Write-Verbose "Getting AzRoleAssignment in $ResourceGroup for $ManagedIdentityObjectId"
+    $ExistingAssignment = Get-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName $RoleDefinitionName
 
-if ($ExistingAssignment) {
+    if ($ExistingAssignment) {
 
-    Write-Verbose "$($ExistingAssignment.DisplayName) is assigned $($ExistingAssignment.RoleDefinitionName)"
+        Write-Verbose "$($ExistingAssignment.DisplayName) is assigned $($ExistingAssignment.RoleDefinitionName)"
 
-}
-else {
+    }
+    else {
 
-    Write-Verbose "Assigning 'Storage Blob Data Contributor' to $ManagedIdentityObjectId"
-    $Result = New-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName $RoleDefinitionName
-    Write-Verbose "New-AzRoleAssignment returned:"
-    if ($VerbosePreference -ne "SilentlyContinue") {
+        Write-Verbose "Assigning 'Storage Blob Data Contributor' to $ManagedIdentityObjectId"
+        $Result = New-AzRoleAssignment -ObjectId $ManagedIdentityObjectId -ResourceGroupName $ResourceGroup -RoleDefinitionName $RoleDefinitionName
+        Write-Verbose "New-AzRoleAssignment returned:"
+        if ($VerbosePreference -ne "SilentlyContinue") {
 
-        $Result
-        
+            $Result
+            
+        }
+
     }
 
 }
+
