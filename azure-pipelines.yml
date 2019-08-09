@@ -74,7 +74,7 @@ jobs:
   dependsOn: BuildAndTestPS
   pool: 'Hosted Ubuntu 1604'
   variables:
-    AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildId)
+    AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
   steps:
   - script: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
