@@ -11,13 +11,20 @@ param(
     [Parameter(Mandatory=$false)]
     [string]$SourceContainer = "cosmosbackups",
     [Parameter(Mandatory=$true)]
-    [string]$StorageAcountName
+    [string]$StorageAcountName,
+    [Parameter(Mandatory=$false)]
+    [string]$TenantId
 )
 
 Write-Verbose "Importing module from $PathToModule"
 Import-Module $PathToModule
 
-Write-Host $env:HOSTNAME
+if ($TenantId) {
+
+    $Credential = Get-Credential
+    Connect-AzAccount -Credential $Credential -Tenant $TenantId -ServicePrincipal
+
+}
 
 if ($PSCmdlet.ShouldProcess("$StorageAcountName", "Getting SAS tokens")) {
 

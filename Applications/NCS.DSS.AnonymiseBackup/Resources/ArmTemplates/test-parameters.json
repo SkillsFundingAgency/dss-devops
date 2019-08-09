@@ -37,6 +37,10 @@
                     {
                         "name": "StorageAcountName",
                         "value": "dssfooshdarmstr"
+                    },
+                    {
+                        "name": "TenantId",
+                        "value": "bff3d180-2700-4460-aedd-2c2661ee9afc"
                     }
                 ]
             }
