@@ -59,17 +59,10 @@ namespace NCS.DSS.AnonymiseBackup
             // connect to storage account
             WriteVerbose("Getting credentials ...");
             StorageCredentials destinationCredentials = new StorageCredentials(DestinationContainerSASToken);
-            //CloudStorageAccount destinationStorageAccount = new CloudStorageAccount(destinationCredentials, true);
-            //CloudBlobClient destinationBlobClient = destinationStorageAccount.CreateCloudBlobClient();
-            //CloudBlobClient destinationBlobClient = destinationStorageContainer.ServiceClient();
-            //destinationBlobContainer = destinationBlobClient.GetContainerReference(DestinationContainerName);
             Uri destinationContainerUri = new Uri(String.Format("https://{0}.blob.core.windows.net/{1}", StorageAccountName, DestinationContainerName));
             destinationBlobContainer = new CloudBlobContainer(destinationContainerUri, destinationCredentials);
 
             StorageCredentials sourceCredentials = new StorageCredentials(SourceContainerSASToken);
-            //CloudStorageAccount sourceStorageAccount = new CloudStorageAccount(sourceCredentials, true);
-            //CloudBlobClient sourceBlobClient = sourceStorageAccount.CreateCloudBlobClient();
-            //sourceBlobContainer = sourceBlobClient.GetContainerReference(SourceContainerName);
             Uri sourceContainerUri = new Uri(String.Format("https://{0}.blob.core.windows.net/{1}", StorageAccountName, SourceContainerName));
             sourceBlobContainer = new CloudBlobContainer(sourceContainerUri, sourceCredentials);
 
