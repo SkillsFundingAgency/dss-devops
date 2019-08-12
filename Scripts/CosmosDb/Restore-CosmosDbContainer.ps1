@@ -23,6 +23,8 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$SecondaryStorageKey,
     [Parameter(Mandatory=$false)]
+    [string]$DataMigrationToolLocation = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe',
+    [Parameter(Mandatory=$false)]
     [bool]$UpdateExisting = $false
 )
 
@@ -40,6 +42,6 @@ $ContainerUrlPort = $UrlParts -join "/"
 
 $parameters = "/s:JsonFile /s.Files:blobs://$SecondaryStorageKey@$ContainerUrlPort/$BackupFileName /t:DocumentDBBulk /t.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database $UpdtExstng/t.Collection:$Database"
 Write-Debug "Parameters: $parameters"
-$cmd = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe'
+$cmd = $DataMigrationToolLocation
 $params = $parameters.Split(" ")
 & $cmd $params

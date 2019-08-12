@@ -19,7 +19,9 @@
 param(
     # The date stamp of the backup files to use for the restore.  The date will be take from the file name not the meta data.  
     # If multiple backups were taken on that date then multiple restores for each collection will take place.
-    [Parameter(Mandatory=$true)]    
+    [Parameter(Mandatory=$true)]
+    [string[]]$CosmosCollections,
+    [Parameter(Mandatory=$true)] 
     [DateTime]$DateToRestoreFrom,
     # The environment to restore to.  Can only be AT, TEST or PP (values should be entered as lowercase)
     [Parameter(Mandatory=$true)]
@@ -43,10 +45,12 @@ param(
     # The password of the AT, TEST or PP SQL user
     [Parameter(Mandatory=$true)]
     [String]$SqlServerPassword,
-    # The username of the AT, TEST or PP SQL user
+    # The username of the AT, TEST or PP SQL user.  The user will require the db_datareader role and the ALTER permission
     [Parameter(Mandatory=$true)]
     [String]$SqlServerUsername
 )
+
+Import-Module SqlServer
 
 function Truncate-SqlTable {
     [CmdletBinding()]
@@ -82,20 +86,25 @@ $FilesToRestoreFrom = @()
 foreach ($Blob in $AllBackupFiles) {
 
     $FileDate = $Blob.Name.Split("_")[0]
-    if($FileDate -eq $DateToRestoreFrom.ToString("yyyy-mm-dd")) {
+    $CollectionName = $Blob.Name.Split("-")[3]
+    if($FileDate -eq $DateToRestoreFrom.ToString("yyyy-MM-dd")) {
 
-        Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Adding $($Blob.Name) to files to restore from"
-        $FilesToRestoreFrom += $Blob
+        if($CosmosCollections.Contains($CollectionName)) {
 
+            Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Adding $($Blob.Name) to files to restore from"
+            $FilesToRestoreFrom += $Blob
+
+        }
+        
     }
     
 }
 
 foreach ($BackupFile in $FilesToRestoreFrom) {
 
-    $DatabaseName = $BackupFile.Split("-")[3]
-    $CollectionId = $BackupFile.Split("-")[3]
-    $SqlTableIdentifier = $BackupFile.Split("-")[3]
+    $DatabaseName = $BackupFile.Name.Split("-")[3]
+    $CollectionId = $BackupFile.Name.Split("-")[3]
+    $SqlTableIdentifier = $BackupFile.Name.Split("-")[3]
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Reseting database\collection $DatabaseName\$CollectionId"
 
     # Delete contents of Cosmos collection
@@ -104,7 +113,18 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
         throw "Requested deletion of Production collection, terminating script"
 
     }
-    Invoke-Expression -Command "$PathToDfcDevops\PSScripts\Remove-CosmosCollectionContents.ps1 -ResourceGroupName $DestinationResourceGroup -CosmosDbAccountName $DestinationCosmosAccount -Database $DatabaseName -CollectionId $CollectionId"
+
+    try {
+        
+        Invoke-Expression -Command "$PathToDfcDevops\PSScripts\Remove-CosmosCollectionContents.ps1 -ResourceGroupName $DestinationResourceGroup -CosmosDbAccountName $DestinationCosmosAccount -Database $DatabaseName -CollectionId $CollectionId"
+
+    }
+    catch {
+
+        throw "Error resetting database\collection $DatabaseName\$CollectionId `n$_"
+
+    }
+
 
     # Truncate SQL table and history table
     if ($DestinationSqlDatabase -match "-prd-") {
@@ -118,9 +138,17 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
 
     # Import contents from backup
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Restoring collection $CollectionId from file $BackupFile"
-    Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $BackupFile -SecondaryStorageKey $SourceStorageKey"
+    try {
+
+        Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey"
+
+    }
+    catch {
+
+        throw "Error restoring database\collection $DatabaseName\$CollectionId `n$_"
+
+    }
 
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Database\collection $DatabaseName\$CollectionId reset"
 
 }
-
