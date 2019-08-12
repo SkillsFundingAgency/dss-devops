@@ -15,7 +15,6 @@
     Requires https://cosmosdbportalstorage.blob.core.windows.net/datamigrationtool/2018.02.28-1.8.1/dt-1.8.1.zip to be extracted to C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\
 
 #>
-
 [CmdletBinding()]
 param(
     # The date stamp of the backup files to use for the restore.  The date will be take from the file name not the meta data.  
@@ -129,7 +128,8 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
 
     try {
         
-        Invoke-Expression -Command "$PathToDfcDevops\PSScripts\Remove-CosmosCollectionContents.ps1 -ResourceGroupName $DestinationResourceGroup -CosmosDbAccountName $DestinationCosmosAccount -Database $DatabaseName -CollectionId $CollectionId"
+        $SecureDestinationCosmosKey = $DestinationCosmosKey | ConvertTo-SecureString -AsPlainText -Force
+        . $PathToDfcDevops\PSScripts\Remove-CosmosCollectionContents.ps1 -CosmosDbAccountName $DestinationCosmosAccount -CosmosDbReadWriteKey $SecureDestinationCosmosKey -Database $DatabaseName -CollectionId $CollectionId
 
     }
     catch {
