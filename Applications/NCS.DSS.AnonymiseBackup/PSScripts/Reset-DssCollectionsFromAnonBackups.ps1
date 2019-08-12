@@ -77,7 +77,6 @@ $SourceStorageAccount = "dssprdshdarmstr"
 $ContainerUrl = "https://$SourceStorageAccount.blob.core.windows.net/$ContainerName"
 
 # Destination variables (should never be PRD.  Validation set and conditions will enforce this)
-$DestinationResourceGroup = "dss-$EnvironmentToRestoreTo-shared-rg"
 $DestinationCosmosAccount = "dss-$EnvironmentToRestoreTo-shared-cdb"
 $DestinationSqlDatabase = "dss-$EnvironmentToRestoreTo-shared-stag-db"
 
@@ -155,12 +154,12 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
 
         if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
 
-            Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey"
+            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey
 
         }
         elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
 
-            Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerSasToken `"$SourceContainerSasToken`" -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name)"
+            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerSasToken `"$SourceContainerSasToken`" -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name)
 
         }
 
