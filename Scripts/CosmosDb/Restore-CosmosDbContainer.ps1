@@ -7,7 +7,6 @@
     Requires https://cosmosdbportalstorage.blob.core.windows.net/datamigrationtool/2018.02.28-1.8.1/dt-1.8.1.zip to be extracted to C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\
 
 #>
-
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
@@ -16,11 +15,13 @@ param(
     [string]$Database,
     [Parameter(Mandatory=$true)]
     [string]$SecondaryCosmosKey,
+    [Parameter(Mandatory=$true, ParameterSetName="ContainerSasToken")]
+    [string]$ContainerSasToken,
     [Parameter(Mandatory=$true)]
     [string]$ContainerUrl,
     [Parameter(Mandatory=$true)]
     [string]$BackupFileName,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, ParameterSetName="StorageAccountKey")]
     [string]$SecondaryStorageKey,
     [Parameter(Mandatory=$false)]
     [string]$DataMigrationToolLocation = 'C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\dt.exe',
@@ -36,11 +37,22 @@ if ($UpdateExisting) {
 
 }
 
-$UrlParts = $ContainerUrl.Replace('https://', '').Split("/")
-$UrlParts[0] += ":443"
-$ContainerUrlPort = $UrlParts -join "/"
+if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
 
-$parameters = "/s:JsonFile /s.Files:blobs://$SecondaryStorageKey@$ContainerUrlPort/$BackupFileName /t:DocumentDBBulk /t.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database $UpdtExstng/t.Collection:$Database"
+    $UrlParts = $ContainerUrl.Replace('https://', '').Split("/")
+    $UrlParts[0] += ":443"
+    $ContainerUrlPort = $UrlParts -join "/"
+
+    $FileUri = "blobs://$SecondaryStorageKey@$ContainerUrlPort/$BackupFileName"
+
+}
+elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
+
+    $FileUri = "$ContainerUrl/$BackupFileName$ContainerSasToken"
+
+}
+
+$parameters = "/s:JsonFile /s.Files:$FileUri /t:DocumentDBBulk /t.ConnectionString:AccountEndpoint=https://$CosmosAccountName.documents.azure.com:443/;AccountKey=$SecondaryCosmosKey;Database=$Database $UpdtExstng/t.Collection:$Database"
 Write-Debug "Parameters: $parameters"
 $cmd = $DataMigrationToolLocation
 $params = $parameters.Split(" ")

@@ -15,6 +15,7 @@
     Requires https://cosmosdbportalstorage.blob.core.windows.net/datamigrationtool/2018.02.28-1.8.1/dt-1.8.1.zip to be extracted to C:\Program Files (x86)\AzureCosmosDBDataMigrationTool\
 
 #>
+
 [CmdletBinding()]
 param(
     # The date stamp of the backup files to use for the restore.  The date will be take from the file name not the meta data.  
@@ -37,8 +38,11 @@ param(
     [Parameter(Mandatory=$true)]
     [String]$PathToDssDevops,
     # Storage account key for the PRD storage account
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, ParameterSetName="StorageAccountKey")]
     [String]$SourceStorageKey,
+    # SAS token for anon-backups container in the PRD storage account.  The token will require rl (read and list) permissions.
+    [Parameter(Mandatory=$true, ParameterSetName="ContainerSasToken")]
+    [String]$SourceContainerSasToken,
     # The FQDN of the AT, TEST or PP SQL server
     [Parameter(Mandatory=$true)]
     [String]$SqlServerFqdn,
@@ -79,7 +83,16 @@ $DestinationCosmosAccount = "dss-$EnvironmentToRestoreTo-shared-cdb"
 $DestinationSqlDatabase = "dss-$EnvironmentToRestoreTo-shared-stag-db"
 
 # Get backup files
-$SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -StorageAccountKey $SourceStorageKey
+if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
+
+    $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -StorageAccountKey $SourceStorageKey
+
+}
+elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
+
+    $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -SasToken $SourceContainerSasToken
+
+}
 $AllBackupFiles = Get-AzureStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
 Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found: $($AllBackupFiles.Count)"
 $FilesToRestoreFrom = @()
@@ -140,7 +153,17 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Restoring collection $CollectionId from file $BackupFile"
     try {
 
-        Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey"
+        if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
+
+            Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey"
+
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
+
+            Invoke-Expression -Command "$PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerSasToken `"$SourceContainerSasToken`" -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name)"
+
+        }
+
 
     }
     catch {
