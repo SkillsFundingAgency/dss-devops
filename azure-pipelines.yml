@@ -96,9 +96,8 @@ jobs:
   variables:
     AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
   steps:
-  - script: |
+  - powershell: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
-      AppImageName=$(AppImageName)
-      AppImageName=${AppImageName,,}
+      $AppImageName = $(AppImageName).ToLower()
       docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
     displayName: 'Build anonapp container'
