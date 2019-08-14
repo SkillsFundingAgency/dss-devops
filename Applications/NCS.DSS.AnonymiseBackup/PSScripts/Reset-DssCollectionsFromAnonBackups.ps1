@@ -36,7 +36,10 @@ param(
     # Path to your local copy of the dss-devops repo or the artifact if running from an Azure DevOps agent
     [Parameter(Mandatory=$true)]
     [String]$PathToDssDevops,
-    # Storage account key for the PRD storage account
+    # Storage account where the anonymised backups are stored
+    [Parameter(Mandatory=$false)]
+    $SourceStorageAccount = "dssprdshdarmstr",
+    # Storage account key for the source storage account
     [Parameter(Mandatory=$true, ParameterSetName="StorageAccountKey")]
     [String]$SourceStorageKey,
     # SAS token for anon-backups container in the PRD storage account.  The token will require rl (read and list) permissions.
@@ -71,9 +74,8 @@ function Truncate-SqlTable {
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName truncated, contains $($Result.Column1) records"
 }
 
-# Source variables (should always be PRD)
+# Source variables (defaults to PRD but can be overriden for testing)
 $ContainerName = "anon-backups"
-$SourceStorageAccount = "dssprdshdarmstr"
 $ContainerUrl = "https://$SourceStorageAccount.blob.core.windows.net/$ContainerName"
 
 # Destination variables (should never be PRD.  Validation set and conditions will enforce this)

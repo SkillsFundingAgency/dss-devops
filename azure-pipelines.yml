@@ -89,3 +89,16 @@ jobs:
       AppImageName=${AppImageName,,}
       docker push $(ContainerRegistryAdminUser).azurecr.io/$AppImageName
     displayName: 'Publish anonapp container'
+- job: BuildRestoreAnonymisedBackup
+  displayName: Build and publish RestoreAnon container
+  dependsOn: BuildAndTestPS
+  pool: 'Hosted VS2017'
+  variables:
+    AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
+  steps:
+  - script: |
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      AppImageName=$(AppImageName)
+      AppImageName=${AppImageName,,}
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
+    displayName: 'Build anonapp container'
