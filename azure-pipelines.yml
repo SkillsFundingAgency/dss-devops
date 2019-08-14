@@ -101,5 +101,6 @@ jobs:
       cd ./Applications/NCS.DSS.AnonymiseBackup
       $AppImageName = $(AppImageName)
       #$AppImageName = $AppImageName.ToLower()
-      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
+      #docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/restoreanonymisebackup:test01 --file restore.Dockerfile .
     displayName: 'Build anonapp container'
