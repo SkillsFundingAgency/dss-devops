@@ -92,7 +92,7 @@ jobs:
 - job: BuildRestoreAnonymisedBackup
   displayName: Build and publish RestoreAnon container
   #dependsOn: BuildAndTestPS
-  pool: 'Hosted Windows Container'
+  pool: 'Hosted Windows 2019 with VS2019'
   variables:
     #AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
     AppImageName: restoreanonymisebackup:test01
