@@ -91,14 +91,15 @@ jobs:
     displayName: 'Publish anonapp container'
 - job: BuildRestoreAnonymisedBackup
   displayName: Build and publish RestoreAnon container
-  dependsOn: BuildAndTestPS
+  #dependsOn: BuildAndTestPS
   pool: 'Hosted VS2017'
   variables:
-    AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
+    #AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
+    AppImageName: restoreanonymisebackup:test01
   steps:
   - powershell: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
       $AppImageName = $(AppImageName)
-      $AppImageName = $AppImageName.ToLower()
+      #$AppImageName = $AppImageName.ToLower()
       docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
     displayName: 'Build anonapp container'
