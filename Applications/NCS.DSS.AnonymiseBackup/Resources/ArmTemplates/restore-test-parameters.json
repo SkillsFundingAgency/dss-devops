@@ -1,0 +1,49 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appContainerRegistryImage": {
+            "value": "dfcfoosharedcr.azurecr.io/ncs.dss.anonymisebackup:ncsd-935-restoreanonymiseddata-227777"
+        },
+        "containerRegistryPassword": {
+            "value": "not-a-real-password"
+        },
+        "containerRegistryServer": {
+            "value": "dfcfoosharedcr.azurecr.io"
+        },
+        "containerRegistryUsername": {
+            "value": "dfcfoosharedcr"
+        },
+        "containerCpu": {
+            "value": 1
+        },
+        "containerMemoryInGb": {
+            "value": "1"
+        },
+        "environment": {
+            "value": "foo"
+        },
+        "environmentVariables": {
+            "value": {
+                "variables": [
+                    {
+                        "name": "CosmosCollections",
+                        "value": "\"adviserdetails\", \"subscriptions\""
+                    },
+                    {
+                        "name": "ResourceGroup",
+                        "value": "dss-foo-shared-rg"
+                    },
+                    {
+                        "name": "StorageAcountName",
+                        "value": "dssfooshdarmstr"
+                    },
+                    {
+                        "name": "TenantId",
+                        "value": "bff3d180-2700-4460-aedd-2c2661ee9afc"
+                    }
+                ]
+            }
+        }
+    }
+}

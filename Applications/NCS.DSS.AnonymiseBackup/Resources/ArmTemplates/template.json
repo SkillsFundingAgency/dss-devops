@@ -61,6 +61,9 @@
                     "cpu": {
                         "value": "[parameters('containerCpu')]"
                     },
+                    "managedIdentity": {
+                        "value": true
+                    },
                     "memoryInGb": {
                         "value": "[parameters('containerMemoryInGb')]"
                     },
