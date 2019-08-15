@@ -100,6 +100,8 @@ jobs:
       $branchname = $env:sourcebranchname.ToLower();
       Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname"
     displayName: 'Set restore container tag'
+    env:
+      sourcebranchname: '$(Build.SourceBranchName)' 
   - script: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
       docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName) --file restore.Dockerfile .
