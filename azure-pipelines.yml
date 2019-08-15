@@ -98,7 +98,7 @@ jobs:
   steps:
   - powershell: |
       $branchname = $env:sourcebranchname.ToLower();
-      Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname"
+      Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname--$(Build.BuildNumber)"
     displayName: 'Set restore container tag'
     env:
       sourcebranchname: '$(Build.SourceBranchName)' 
