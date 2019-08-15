@@ -43,6 +43,7 @@ if ($PSCmdlet.ShouldProcess("$StorageAcountName", "Getting SAS tokens")) {
 
 }
 
+# When CosmosCollections is passed in as an environment variable it will be a single comma seperated string
 if ($CosmosCollections.Count -eq 1) {
 
     Write-Verbose "Splitting CosmosCollections parameter"

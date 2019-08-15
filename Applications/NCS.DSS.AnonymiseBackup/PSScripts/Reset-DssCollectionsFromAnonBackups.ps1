@@ -95,6 +95,16 @@ elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
     $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -SasToken $SourceContainerSasToken
 
 }
+
+# When CosmosCollections is passed in as an environment variable it will be a single comma seperated string
+if ($CosmosCollections.Count -eq 1) {
+
+    Write-Verbose "Splitting CosmosCollections parameter"
+    $CosmosCollections = $CosmosCollections.Replace('"', '').Split(", ")
+
+}
+
+
 $AllBackupFiles = Get-AzureStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
 Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found: $($AllBackupFiles.Count)"
 $FilesToRestoreFrom = @()

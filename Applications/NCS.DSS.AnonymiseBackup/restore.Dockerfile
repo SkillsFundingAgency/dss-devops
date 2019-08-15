@@ -10,13 +10,14 @@ WORKDIR /PSScripts
 COPY /PSScripts/Reset-DssCollectionsFromAnonBackups.ps1 .
 ADD https://raw.githubusercontent.com/SkillsFundingAgency/dss-devops/NCSD-935-RestoreAnonymisedData-TestDockerfile/Scripts/CosmosDb/Restore-CosmosDbContainer.ps1 /dss-devops/Scripts/CosmosDb/
 ADD https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/NCSD-1228-FixRemoveCosmosCollScript/PSScripts/Remove-CosmosCollectionContents.ps1 /dfc-devops/PSScripts/
-ENV CosmosCollections=""
-ENV DateToRestoreFrom=""
+ENV CosmosCollections="diversitydetails, transfers"
+ENV DateToRestoreFrom="yyyy/MM/dd HH:mm:ss"
 ENV DestinationCosmosKey=""
 ENV EnvironmentToRestoreTo=""
-ENV PathToDfcDevops="/PSScripts/dfc-devops"
-ENV PathToDssDevops="/PSScripts/dss-devops"
+ENV PathToDfcDevops="C:\dfc-devops"
+ENV PathToDssDevops="C:\dss-devops"
 ENV SourceContainerSasToken=""
 ENV SqlServerFqdn=""
 ENV SqlServerPassword=""
 ENV SqlServerUsername=""
+#CMD .\Reset-DssCollectionsFromAnonBackups.ps1 -CosmosCollections $env:CosmosCollections -DateToRestoreFrom $env:DateToRestoreFrom -EnvironmentToRestoreTo $env:EnvironmentToRestoreTo -DestinationCosmosKey $env:DestinationCosmosKey -PathToDfcDevops $env:PathToDfcDevops -PathToDssDevops $env:PathToDssDevops -SourceStorageAccount $env:SourceStorageAccount -SourceContainerSasToken $env:SourceContainerSasToken -SqlServerFqdn $env:SqlServerFqdn -SqlServerPassword $env:SqlServerPassword -SqlServerUsername $env:SqlServerUsername -Verbose
