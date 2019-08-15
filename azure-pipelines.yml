@@ -94,13 +94,18 @@ jobs:
   #dependsOn: BuildAndTestPS
   pool: 'Hosted Windows 2019 with VS2019'
   variables:
-    #AppImageName: RestoreAnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
-    AppImageName: restoreanonymisebackup:test01
+    AppImageBaseName: restoreanonymisebackup
   steps:
   - powershell: |
+      $branchname = $env:sourcebranchname.ToLower();
+      Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname"
+    displayName: 'Set restore container tag'
+  - script: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
-      #$AppImageName = $(AppImageName)
-      #$AppImageName = $AppImageName.ToLower()
-      #docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName --file restore.Dockerfile .
-      docker build -t $(ContainerRegistryAdminUser).azurecr.io/restoreanonymisebackup:test01 --file restore.Dockerfile .
-    displayName: 'Build anonapp container'
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName) --file restore.Dockerfile .
+    displayName: 'Build restore container'
+  - script: |
+      docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName)
+    displayName: 'Publish restore container'
