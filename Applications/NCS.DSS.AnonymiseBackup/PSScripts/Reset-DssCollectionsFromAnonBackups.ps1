@@ -53,7 +53,9 @@ param(
     [String]$SqlServerPassword,
     # The username of the AT, TEST or PP SQL user.  The user will require the db_datareader role and the ALTER permission
     [Parameter(Mandatory=$true)]
-    [String]$SqlServerUsername
+    [String]$SqlServerUsername,
+    [Parameter(Mandatory=$false)]
+    [string]$DataMigrationToolLocation = "C:\temp\dt-tool\drop\dt.exe"
 )
 
 Import-Module SqlServer
@@ -156,12 +158,12 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
 
         if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
 
-            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey
+            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -SecondaryStorageKey $SourceStorageKey -DataMigrationToolLocation $DataMigrationToolLocation
 
         }
         elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
 
-            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerSasToken `"$SourceContainerSasToken`" -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name)
+            . $PathToDssDevops\Scripts\CosmosDb\Restore-CosmosDbContainer.ps1 -CosmosAccountName $DestinationCosmosAccount -Database $DatabaseName -SecondaryCosmosKey $DestinationCosmosKey -ContainerSasToken `"$SourceContainerSasToken`" -ContainerUrl $ContainerUrl -BackupFileName $($BackupFile.Name) -DataMigrationToolLocation $DataMigrationToolLocation
 
         }
 

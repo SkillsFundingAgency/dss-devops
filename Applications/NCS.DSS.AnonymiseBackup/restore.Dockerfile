@@ -4,6 +4,8 @@ RUN Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 RUN Install-Module AzureRm -Force
 RUN Install-Module SqlServer -Force
 RUN Install-Module CosmosDb -Force -MaximumVersion 2.1.15.239 -MinimumVersion 2.1.15.239
+ADD https://aka.ms/csdmtool /temp/dt.zip
+RUN Expand-Archive -Path C:\temp\dt.zip -DestinationPath C:\temp\dt-tool\
 WORKDIR /PSScripts
 COPY /PSScripts/Reset-DssCollectionsFromAnonBackups.ps1 .
 ADD https://raw.githubusercontent.com/SkillsFundingAgency/dss-devops/NCSD-935-RestoreAnonymisedData-TestDockerfile/Scripts/CosmosDb/Restore-CosmosDbContainer.ps1 /dss-devops/Scripts/CosmosDb/
