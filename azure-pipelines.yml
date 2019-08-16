@@ -116,7 +116,7 @@ jobs:
   - powershell: |
       $branchname = $env:sourcebranchname.ToLower();
       if ($env:sourcebranchname.Length -ge 190) { $branchname = $env:sourcebranchname.ToLower().Substring(0, 190) } else { $branchname = $env:sourcebranchname.ToLower() };
-      Write-Host "##vso[task.setvariable variable=RestoreImageName]$(AppImageBaseName):$branchname-$(Build.BuildNumber)"
+      Write-Host "##vso[task.setvariable variable=RestoreImageName]$(RestoreImageBaseName):$branchname-$(Build.BuildNumber)"
     displayName: 'Set restore container tag'
     env:
       sourcebranchname: '$(Build.SourceBranchName)' 
