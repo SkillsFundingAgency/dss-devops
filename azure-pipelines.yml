@@ -115,9 +115,8 @@ jobs:
       azurePowerShellVersion: LatestVersion
   - powershell: |
       $branchname = $env:sourcebranchname.ToLower();
-      $RestoreImageName = $(RestoreImageBaseName):$branchname-$(Build.BuildNumber)
-      if ($RestoreImageName.Length -ge 190) { $RestoreImageName = $RestoreImageName.Substring(0, 190) }
-      Write-Host "##vso[task.setvariable variable=RestoreImageName]$RestoreImageName"
+      if ($env:sourcebranchname.Length -ge 190) { $branchname = $env:sourcebranchname.ToLower().Substring(0, 190) } else { $branchname = $env:sourcebranchname.ToLower() };
+      Write-Host "##vso[task.setvariable variable=RestoreImageName]$(AppImageBaseName):$branchname-$(Build.BuildNumber)"
     displayName: 'Set restore container tag'
     env:
       sourcebranchname: '$(Build.SourceBranchName)' 
