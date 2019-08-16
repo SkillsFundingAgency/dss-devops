@@ -29,7 +29,7 @@
     },
     "variables": {
         "BuildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/NCSD-1227-AddContainerInstanceTemplate/ArmTemplates/",
-        "ContainerName": "[toLower(concat('dss-', parameters('environment'), '-anon-aci'))]"
+        "ContainerName": "[toLower(concat('dss-', parameters('environment'), '-restore-aci'))]"
     },
     "resources": [
         {
