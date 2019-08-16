@@ -71,10 +71,5 @@
             }
         }
     ],
-    "outputs": {
-        "ManagedIdentityObjectId": {
-            "type": "string",
-            "value": "[reference(variables('ContainerName')).outputs.ManagedIdentityObjectId.value]"
-        }
-    }
+    "outputs": {}
 }

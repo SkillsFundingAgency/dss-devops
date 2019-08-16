@@ -39,7 +39,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'container-instance.json')]",
+                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'ContainerInstance/linux-container-instance.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
