@@ -114,7 +114,7 @@ jobs:
       scriptArguments: -ParameterFile '$(ArmTemplateRoot)\restore-test-parameters.json' -TemplateFile '$(ArmTemplateRoot)\restore-template.json' -Verbose
       azurePowerShellVersion: LatestVersion
   - powershell: |
-      $branchname = $env:sourcebranchname.ToLower();
+      $branchname = $env:sourcebranchname.Substring(0, 190).ToLower();
       Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname--$(Build.BuildNumber)"
     displayName: 'Set restore container tag'
     env:
