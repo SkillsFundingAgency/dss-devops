@@ -96,7 +96,6 @@ jobs:
   variables:
     AppImageBaseName: restoreanonymisebackup
     ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
-    AzureSubscription: SFA-DSS-DevTest
     TestArmTemplateScriptUrl: https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/PSScripts/Test-ArmTemplate.ps1
     TestArmTemplateScriptFilePath: $(System.DefaultWorkingDirectory)\Test-ArmTemplate.ps1
   steps:
@@ -109,7 +108,7 @@ jobs:
   - task: AzurePowerShell@3
     displayName: 'Test Arm Template'
     inputs:
-      azureSubscription: $(AzureSubscription)
+      azureSubscription: SFA-DSS-DevTest
       scriptType: filePath
       scriptPath: $(TestArmTemplateScriptFilePath)
       scriptArguments: -ParameterFile '$(ArmTemplateRoot)\restore-test-parameters.json' -TemplateFile '$(ArmTemplateRoot)\restore-template.json' -Verbose
