@@ -94,7 +94,7 @@ jobs:
   #dependsOn: BuildAndTestPS
   pool: 'Hosted Windows 2019 with VS2019'
   variables:
-    AppImageBaseName: restoreanonymisebackup
+    RestoreImageBaseName: restoreanonymisebackup
     ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
     TestArmTemplateScriptUrl: https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/PSScripts/Test-ArmTemplate.ps1
     TestArmTemplateScriptFilePath: $(System.DefaultWorkingDirectory)\Test-ArmTemplate.ps1
@@ -114,17 +114,19 @@ jobs:
       scriptArguments: -ParameterFile '$(ArmTemplateRoot)\restore-test-parameters.json' -TemplateFile '$(ArmTemplateRoot)\restore-template.json' -Verbose
       azurePowerShellVersion: LatestVersion
   - powershell: |
-      $branchname = $env:sourcebranchname.Substring(0, 190).ToLower();
-      Write-Host "##vso[task.setvariable variable=AppImageName]$(AppImageBaseName):$branchname--$(Build.BuildNumber)"
+      $branchname = $env:sourcebranchname.ToLower();
+      $RestoreImageName = $(RestoreImageBaseName):$branchname-$(Build.BuildNumber)
+      if ($RestoreImageName.Length -ge 190) { $RestoreImageName = $RestoreImageName.Substring(0, 190) }
+      Write-Host "##vso[task.setvariable variable=RestoreImageName]$RestoreImageName"
     displayName: 'Set restore container tag'
     env:
       sourcebranchname: '$(Build.SourceBranchName)' 
   - script: |
       cd ./Applications/NCS.DSS.AnonymiseBackup
-      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName) --file restore.Dockerfile .
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(RestoreImageName) --file restore.Dockerfile .
     displayName: 'Build restore container'
   - script: |
       docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
       cd ./Applications/NCS.DSS.AnonymiseBackup
-      docker push $(ContainerRegistryAdminUser).azurecr.io/$(AppImageName)
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(RestoreImageName)
     displayName: 'Publish restore container'
