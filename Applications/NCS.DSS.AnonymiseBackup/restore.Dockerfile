@@ -10,7 +10,7 @@ WORKDIR /PSScripts
 COPY /PSScripts/Reset-DssCollectionsFromAnonBackups.ps1 .
 ADD https://raw.githubusercontent.com/SkillsFundingAgency/dss-devops/NCSD-935-RestoreAnonymisedData-TestDockerfile/Scripts/CosmosDb/Restore-CosmosDbContainer.ps1 /dss-devops/Scripts/CosmosDb/
 ADD https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/NCSD-1228-FixRemoveCosmosCollScript/PSScripts/Remove-CosmosCollectionContents.ps1 /dfc-devops/PSScripts/
-ENV CosmosCollections="diversitydetails, transfers"
+ENV CosmosCollections="comma, seperated, list, of, collections"
 ENV DateToRestoreFrom="yyyy/MM/dd HH:mm:ss"
 ENV DestinationCosmosKey=""
 ENV EnvironmentToRestoreTo=""
@@ -22,3 +22,4 @@ ENV SqlServerFqdn=""
 ENV SqlServerPassword=""
 ENV SqlServerUsername=""
 #CMD .\Reset-DssCollectionsFromAnonBackups.ps1 -CosmosCollections $env:CosmosCollections -DateToRestoreFrom $env:DateToRestoreFrom -EnvironmentToRestoreTo $env:EnvironmentToRestoreTo -DestinationCosmosKey $env:DestinationCosmosKey -PathToDfcDevops $env:PathToDfcDevops -PathToDssDevops $env:PathToDssDevops -SourceStorageAccount $env:SourceStorageAccount -SourceContainerSasToken $env:SourceContainerSasToken -SqlServerFqdn $env:SqlServerFqdn -SqlServerPassword $env:SqlServerPassword -SqlServerUsername $env:SqlServerUsername -Verbose
+CMD .\Reset-DssCollectionsFromAnonBackups.ps1 -CosmosCollections "diversitydetails, transfers" -DateToRestoreFrom $env:DateToRestoreFrom -EnvironmentToRestoreTo $env:EnvironmentToRestoreTo -DestinationCosmosKey $env:DestinationCosmosKey -PathToDfcDevops $env:PathToDfcDevops -PathToDssDevops $env:PathToDssDevops -SourceStorageAccount $env:SourceStorageAccount -SourceContainerSasToken $env:SourceContainerSasToken -SqlServerFqdn $env:SqlServerFqdn -SqlServerPassword $env:SqlServerPassword -SqlServerUsername $env:SqlServerUsername -Verbose
