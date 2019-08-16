@@ -23,9 +23,9 @@ param(
     [string[]]$CosmosCollections,
     [Parameter(Mandatory=$true)] 
     [DateTime]$DateToRestoreFrom,
-    # The environment to restore to.  Can only be AT, TEST or PP (values should be entered as lowercase)
+    # The environment to restore to.  Can only be AT, TEST or PP
     [Parameter(Mandatory=$true)]
-    [ValidateSet("at", "test", "pp")]
+    [ValidateSet("AT", "TEST", "PP")]
     [String]$EnvironmentToRestoreTo,
     # Read/Write CosmosDb key for the AT, TEST or PP CosmosDb account
     [Parameter(Mandatory=$true)]
@@ -81,8 +81,8 @@ $ContainerName = "anon-backups"
 $ContainerUrl = "https://$SourceStorageAccount.blob.core.windows.net/$ContainerName"
 
 # Destination variables (should never be PRD.  Validation set and conditions will enforce this)
-$DestinationCosmosAccount = "dss-$EnvironmentToRestoreTo-shared-cdb"
-$DestinationSqlDatabase = "dss-$EnvironmentToRestoreTo-shared-stag-db"
+$DestinationCosmosAccount = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-cdb"
+$DestinationSqlDatabase = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-stag-db"
 
 # Get backup files
 if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
