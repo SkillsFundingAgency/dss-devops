@@ -104,6 +104,27 @@ if ($CosmosCollections.Count -eq 1) {
 
 }
 
+# Test network connectivity
+$DnsCheck = Resolve-DnsName -Name "$SourceStorageAccount.blob.core.windows.net" -ErrorAction SilentlyContinue
+$i = 0
+while (!$DnsCheck) {
+
+    if ($i -lt 3) {
+
+        Write-Verbose "DNS resolution failed for $SourceStorageAccount.blob.core.windows.net"
+
+    }
+    else {
+
+        throw "DNS resolution failed for $SourceStorageAccount.blob.core.windows.net for 3 attempts, terminating script"
+
+    }
+    Start-Sleep -Seconds 30
+    $DnsCheck = Resolve-DnsName -Name "$SourceStorageAccount.blob.core.windows.net" -ErrorAction SilentlyContinue
+    $i++
+
+}
+Write-Verbose "DNS resolved for $($DnsCheck[0].Name)"
 
 $AllBackupFiles = Get-AzureStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
 Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found: $($AllBackupFiles.Count)"
