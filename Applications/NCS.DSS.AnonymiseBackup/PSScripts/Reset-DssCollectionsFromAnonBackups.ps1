@@ -55,7 +55,10 @@ param(
     [Parameter(Mandatory=$true)]
     [String]$SqlServerUsername,
     [Parameter(Mandatory=$false)]
-    [string]$DataMigrationToolLocation = "C:\temp\dt-tool\drop\dt.exe"
+    [string]$DataMigrationToolLocation = "C:\temp\dt-tool\drop\dt.exe",
+    # SAS token for restore container in the PRD storage account.  The token will require cw (create and write) permission.
+    [Parameter(Mandatory=$false, ParameterSetName="ContainerSasToken")]
+    [String]$LogContainerSasToken
 )
 
 Import-Module SqlServer
@@ -207,5 +210,25 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
     }
 
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Database\collection $DatabaseName\$CollectionId reset"
+
+    $OutputFile = Get-Item -Path ".\Reset-DssCollectionsFromAnonBackups.logs" -ErrorAction SilentlyContinue
+    if ($OutputFile) {
+
+        # Cannot upload a file that is locked so copy current content to new file
+        Write-Verbose "Getting log content"
+        $CurrentLogContent = Get-Content -Path $($OutputFile.FullName)
+        $LogsToUpLoad = New-Item -Name "Reset-DssCollectionsFromAnonBackups-to-$($EnvironmentToRestoreTo.ToUpper())-$([DateTime]::Now.ToString("dd-MM-yyyy_HHmmss")).logs"
+        Set-Content -Path $LogsToUpLoad.FullName -Value $CurrentLogContent
+
+        Write-Verbose "Writing logs to blob storage"
+        $LogStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -SasToken $LogContainerSasToken
+        Set-AzureStorageBlobContent -File $LogsToUpLoad.FullName -Container "restorelogs" -Blob $LogsToUpLoad.Name -Context $LogStorageContext -Force
+
+    }
+    else {
+
+        Write-Verbose "No log file found to upload"
+
+    }
 
 }
