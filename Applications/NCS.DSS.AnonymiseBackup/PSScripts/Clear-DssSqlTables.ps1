@@ -2,6 +2,10 @@
 param(
     [Parameter(Mandatory=$true)]
     [string[]]$CosmosCollections,
+    # The environment to restore to.  Can only be AT, TEST or PP
+    [Parameter(Mandatory=$true)]
+    [ValidateSet("AT", "TEST", "PP")]
+    [String]$EnvironmentToRestoreTo,
     # The FQDN of the AT, TEST or PP SQL server
     [Parameter(Mandatory=$true)]
     [String]$SqlServerFqdn,
@@ -38,6 +42,7 @@ if ($DestinationSqlDatabase -match "-prd-") {
 
 }
 
+$DestinationSqlDatabase = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-stag-db"
 $ConnectionString = "Server=tcp:$SqlServerFqdn,1433;Initial Catalog=$DestinationSqlDatabase;Persist Security Info=False;User ID=$SqlServerUsername;Password=$SqlServerPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 foreach ($Collection in $CosmosCollections) {

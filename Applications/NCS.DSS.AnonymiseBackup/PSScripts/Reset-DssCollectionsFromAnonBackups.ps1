@@ -58,7 +58,6 @@ $ContainerUrl = "https://$SourceStorageAccount.blob.core.windows.net/$ContainerN
 
 # Destination variables (should never be PRD.  Validation set and conditions will enforce this)
 $DestinationCosmosAccount = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-cdb"
-$DestinationSqlDatabase = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-stag-db"
 
 # Get backup files
 if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
