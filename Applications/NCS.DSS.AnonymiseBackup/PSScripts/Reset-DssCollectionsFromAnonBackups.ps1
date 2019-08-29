@@ -17,10 +17,10 @@
 #>
 [CmdletBinding()]
 param(
-    # The date stamp of the backup files to use for the restore.  The date will be take from the file name not the meta data.  
-    # If multiple backups were taken on that date then multiple restores for each collection will take place.
     [Parameter(Mandatory=$true)]
     [string[]]$CosmosCollections,
+    # The date stamp of the backup files to use for the restore.  The date will be take from the file name not the meta data.  
+    # If multiple backups were taken on that date then multiple restores for each collection will take place.
     [Parameter(Mandatory=$true)] 
     [DateTime]$DateToRestoreFrom,
     # The environment to restore to.  Can only be AT, TEST or PP
@@ -45,55 +45,12 @@ param(
     # SAS token for anon-backups container in the PRD storage account.  The token will require rl (read and list) permissions.
     [Parameter(Mandatory=$true, ParameterSetName="ContainerSasToken")]
     [String]$SourceContainerSasToken,
-    # The FQDN of the AT, TEST or PP SQL server
-    [Parameter(Mandatory=$true)]
-    [String]$SqlServerFqdn,
-    # The password of the AT, TEST or PP SQL user
-    [Parameter(Mandatory=$true)]
-    [String]$SqlServerPassword,
-    # The username of the AT, TEST or PP SQL user.  The user will require the db_datareader role and the ALTER permission
-    [Parameter(Mandatory=$true)]
-    [String]$SqlServerUsername,
     [Parameter(Mandatory=$false)]
     [string]$DataMigrationToolLocation = "C:\temp\dt-tool\drop\dt.exe",
     # SAS token for restore container in the PRD storage account.  The token will require cw (create and write) permission.
     [Parameter(Mandatory=$false, ParameterSetName="ContainerSasToken")]
     [String]$LogContainerSasToken
 )
-
-Import-Module SqlServer
-
-function Truncate-SqlTable {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$ConnectionString,
-        [Parameter(Mandatory=$true)]
-        [string]$TableName
-    )
-
-    try {
-
-        $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString -ErrorAction Stop
-
-    }
-    catch {
-
-        if ($Error[0].ToString() -match "Client with IP address") {
-
-            Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) firewall rule exception not added, waiting for 6 minutes"
-            Start-Sleep -Seconds 360
-            $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString -ErrorAction Stop
-
-        }
-        
-    }
-    
-    Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName contains $($Result.Column1) records"
-    Invoke-Sqlcmd -Query "TRUNCATE TABLE [dbo].[$TableName];" -ConnectionString $ConnectionString
-    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString
-    Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName truncated, contains $($Result.Column1) records"
-}
 
 # Source variables (defaults to PRD but can be overriden for testing)
 $ContainerName = "anon-backups"
@@ -190,17 +147,6 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
         throw "Error resetting database\collection $DatabaseName\$CollectionId `n$_"
 
     }
-
-
-    # Truncate SQL table and history table
-    if ($DestinationSqlDatabase -match "-prd-") {
-
-        throw "Requested truncation of Production SQL tables, terminating script"
-
-    }
-    $ConnectionString = "Server=tcp:$SqlServerFqdn,1433;Initial Catalog=$DestinationSqlDatabase;Persist Security Info=False;User ID=$SqlServerUsername;Password=$SqlServerPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-    Truncate-SqlTable -ConnectionString $ConnectionString -TableName "dss-$SqlTableIdentifier"
-    Truncate-SqlTable -ConnectionString $ConnectionString -TableName "dss-$SqlTableIdentifier-history"
 
     # Import contents from backup
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Restoring collection $CollectionId from file $BackupFile"
