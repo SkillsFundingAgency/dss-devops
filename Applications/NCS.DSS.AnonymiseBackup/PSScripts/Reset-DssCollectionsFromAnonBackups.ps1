@@ -72,7 +72,23 @@ function Truncate-SqlTable {
         [string]$TableName
     )
 
-    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString
+    try {
+
+        $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString -ErrorAction Stop
+
+    }
+    catch {
+
+        if ($Error[0].ToString() -match "Client with IP address") {
+
+            Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) firewall rule exception not added, waiting for 6 minutes"
+            Start-Sleep -Seconds 360
+            $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString -ErrorAction Stop
+
+        }
+        
+    }
+    
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName contains $($Result.Column1) records"
     Invoke-Sqlcmd -Query "TRUNCATE TABLE [dbo].[$TableName];" -ConnectionString $ConnectionString
     $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString
