@@ -66,7 +66,10 @@
                     },
                     "environmentVariables": {
                         "value": "[parameters('environmentVariables')]"
-                    }
+                    },
+                    "publicallyExposedPorts": [
+                        "2056"
+                    ]
                 }
             }
         }
