@@ -71,10 +71,5 @@
             }
         }
     ],
-    "outputs": {
-        "publicIpAddress": {
-            "type": "string",
-            "value": "[reference(variables('ContainerName')).outputs.publicIpAddress.value]"
-        }
-    }
+    "outputs": {}
 }
