@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appContainerRegistryImage": {
+            "type": "string"
+        },
+        "containerRegistryPassword": {
+            "type": "securestring"
+        },
+        "containerRegistryServer": {
+            "type": "string"
+        },
+        "containerRegistryUsername": {
+            "type": "string"
+        },
+        "containerCpu": {
+            "type": "int"
+        },
+        "containerMemoryInGb": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "environmentVariables": {
+            "type": "secureObject"
+        }
+    },
+    "variables": {
+        "BuildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+        "ContainerName": "[toLower(concat('dss-', parameters('environment'), '-anon-aci'))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('ContainerName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'ContainerInstance/linux-container-instance.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "containerName": {
+                        "value": "[variables('ContainerName')]"
+                    },
+                    "appContainerRegistryImage": {
+                        "value": "[parameters('appContainerRegistryImage')]"
+                    },
+                    "containerRegistryPassword": {
+                        "value": "[parameters('containerRegistryPassword')]"
+                    },
+                    "containerRegistryServer": {
+                        "value": "[parameters('containerRegistryServer')]"
+                    },
+                    "containerRegistryUsername": {
+                        "value": "[parameters('containerRegistryUsername')]"
+                    },
+                    "cpu": {
+                        "value": "[parameters('containerCpu')]"
+                    },
+                    "managedIdentity": {
+                        "value": true
+                    },
+                    "memoryInGb": {
+                        "value": "[parameters('containerMemoryInGb')]"
+                    },
+                    "environmentVariables": {
+                        "value": "[parameters('environmentVariables')]"
+                    },
+                    "restartPolicy": {
+                        "value": "OnFailure"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "ManagedIdentityObjectId": {
+            "type": "string",
+            "value": "[reference(variables('ContainerName')).outputs.ManagedIdentityObjectId.value]"
+        }
+    }
+}

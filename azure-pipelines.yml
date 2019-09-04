@@ -1,14 +1,23 @@
 variables:
-    BuildPlatform: 'any cpu'
-    BuildConfiguration: 'release'
+  - name: BuildPlatform
+    value: 'any cpu'
+  - name: BuildConfiguration
+    value: 'release'
+  - group: AT Shared Resources
+  - group: KeyVault - dss-at-shared-kv
 
 resources:
   repositories:
   - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (CDH)'
+    ref: refs/tags/v1.5.0
 
 jobs:
-- job: BuildAndTest
-  displayName: BuildAndTest
+- job: BuildAndTestPS
+  displayName: 'Build and Test PowerShell'
   pool: Continuous Integration 02 - SSD - 160ACU
 
   steps:
@@ -76,4 +85,69 @@ jobs:
       pathtoPublish: $(build.artifactstagingdirectory)\Artifact\NCS.DSS.AnonymiseBackupPackages\
       artifactName: NCS.DSS.AnonymiseBackup
       publishLocation: container
+  # Test NCS.DSS.AnonymiseBackup ARM template
+  - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+    parameters:
+      ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
+      AzureSubscription: SFA-DSS-DevTest
 
+- job: BuildNCSDSSAnonymiseBackup
+  displayName: Build and publish NCS.DSS.AnonymiseBackup container
+  dependsOn: BuildAndTestPS
+  pool: 'Hosted Ubuntu 1604'
+  variables:
+    AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
+  steps:
+  - script: |
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      AppImageName=$(AppImageName)
+      AppImageName=${AppImageName,,}
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$AppImageName .
+    displayName: 'Build anonapp container'
+  - script: |
+      docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      AppImageName=$(AppImageName)
+      AppImageName=${AppImageName,,}
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$AppImageName
+    displayName: 'Publish anonapp container'
+- job: BuildRestoreAnonymisedBackup
+  displayName: Test Restore ARM templates, build and publish container
+  #dependsOn: BuildAndTestPS
+  pool: 'Hosted Windows 2019 with VS2019'
+  variables:
+    RestoreImageBaseName: restoreanonymisebackup
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
+    TestArmTemplateScriptUrl: https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/PSScripts/Test-ArmTemplate.ps1
+    TestArmTemplateScriptFilePath: $(System.DefaultWorkingDirectory)\Test-ArmTemplate.ps1
+  steps:
+  - task: PowerShell@2
+    name: DownloadTestArmTemplateScript
+    displayName: 'Download Test-ArmTemplate script'
+    inputs:
+      targetType: 'inline'
+      script: Invoke-WebRequest -Uri $(TestArmTemplateScriptUrl) -OutFile $(TestArmTemplateScriptFilePath)
+  - task: AzurePowerShell@3
+    displayName: 'Test Arm Template'
+    inputs:
+      azureSubscription: SFA-DSS-DevTest
+      scriptType: filePath
+      scriptPath: $(TestArmTemplateScriptFilePath)
+      scriptArguments: -ParameterFile '$(ArmTemplateRoot)\restore-test-parameters.json' -TemplateFile '$(ArmTemplateRoot)\restore-template.json' -Verbose
+      azurePowerShellVersion: LatestVersion
+  - powershell: |
+      $branchname = $env:sourcebranchname.ToLower();
+      if ($env:sourcebranchname.Length -ge 190) { $branchname = $env:sourcebranchname.ToLower().Substring(0, 190) } else { $branchname = $env:sourcebranchname.ToLower() };
+      Write-Host "##vso[task.setvariable variable=RestoreImageName]$(RestoreImageBaseName):$branchname-$(Build.BuildNumber)"
+    displayName: 'Set restore container tag'
+    env:
+      sourcebranchname: '$(Build.SourceBranchName)' 
+  - script: |
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      docker build -t $(ContainerRegistryAdminUser).azurecr.io/$(RestoreImageName) --file restore.Dockerfile .
+    displayName: 'Build restore container'
+  - script: |
+      docker login -u $(ContainerRegistryAdminUser) -p $(ContainerRegistryPassword) $(ContainerRegistryAdminUser).azurecr.io
+      cd ./Applications/NCS.DSS.AnonymiseBackup
+      docker push $(ContainerRegistryAdminUser).azurecr.io/$(RestoreImageName)
+    displayName: 'Publish restore container'
