@@ -8,8 +8,8 @@ ADD https://aka.ms/csdmtool /temp/dt.zip
 RUN Expand-Archive -Path C:\\temp\\dt.zip -DestinationPath C:\\temp\\dt-tool
 WORKDIR /PSScripts
 COPY /PSScripts/Reset-DssCollectionsFromAnonBackups.ps1 .
-ADD https://raw.githubusercontent.com/SkillsFundingAgency/dss-devops/NCSD-935-RestoreAnonymisedData-TestDockerfile/Scripts/CosmosDb/Restore-CosmosDbContainer.ps1 /dss-devops/Scripts/CosmosDb/
-ADD https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/NCSD-1228-FixRemoveCosmosCollScript/PSScripts/Remove-CosmosCollectionContents.ps1 /dfc-devops/PSScripts/
+ADD https://raw.githubusercontent.com/SkillsFundingAgency/dss-devops/master/Scripts/CosmosDb/Restore-CosmosDbContainer.ps1 /dss-devops/Scripts/CosmosDb/
+ADD https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/PSScripts/Remove-CosmosCollectionContents.ps1 /dfc-devops/PSScripts/
 ENV CosmosCollections="comma, seperated, list, of, collections"
 ENV DateToRestoreFrom="yyyy/MM/dd HH:mm:ss"
 ENV DestinationCosmosKey=""
