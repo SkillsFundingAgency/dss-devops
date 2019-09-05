@@ -125,7 +125,6 @@ foreach ($BackupFile in $FilesToRestoreFrom) {
 
     $DatabaseName = $BackupFile.Name.Split("-")[3]
     $CollectionId = $BackupFile.Name.Split("-")[3]
-    $SqlTableIdentifier = $BackupFile.Name.Split("-")[3]
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Reseting database\collection $DatabaseName\$CollectionId"
 
     # Delete contents of Cosmos collection
@@ -183,8 +182,9 @@ if ($OutputFile) {
     $LogsToUpLoad = New-Item -Name "Reset-DssCollectionsFromAnonBackups-to-$($EnvironmentToRestoreTo.ToUpper())-$([DateTime]::Now.ToString("dd-MM-yyyy_HHmmss")).logs"
     Set-Content -Path $LogsToUpLoad.FullName -Value $CurrentLogContent
 
+    $LogContainerStorageAccount = "dss$($EnvironmentToRestoreTo.ToLower())shdarmstr"
     Write-Verbose "Writing logs to blob storage"
-    $LogStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -SasToken $LogContainerSasToken
+    $LogStorageContext = New-AzureStorageContext -StorageAccountName $LogContainerStorageAccount -SasToken $LogContainerSasToken
     Set-AzureStorageBlobContent -File $LogsToUpLoad.FullName -Container "restorelogs" -Blob $LogsToUpLoad.Name -Context $LogStorageContext -Force
 
 }
