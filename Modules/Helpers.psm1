@@ -74,6 +74,8 @@ function Get-AzureRmStorageContainerSasToken {
         [Parameter(Mandatory=$true)]
         [string]$ContainerName,
         [Parameter(Mandatory=$false)]
+        [int]$DurationInHours = 1,
+        [Parameter(Mandatory=$false)]
         #Optional.  Set the permissions for the SAS token.  Available permissions are Read (r), Add (a), Create (c), Write (w), Delete (d) and List (l).  See for more info - https://docs.microsoft.com/en-us/rest/api/storageservices/create-service-sas#permissions-for-a-container
         [ValidatePattern('[racwdl]+')]
         [string]$Permissions = "r",
@@ -82,9 +84,12 @@ function Get-AzureRmStorageContainerSasToken {
         [switch]$RemoveLeadingQuestionMark
     )
 
+    $StartTime = [DateTime]::Now
+    $ExpiryTime = [DateTime]::Now.AddHours($DurationInHours)
+
     $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $($ResourceGroupName.ToLower()) -Name $($StorageAccountName.ToLower())
     $Context = New-AzureStorageContext -StorageAccountName $($StorageAccountName.ToLower()) -StorageAccountKey $Key[0].Value
-    $SasToken = New-AzureStorageContainerSASToken -Name $($ContainerName.ToLower()) -Permission $Permissions -Context $Context
+    $SasToken = New-AzureStorageContainerSASToken -Name $($ContainerName.ToLower()) -Permission $Permissions -Context $Context -StartTime $StartTime -ExpiryTime $ExpiryTime
 
     if ($RemoveLeadingQuestionMark.IsPresent) {
         $SasToken.Substring(1)
