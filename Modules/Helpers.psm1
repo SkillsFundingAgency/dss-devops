@@ -85,7 +85,7 @@ function Get-AzureRmStorageContainerSasToken {
     )
 
     $StartTime = [DateTime]::Now
-    $ExpiryTime = [DateTime]::Now.AddHours($DurationInHours)
+    $ExpiryTime = $StartTime.AddHours($DurationInHours)
 
     $Key = Get-AzureRmStorageAccountKey -ResourceGroupName $($ResourceGroupName.ToLower()) -Name $($StorageAccountName.ToLower())
     $Context = New-AzureStorageContext -StorageAccountName $($StorageAccountName.ToLower()) -StorageAccountKey $Key[0].Value
