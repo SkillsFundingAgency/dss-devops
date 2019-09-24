@@ -28,10 +28,15 @@ function Truncate-SqlTable {
         [string]$TableName
     )
 
-    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString -ErrorAction Stop
+    $SqlParams = @{
+        ConnectionString = $ConnectionString
+        QueryTimeout = 600
+    }
+
+    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" @SqlParams -ErrorAction Stop
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName contains $($Result.Column1) records"
-    Invoke-Sqlcmd -Query "TRUNCATE TABLE [dbo].[$TableName];" -ConnectionString $ConnectionString
-    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" -ConnectionString $ConnectionString
+    Invoke-Sqlcmd -Query "TRUNCATE TABLE [dbo].[$TableName];" @SqlParams
+    $Result = Invoke-Sqlcmd -Query "SELECT COUNT(*) FROM [dbo].[$TableName];" @sqlParams
     Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) $TableName truncated, contains $($Result.Column1) records"
 }
 
