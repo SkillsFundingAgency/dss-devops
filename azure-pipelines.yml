@@ -18,7 +18,7 @@ resources:
 jobs:
 - job: BuildAndTestPS
   displayName: 'Build and Test PowerShell'
-  pool: Continuous Integration 02 - SSD - 160ACU
+  pool: NCS - CI and CD
 
   steps:
   # Run PowerShell tests and publish results
