@@ -59,7 +59,7 @@ Class CosmosDbCollection {
     [string]$CollectionName
     [string]$PartitionKey = $null
     [int]$OfferThroughput
-    [int]$DefaultTimeToLive = $null
+    [int]$DefaultTimeToLive
     [CosmosDbStoredProcedure[]]$StoredProcedures
 }
 
