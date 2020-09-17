@@ -59,7 +59,7 @@ Class CosmosDbCollection {
     [string]$CollectionName
     [string]$PartitionKey = $null
     [int]$OfferThroughput
-    [int]$DefaultTimeToLive
+    [int]$DefaultTimeToLive = 0
     [CosmosDbStoredProcedure[]]$StoredProcedures
 }
 
@@ -163,6 +163,14 @@ foreach ($Database in $CosmosDbConfiguration.Databases) {
                 Id              = $Collection.CollectionName
                 OfferThroughput = $Collection.OfferThroughput
                 DefaultTimeToLive = $Collection.DefaultTimeToLive
+            }
+            if ($Collection.DefaultTimeToLive -eq 0 -or $null -eq $Collection.DefaultTimeToLive) {
+                $NewCosmosDbCollectionParameters = @{
+                    Context         = $CosmosDbContext
+                    Database        = $Database.DatabaseName
+                    Id              = $Collection.CollectionName
+                    OfferThroughput = $Collection.OfferThroughput
+                }
             }
             if ($Collection.PartitionKey) {
                 if ($PartitionKeyFix.IsPresent) {
