@@ -1,14 +1,7 @@
 <policies>
   <inbound>
-    <set-header name="X-Forwarded-APIM-Url" exists-action="override">
-        <value>@{
-            var url = context.Request.OriginalUrl.ToString();
-            var sourceArray = url.Split('/');
-            var destArray = new String[4];
-            Array.Copy(sourceArray, destArray, 4);
-            var newUrl = String.Join("/", destArray);
-            return String.Format("{0}/", newUrl);
-        }</value>
+    <set-header name="apimurl">
+      <value>@(String.Format(@"{0}://{1}{2}", context.Request.OriginalUrl.Scheme, context.Request.OriginalUrl.Host, context.Request.OriginalUrl.Path))</value>
     </set-header>
     <base />
   </inbound>
