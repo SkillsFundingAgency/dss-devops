@@ -11,7 +11,7 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     ) {
         param ($BranchName)
 
-        { .\Test-BranchName -BranchName $BranchName -PipelineType Build } | Should -Throw
+        { .\Test-BranchName -BranchName $BranchName -PipelineType Build } | Should Throw
 
     }
 
