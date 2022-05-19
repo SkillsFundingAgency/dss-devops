@@ -59,7 +59,7 @@ function Write-FunctionAppName {
 
 # --- RegEx Patterns
 $V1MasterBranchRegEx = "^master$"
-$V1FeatureBranchRegEx = "^(?:CDS|SDD)-\d+-\w+[-v\d]{0}$"
+$V1FeatureBranchRegEx = "^(?:CDS|SDD|NCSLT|release|master)(-\d+(-\w+)*(-(v\d+)*))*.*$"
 
 $V2OrHigherMasterBranchRegEx = "^master-(v\d+)$"
 $V2OrHigherFeatureBranchRegEx = "^(?:CDS|SDD|NCSLT|release|master)(-\d+(-\w+)*(-(v\d+)*))*.*$"
