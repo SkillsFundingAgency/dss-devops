@@ -62,7 +62,7 @@ $V1MasterBranchRegEx = "^master$"
 $V1FeatureBranchRegEx = "^(master)(-v\d+)?|(release\/).*|(CDS|SDD|NCSLT)(-\d+)(.*)(-v\d+){1}$"
 
 $V2OrHigherMasterBranchRegEx = "^master-(v\d+)$"
-$V2OrHigherFeatureBranchRegEx = "^(master)(-v\d+)?|(release\/).*|(CDS|SDD|NCSLT)(-\d+)(.*)(-v2|-v3){1}$"
+$V2OrHigherFeatureBranchRegEx = "^(master-v([2-9])){1}|(release\/).*|(CDS|SDD|NCSLT)(-\d+)(.*)-v([2-9]){1}$"
 
 if ($PSCmdlet.ParameterSetName -eq "Release") {
 
