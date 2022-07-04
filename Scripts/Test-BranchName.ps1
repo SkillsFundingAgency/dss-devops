@@ -59,10 +59,10 @@ function Write-FunctionAppName {
 
 # --- RegEx Patterns
 $V1MasterBranchRegEx = "^master$"
-$V1FeatureBranchRegEx = "^(?:CDS|SDD)-\d+-\w+[-v\d]{0}$"
+$V1FeatureBranchRegEx = "^(master)(-v\d+)?|(release\/).*|(CDS|SDD|NCSLT)(-\d+)(.*)(-v\d+){1}$"
 
 $V2OrHigherMasterBranchRegEx = "^master-(v\d+)$"
-$V2OrHigherFeatureBranchRegEx = "^(?:CDS|SDD)-\d+-\w+-(v\d+)$"
+$V2OrHigherFeatureBranchRegEx = "^(master)(-v\d+)?|(release\/).*|(CDS|SDD|NCSLT)(-\d+)(.*)(-v2|-v3){1}$"
 
 if ($PSCmdlet.ParameterSetName -eq "Release") {
 
