@@ -18,7 +18,7 @@ Displays a summary of results from the test runner and fails if a threshold is n
 Out-TestResults.ps1
 
 #>
-
+<#
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $false)]
@@ -71,3 +71,4 @@ if ($CodeCovered -lt $CoveragePercent) {
 } else {
     Write-Output "Code coverage $CodeCovered"
 }
+#>
