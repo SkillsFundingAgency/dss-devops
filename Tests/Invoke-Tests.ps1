@@ -43,8 +43,8 @@ if ($CodeCoveragePath) {
 Remove-Item "$PSScriptRoot\TEST-*.xml"
 Remove-Item "$PSScriptRoot\CODECOVERAGE-*.xml"
 
-# Invoke tests
-# $Result = Invoke-Pester @TestParameters
+Invoke tests
+$Result = Invoke-Pester @TestParameters
 
 # report failures
 if ($Result.FailedCount -ne 0) { 
