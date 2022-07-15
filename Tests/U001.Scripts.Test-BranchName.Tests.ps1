@@ -2,6 +2,17 @@ Push-Location -Path $PSScriptRoot\..\Scripts\
 
 Describe "Test-BranchName unit tests" -Tag "Unit" {
 
+
+    It "Example Test" -TestCases @(
+        @{ BranchName = "master"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
+    ) {
+
+        $Expected = "foo"
+        $Output = "foo"
+
+        $Output | Should be $Expected
+    }
+
 <#
     It "Should should throw an error given an invalid branch name" -TestCases @(
         @{ BranchName = 'master-va'}
