@@ -25,7 +25,7 @@ Param (
     [String] $CodeCoveragePath
 )
 
-Get-Module -Name "Pester" -ErrorAction "SilentlyContinue"
+Get-Module -Name "Pester"
 
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
