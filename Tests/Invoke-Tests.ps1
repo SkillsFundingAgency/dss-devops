@@ -50,7 +50,7 @@ if (!$pesterModule) {
     }
 }
 
-$pesterModule | Import-Module -Force
+# $pesterModule | Import-Module -Force
 
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
