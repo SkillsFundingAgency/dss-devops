@@ -25,7 +25,7 @@ Param (
     [String] $CodeCoveragePath
 )
 
-Get-Module -Name "Pester"
+Install-Module -Name Pester -RequiredVersion 4.10.1 -Force -Verbose -Scope CurrentUser
 
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
