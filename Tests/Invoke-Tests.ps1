@@ -25,9 +25,6 @@ Param (
     [String] $CodeCoveragePath
 )
 
-Uninstall-Module -Name Pester -RequiredVersion 5.0.1 -Force -Scope CurrentUser
-Install-Module -Name Pester -RequiredVersion 4.10.1 -Force -Scope CurrentUser
-
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
     OutputFile   = "$PSScriptRoot\TEST-$TestType.xml"
