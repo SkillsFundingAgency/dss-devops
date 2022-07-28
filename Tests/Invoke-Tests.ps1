@@ -25,6 +25,21 @@ Param (
     [String] $CodeCoveragePath
 )
 
+$pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '4.*'}
+if (!$pesterModule) {
+    try {
+        Write-Host "Installing Pester"
+        Install-Module -Name Pester -Force -SkipPublisherCheck -RequiredVersion "4.10.1"
+        Write-Host "Getting Pester version"
+        $pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '4.*'}
+    }
+    catch {
+        Write-Error "Failed to install the Pester module."
+    }
+}
+
+$pesterModule | Import-Module
+
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
     OutputFile   = "$PSScriptRoot\TEST-$TestType.xml"
