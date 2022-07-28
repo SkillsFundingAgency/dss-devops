@@ -18,8 +18,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     It "Should write Version1 given a valid version 1 branch name" -TestCases @(
         @{ BranchName = "master"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
         @{ BranchName = "master"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
-        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
-        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
+        @{ BranchName = "CDS-101-ThisIsAChangeTo-V1"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
+        @{ BranchName = "CDS-101-ThisIsAChangeTo-V1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
     ) {
         param ($BranchName, $PipelineType, $ExpectedOutputType, $DssApiVersion)
 
@@ -52,7 +52,7 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     It "Should write FunctionAppVersion and FunctionAppName given a valid FunctionAppBaseName" -TestCases @(
         @{ BranchName = "master"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = ""; FunctionAppVersion = "Version1"; FunctionAppName = "dss-at-foo-v1-fa" }
         @{ BranchName = "master-v2"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = "v2"; FunctionAppVersion = "Version2+"; FunctionAppName = "dss-at-foo-v2-fa" }
-        @{ BranchName = "CDS-101-ThisIsAChangeToV1"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = ""; FunctionAppVersion = "Version1"; FunctionAppName = "dss-at-foo-v1-fa" }
+        @{ BranchName = "CDS-101-ThisIsAChangeTo-V1"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = ""; FunctionAppVersion = "Version1"; FunctionAppName = "dss-at-foo-v1-fa" }
         @{ BranchName = "CDS-456-ThisIsAChangeToV3-v3"; PipelineType = "Release"; FunctionAppBaseName = "dss-at-foo-fa"; DssApiVersion = "v3"; FunctionAppVersion = "Version2+"; FunctionAppName = "dss-at-foo-v3-fa" }
     ) {
         param ($BranchName, $PipelineType, $DssApiVersion, $FunctionAppVersion, $FunctionAppName)
@@ -68,7 +68,7 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
     it "Should write FunctionAppVersion based on the PullRequestBranchName param if BranchName is merge" -TestCases @(
         @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "master"; ExpectedOutputType = "true"; FunctionAppVersion = "Version1" }
         @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "master-v2"; ExpectedOutputType = "true"; FunctionAppVersion = "Version2+" }
-        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "CDS-101-ThisIsAChangeToV1"; ExpectedOutputType = "true"; FunctionAppVersion = "Version1" }
+        @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "CDS-101-ThisIsAChangeTo-V1"; ExpectedOutputType = "true"; FunctionAppVersion = "Version1" }
         @{ BranchName = "merge"; PipelineType = "Build"; PullRequestBranchName = "CDS-456-ThisIsAChangeToV3-v3"; ExpectedOutputType = "true"; FunctionAppVersion = "Version2+" }
     ) {
         param ($BranchName, $PipelineType, $PullRequestBranchName, $ExpectedOutputType, $FunctionAppVersion)
