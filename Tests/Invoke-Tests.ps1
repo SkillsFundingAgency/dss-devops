@@ -25,6 +25,18 @@ Param (
     [String] $CodeCoveragePath
 )
 
+$pesterModuleV5 = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '5.*'}
+if (!$pesterModuleV5) {
+    try {
+        Write-Host "Removing Pester v5"
+        $pesterModuleV5 = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '5.*'}
+        Remove-Module $pesterModuleV5
+    }
+    catch {
+        Write-Error "Failed to remove the Pester module."
+    }
+}
+
 $pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '4.*'}
 if (!$pesterModule) {
     try {
