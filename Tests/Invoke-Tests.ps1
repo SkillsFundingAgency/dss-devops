@@ -25,12 +25,11 @@ Param (
     [String] $CodeCoveragePath
 )
 
-$pesterModuleV5 = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '5.*'}
-if (!$pesterModuleV5) {
+$pester = Get-Module -Name Pester -ListAvailable
+if (!$pester) {
     try {
-        Write-Host "Removing Pester v5"
-        $pesterModuleV5 = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '5.*'}
-        Remove-Module $pesterModuleV5
+        Write-Host "Removing Pester"
+        Remove-Module "Pester"
     }
     catch {
         Write-Error "Failed to remove the Pester module."
@@ -50,7 +49,7 @@ if (!$pesterModule) {
     }
 }
 
-# $pesterModule | Import-Module -Force
+$pesterModule | Import-Module
 
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
