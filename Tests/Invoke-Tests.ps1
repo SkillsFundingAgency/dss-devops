@@ -25,6 +25,8 @@ Param (
     [String] $CodeCoveragePath
 )
 
+Get-Module -Name "Pester" -ErrorAction "SilentlyContinue"
+
 $TestParameters = @{
     OutputFormat = 'NUnitXml'
     OutputFile   = "$PSScriptRoot\TEST-$TestType.xml"
