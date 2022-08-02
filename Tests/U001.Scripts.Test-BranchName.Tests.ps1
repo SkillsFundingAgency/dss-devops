@@ -26,8 +26,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]Version1",
             "##vso[task.setvariable variable=DssApiVersion;isOutput=$ExpectedOutputType]$DssApiVersion")
 
-        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
-        $Output | Should be $Expected
+        $Output = ..\Scripts\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
+        $Output | Should -be $Expected
     }
 
     It "Should write Version2+ given a valid version 2 or higher branch name" -TestCases @(
@@ -45,8 +45,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         $Expected = @("##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]Version2+",
         "##vso[task.setvariable variable=DssApiVersion;isOutput=$ExpectedOutputType]$DssApiVersion")
 
-        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
-        $Output | Should be $Expected
+        $Output = ..\Scripts\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType
+        $Output | Should -be $Expected
     }
 
     It "Should write FunctionAppVersion and FunctionAppName given a valid FunctionAppBaseName" -TestCases @(
@@ -61,8 +61,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
             "##vso[task.setvariable variable=DssApiVersion;isOutput=false]$DssApiVersion",
             "##vso[task.setvariable variable=FunctionAppName;isOutput=false]$FunctionAppName")
 
-        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -FunctionAppBaseName "dss-at-foo-fa"
-        $Output | Should be $Expected
+        $Output = ..\Scripts\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -FunctionAppBaseName "dss-at-foo-fa"
+        $Output | Should -be $Expected
     }
 
     it "Should write FunctionAppVersion based on the PullRequestBranchName param if BranchName is merge" -TestCases @(
@@ -75,10 +75,10 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
 
         $Expected = "##vso[task.setvariable variable=FunctionAppVersion;isOutput=$ExpectedOutputType]$($FunctionAppVersion)"
 
-        $Output = .\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -PullRequestBranchName $PullRequestBranchName
-        $Output | Should be $Expected
+        $Output = ..\Scripts\Test-BranchName -BranchName $BranchName -PipelineType $PipelineType -PullRequestBranchName $PullRequestBranchName
+        $Output | Should -be $Expected
     }
 
-}
+ }
 
 Push-Location -Path $PSScriptRoot
