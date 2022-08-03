@@ -16,6 +16,8 @@ Invoke-AcceptanceTests.ps1 -TestType Quality
 
 #>
 
+Import-Module Pester
+
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $false)]
