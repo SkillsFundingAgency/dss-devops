@@ -43,8 +43,8 @@ if ($TestType -ne 'All') {
     $TestConfiguration.Filter.Tag = $TestType
 }
 if ($CodeCoveragePath) {
-    $TestConfiguration.CodeCoverage = $CodeCoveragePath
-    $TestConfiguration.CodeCoverageOutputFile = "$PSScriptRoot\CODECOVERAGE-$TestType.xml"
+    $TestConfiguration.CodeCoverage.Path = $CodeCoveragePath
+    $TestConfiguration.CodeCoverage.OutputPath = "$PSScriptRoot\CODECOVERAGE-$TestType.xml"
 }
 
 # Remove previous runs
