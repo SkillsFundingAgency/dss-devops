@@ -26,6 +26,7 @@ Param (
 )
 
 Import-Module Pester
+Get-Module -Name Pester -ListAvailable
 
 $TestConfiguration = [PesterConfiguration]@{
     Run = @{
