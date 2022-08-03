@@ -16,8 +16,6 @@ Invoke-AcceptanceTests.ps1 -TestType Quality
 
 #>
 
-Import-Module Pester
-
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $false)]
@@ -26,6 +24,8 @@ Param (
     [Parameter(Mandatory = $false)]
     [String] $CodeCoveragePath
 )
+
+Import-Module Pester
 
 $TestConfiguration = [PesterConfiguration]@{
     Run = @{
