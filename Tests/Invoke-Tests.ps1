@@ -25,44 +25,23 @@ Param (
     [String] $CodeCoveragePath
 )
 
-$pester = Get-Module -Name Pester -ListAvailable
-if (!$pester) {
-    try {
-        Write-Host "Removing Pester"
-        Remove-Module "Pester"
+$TestConfiguration = [PesterConfiguration]@{
+    Run = @{
+        Path         = "$PSScriptRoot"
+        PassThru     = $True
     }
-    catch {
-        Write-Error "Failed to remove the Pester module."
+    TestResult = @{
+        OutputFormat = 'NUnitXml'
+        OutputPath   = "$PSScriptRoot\TEST-$TestType.xml"
     }
-}
-
-$pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '4.*'}
-if (!$pesterModule) {
-    try {
-        Write-Host "Installing Pester"
-        Install-Module -Name Pester -Force -SkipPublisherCheck -RequiredVersion "4.10.1"
-        Write-Host "Getting Pester version"
-        $pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '4.*'}
-    }
-    catch {
-        Write-Error "Failed to install the Pester module."
-    }
-}
-
-$pesterModule | Import-Module
-
-$TestParameters = @{
-    OutputFormat = 'NUnitXml'
-    OutputFile   = "$PSScriptRoot\TEST-$TestType.xml"
     Script       = "$PSScriptRoot"
-    PassThru     = $True
 }
 if ($TestType -ne 'All') {
-    $TestParameters['Tag'] = $TestType
+    $TestConfiguration.Filter.Tag = $TestType
 }
 if ($CodeCoveragePath) {
-    $TestParameters['CodeCoverage'] = $CodeCoveragePath
-    $TestParameters['CodeCoverageOutputFile'] = "$PSScriptRoot\CODECOVERAGE-$TestType.xml"
+    $TestConfiguration.Filter.CodeCoverage = $CodeCoveragePath
+    $TestConfiguration.Filter.CodeCoverageOutputFile = "$PSScriptRoot\CODECOVERAGE-$TestType.xml"
 }
 
 # Remove previous runs
@@ -70,7 +49,7 @@ Remove-Item "$PSScriptRoot\TEST-*.xml"
 Remove-Item "$PSScriptRoot\CODECOVERAGE-*.xml"
 
 # Invoke tests
-$Result = Invoke-Pester @TestParameters
+$Result = Invoke-Pester -Configuration @TestConfiguration
 
 # report failures
 if ($Result.FailedCount -ne 0) { 
