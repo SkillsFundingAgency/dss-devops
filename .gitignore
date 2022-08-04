@@ -16,3 +16,4 @@ Tests/TEST-*.xml
 /Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/bin/Debug/netcoreapp2.1
 /Applications/GeoCodeBulkUpdate/GeoCodeBulkUpdate/obj
 /Applications/GeoCodeBulkUpdate/.vs/*
+Tests/CODECOVERAGE-All.xml

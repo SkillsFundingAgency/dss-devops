@@ -36,6 +36,7 @@ $TestConfiguration = [PesterConfiguration]@{
     TestResult = @{
         OutputFormat = 'NUnitXml'
         OutputPath   = "$PSScriptRoot\TEST-$TestType.xml"
+        Enabled = $True
     }
     Script       = "$PSScriptRoot"
 }
