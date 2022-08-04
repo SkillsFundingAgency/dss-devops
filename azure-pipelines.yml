@@ -94,7 +94,7 @@ jobs:
 - job: BuildNCSDSSAnonymiseBackup
   displayName: Build and publish NCS.DSS.AnonymiseBackup container
   dependsOn: BuildAndTestPS
-  pool: 'Hosted Ubuntu 1604'
+  pool: 'ubuntu-latest'
   variables:
     AppImageName: NCS.DSS.AnonymiseBackup:$(Build.SourceBranchName)-$(Build.BuildNumber)
   steps:
@@ -114,7 +114,7 @@ jobs:
 - job: BuildRestoreAnonymisedBackup
   displayName: Test Restore ARM templates, build and publish container
   #dependsOn: BuildAndTestPS
-  pool: 'Hosted Windows 2019 with VS2019'
+  pool: 'windows-2019'
   variables:
     RestoreImageBaseName: restoreanonymisebackup
     ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
