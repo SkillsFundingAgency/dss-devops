@@ -30,7 +30,7 @@ Param (
 )
 
 if (-not $TestResultFile) {
-    $FindRecentFile = Get-ChildItem "$PSScriptRoot\TEST-*.xml" |
+    $FindRecentFile = Get-ChildItem "Tests\TEST-*.xml" |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
     $TestResultFile = $FindRecentFile.FullName
@@ -38,7 +38,7 @@ if (-not $TestResultFile) {
 [xml] $TestResult = Get-Content -Path $TestResultFile
 
 if (-not $CodeCoverageFile) {
-    $FindRecentFile = Get-ChildItem "$PSScriptRoot\CODECOVERAGE-*.xml" |
+    $FindRecentFile = Get-ChildItem "Tests\CODECOVERAGE-*.xml" |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
     $CodeCoverageFile = $FindRecentFile.FullName
