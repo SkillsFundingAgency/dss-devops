@@ -17,8 +17,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         @{ BranchName = "master"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
         @{ BranchName = "CDS-101-ThisIsAChangeTo-V1"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
         @{ BranchName = "CDS-101-ThisIsAChangeTo-V1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
-        @{ BranchName = "release/DSS-Release-1-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
-        @{ BranchName = "release/netcompany/DSS-Release-1-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
+        @{ BranchName = "DSS-Release-1-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
+        @{ BranchName = "DSS-Release-1-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
     ) {
         param ($BranchName, $PipelineType, $ExpectedOutputType, $DssApiVersion)
 
@@ -38,8 +38,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         @{ BranchName = "CDS-321-ThisIsAChangeToV2-v2"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v2" }
         @{ BranchName = "CDS-456-ThisIsAChangeToV3-v10"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "v10" }
         @{ BranchName = "CDS-456-ThisIsAChangeToV3-v10"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v10" }
-        @{ BranchName = "release/DSS-Release-1-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
-        @{ BranchName = "release/netcompany/DSS-Release-1-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
+        @{ BranchName = "DSS-Release-1-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
+        @{ BranchName = "DSS-Release-1-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
     ) {
         param ($BranchName, $PipelineType, $ExpectedOutputType, $DssApiVersion)
 
