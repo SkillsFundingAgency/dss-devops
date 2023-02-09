@@ -224,3 +224,96 @@ function Write-Log {
         }
     }
 }
+
+function Invoke-RetryCommand {
+    <#
+    .SYNOPSIS
+    Generic Invoke retry command with optional Failure command
+
+    .DESCRIPTION
+    Generic retry wrapper to be used with scripts
+
+    .PARAMETER Command
+    Script block to retry
+
+    .PARAMETER FailureCommand
+    Script block to attempt once the first set of retries has failed
+
+    .PARAMETER MaxRetries
+    Maximum number of initial retries default is 5
+
+    .PARAMETER RetryInterval
+    Time in seconds to wait between retries
+
+
+    .EXAMPLE
+    Invoke-RetryCommand -Command { Get-ChildItem C:\ } -FailureCommand { Write-Host "Failed to get child items." }
+
+    #>
+    [CmdletBinding()]
+    param(
+      [Parameter(Mandatory=$true)]
+      [ScriptBlock]$Command,
+  
+      [Parameter(Mandatory=$false)]
+      [ScriptBlock]$FailureCommand,
+  
+      [Parameter(Mandatory=$false)]
+      [int]$MaxRetries = 5,
+  
+      [Parameter(Mandatory=$false)]
+      [int]$RetryInterval = 30
+    )
+  
+    $retryCount = 0
+    $success = $false
+  
+    while ($retryCount -lt $MaxRetries -and -not $success) {
+      try {
+        & $Command
+  
+        $success = $true
+      } catch {
+        $retryCount++
+        Write-Host "Failed to run Command sleeping for $RetryInterval seconds"
+  
+        Start-Sleep -Seconds $RetryInterval
+      }
+    }
+  
+    if ($success) {
+        Write-Host "The command succeeded after $retryCount retries."
+      return
+    } else {
+        Write-Host "The command failed after $MaxRetries retries."
+  
+      if ($FailureCommand) {
+        & $FailureCommand
+        $MaxRetries = 5
+        $retryCount = 0
+        $success = $false
+  
+        while ($retryCount -lt $MaxRetries -and -not $success) {
+          try {
+            & $Command
+  
+            $success = $true
+          } catch {
+            $retryCount++
+  
+            Start-Sleep -Seconds $RetryInterval
+          }
+        }
+  
+        if ($success) {
+            Write-Host "The command succeeded after $retryCount retries."
+          return
+        } else {
+          throw "The command failed after all retry attempts."
+        }
+      } else {
+        throw "The command failed after all retry attempts."
+      }
+    }
+  }
+  

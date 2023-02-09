@@ -47,17 +47,23 @@ Param(
 
 if ($PSCmdlet.ParameterSetName -eq "File") {
     Import-Module $ModulePath
-
-    $Swagger = Get-Swagger -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -ApiResourceName $ApiResourceName -ResourceGroupName $FunctionAppResourceGroup
-    Write-Verbose -Message $($Swagger | ConvertTo-Json -Depth 20)
+    Import-Module (Resolve-Path -Path $PSScriptRoot\..\Modules\Helpers.psm1).Path
 
     $FileName = "$($FunctionAppName)_swagger-def_$([DateTime]::Now.ToString("yyyyMMdd-hhmmss")).json"
-    Write-Verbose -Message "Filename: $FileName"
-
     $OutputFolder = New-Item -Path $OutputFilePath -ItemType Directory
     $OutputFile = New-Item -Path "$($OutputFolder.FullName)\$FileName" -ItemType File
-    Write-Verbose -Message "OutputFile: $($OutputFile.FullName)"
-    Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
+
+    Invoke-RetryCommand -Command { 
+
+        $Swagger = Get-Swagger -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -ApiResourceName $ApiResourceName -ResourceGroupName $FunctionAppResourceGroup
+        Write-Verbose -Message $($Swagger | ConvertTo-Json -Depth 20) 
+
+        Write-Host "Filename: $FileName"
+        Write-Host "OutputFile: $($OutputFile.FullName)"
+        Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
+
+     } -FailureCommand { Restart-AzureRmWebApp -Name $FunctionAppName -ResourceGroupName $FunctionAppResourceGroup }
+
 }
 
 try {
