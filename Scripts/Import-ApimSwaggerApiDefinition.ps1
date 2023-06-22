@@ -56,11 +56,11 @@ if ($PSCmdlet.ParameterSetName -eq "File") {
     Invoke-RetryCommand -Command { 
 
         $Swagger = Get-Swagger -FunctionAppName $FunctionAppName -FunctionAppDomain $FunctionAppDomain -ApiResourceName $ApiResourceName -ResourceGroupName $FunctionAppResourceGroup
-        Write-Verbose -Message $($Swagger | ConvertTo-Json -Depth 20) 
+        Write-Verbose -Message $Swagger
 
         Write-Host "Filename: $FileName"
         Write-Host "OutputFile: $($OutputFile.FullName)"
-        Set-Content -Path $OutputFile.FullName -Value ($Swagger | ConvertTo-Json -Depth 20)
+        Set-Content -Path $OutputFile.FullName -Value $Swagger
 
      } -FailureCommand { Restart-AzureRmWebApp -Name $FunctionAppName -ResourceGroupName $FunctionAppResourceGroup }
 
