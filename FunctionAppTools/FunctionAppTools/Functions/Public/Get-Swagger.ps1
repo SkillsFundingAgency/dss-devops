@@ -25,6 +25,6 @@ function Get-Swagger{
     }
     
     $Uri = "https://$FunctionAppName.$FunctionAppDomain/api/$ApiResourceName/api-definition?code=$($MasterKey)"
-    $Swagger = Invoke-RestMethod -Method GET -Uri $Uri -UseBasicParsing
+    $Swagger = (Invoke-WebRequest -Uri $Uri -UseBasicParsing).Content
     $Swagger
 }
