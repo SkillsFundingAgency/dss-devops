@@ -8,8 +8,8 @@ function New-AzureApiServiceAccount {
     )
 
     # Intial logon to Azure AD and Global objects creation #
-    Login-AzureRmAccount
-    $Subscription = Get-AzureRmSubscription -SubscriptionName $SubscriptionName | Set-AzureRmContext
+    Connect-AzAccount
+    $Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName | Set-AzContext
     Write-Host "Azure TenantId $($Subscription.Tenant.TenantId)" -ForegroundColor Yellow
     Write-Host "Azure AccountID $($Subscription.Account.Id)" -ForegroundColor Yellow
     Write-Host "Azure Subscription Name $($Subscription.Name)" -ForegroundColor Yellow
@@ -18,13 +18,13 @@ function New-AzureApiServiceAccount {
     $ADAppHomePage = "http://$AppName"
 
     # check the existance of the application and create one if it does not exist
-    if (!($ADApp = Get-AzureRmADApplication -IdentifierUri $ADAppHomePage -ErrorAction SilentlyContinue)) {
-        $ADApp = New-AzureRmADApplication -DisplayName $AppName -HomePage $ADAppHomePage -IdentifierUris $ADAppHomePage -Password $AppPassword
+    if (!($ADApp = Get-AzADApplication -IdentifierUri $ADAppHomePage -ErrorAction SilentlyContinue)) {
+        $ADApp = New-AzADApplication -DisplayName $AppName -HomePage $ADAppHomePage -IdentifierUri $ADAppHomePage -Password $AppPassword
     }
     
     # Now create a Service Principal for App
-    if (!($ADAppServicePrincipal = Get-AzureRmADServicePrincipal -SearchString $ADApp.DisplayName -ErrorAction SilentlyContinue)) {
-        $ADAppServicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $ADApp.ApplicationId
+    if (!($ADAppServicePrincipal = Get-AzADServicePrincipal -DisplayNameBeginsWith $ADApp.DisplayName -ErrorAction SilentlyContinue)) {
+        $ADAppServicePrincipal = New-AzADServicePrincipal -ApplicationId $ADApp.ApplicationId
         Write-Host "Service Principal $($ADAppServicePrincipal.DisplayName) created with GUID $($ADAppServicePrincipal.Id) created" -ForegroundColor Yellow
     }
 
@@ -32,13 +32,14 @@ function New-AzureApiServiceAccount {
     try{
         # Assign to the entire subscription level #
         Start-Sleep -Seconds 15
-        New-AzureRmRoleAssignment -RoleDefinitionName $RoleType -ServicePrincipalName $($ADApp.ApplicationId) -ErrorAction Stop
+        New-AzRoleAssignment -RoleDefinitionName $RoleType -ApplicationId $($ADApp.ApplicationId) -ErrorAction Stop
         Write-Host "Assigned $RoleType role at Service Principal $($ADAppServicePrincipal.DisplayName) on Subscription $SubscriptionName" -ForegroundColor Yellow
     }
     catch{
         Write-Output "Error creating Role Assignment!"
     }
 }
+
 
 
 

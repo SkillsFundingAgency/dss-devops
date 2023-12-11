@@ -8,7 +8,7 @@
 
   Write-Host "Logging preference: $VerbosePreference"
 
-  $Subscription = Get-AzureRmSubscription -SubscriptionName $SubscriptionName
+  $Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName
   
   Write-Verbose -Message "SubscriptionId: $($Subscription.Id)"
   Write-Verbose "Logged on account: $($Subscription.ExtendedProperties.Account)"
@@ -19,7 +19,7 @@
     Write-Verbose -Message $ADDomainName
     $ADAppUserName = "$ApplicationId@$ADDomainName"
     Write-Verbose -Message $ADAppUserName
-    $ADAppCredential = New-Object -TypeName pscredential –ArgumentList $ADAppUserName, $AppPassword
+    $ADAppCredential = New-Object -TypeName pscredential -ArgumentList $ADAppUserName, $AppPassword
     Write-Host "AAD Credendial created...." -ForegroundColor Yellow 
 
   }
@@ -29,7 +29,7 @@
 
   }
 
-  Login-AzureRmAccount -Credential $ADAppCredential -ServicePrincipal –TenantId $Subscription.TenantId -SubscriptionName $SubscriptionName
+  Connect-AzAccount -Credential $ADAppCredential -ServicePrincipal -TenantId $Subscription.TenantId -Subscription $SubscriptionName
   
   $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AppPassword)
   $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)

@@ -62,16 +62,16 @@ if ($PSCmdlet.ParameterSetName -eq "File") {
         Write-Host "OutputFile: $($OutputFile.FullName)"
         Set-Content -Path $OutputFile.FullName -Value $Swagger
 
-     } -FailureCommand { Restart-AzureRmWebApp -Name $FunctionAppName -ResourceGroupName $FunctionAppResourceGroup }
+     } -FailureCommand { Restart-AzWebApp -Name $FunctionAppName -ResourceGroupName $FunctionAppResourceGroup }
 
 }
 
 try {
     # --- Build context and retrieve apiid
     Write-Host "Building APIM context for $ApimResourceGroup\$InstanceName"
-    $Context = New-AzureRmApiManagementContext -ResourceGroupName $ApimResourceGroup -ServiceName $InstanceName
+    $Context = New-AzApiManagementContext -ResourceGroupName $ApimResourceGroup -ServiceName $InstanceName
     Write-Host "Retrieving ApiId for API $ApiName"
-    $Api = Get-AzureRmApiManagementApi -Context $Context -ApiId $ApiName
+    $Api = Get-AzApiManagementApi -Context $Context -ApiId $ApiName
 
     # --- Throw if Api is null
     if (!$Api) {
@@ -82,12 +82,13 @@ try {
     
     if($PSCmdlet.ParameterSetName -eq "Url") {
         Write-Host "Updating API $InstanceName\$ApiId from definition $SwaggerSpecficiationUrl"
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
     }
     elseif ($PSCmdlet.ParameterSetName -eq "File") {
         Write-Host "Updating API $InstanceName\$ApiId from definition $($OutputFile.FullName)"
-        Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
+        Import-AzApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationPath $($OutputFile.FullName) -ApiId $($Api.ApiId) -Path $($Api.Path) -ErrorAction Stop -Verbose:$VerbosePreference
     }
 } catch {
    throw $_
 }
+

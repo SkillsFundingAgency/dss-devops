@@ -42,7 +42,7 @@ try {
             grant_type    = "client_credentials"
             client_id     = $EndpointClientId
             client_secret = $EndpointClientSecret
-            resource      = "https://graph.windows.net/"
+            resource      = "https://graph.windows.net"
         }
         
         $Response = Invoke-RestMethod -Method POST -Uri $AADTokenUrl -ContentType "application/x-www-form-urlencoded" -Body $Body
@@ -185,7 +185,7 @@ else {
 
 # Create PasswordCredential (API Access Key) and store in KeyVault
 $KeyVaultSecretName = "$(($ContentPushRegistration.DisplayName).Replace(".", "-"))-api-key"
-$KeyVaultSecret = Get-AzureKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -ErrorAction SilentlyContinue
+$KeyVaultSecret = Get-AzKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -ErrorAction SilentlyContinue
 if (!$KeyVaultSecret) {
 
     if ($ContentPushRegistration.PasswordCredential.Count -ne 0) {
@@ -198,7 +198,7 @@ if (!$KeyVaultSecret) {
         $CredentialObject = New-AzureADApplicationPasswordCredential -ObjectId $ContentPushRegistration.ObjectId -EndDate $([DateTime]::new(2299, 12, 31, 0, 0, 0)) -CustomKeyIdentifier "ContentPushKey"
         Write-Verbose -Message "Adding credential $KeyVaultSecretName to KeyVault $KeyVault"
         $SecureSecret = $CredentialObject.Value | ConvertTo-SecureString -AsPlainText -Force
-        Set-AzureKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -SecretValue $SecureSecret
+        Set-AzKeyVaultSecret -VaultName $KeyVault -Name $KeyVaultSecretName -SecretValue $SecureSecret
 
     }
 
@@ -212,3 +212,4 @@ foreach ($EndpointUriKey in $EndpointUris.Keys) {
     Write-Host "##vso[task.setvariable variable=$($EndpointUriKey)_AppIdUri]$AppIdUri" 
     
 }
+
