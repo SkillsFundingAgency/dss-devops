@@ -29,7 +29,7 @@ function Test-LoggedIn {
 
     if ($NeedLogin) {
 
-        Login-AzAccount
+        Connect-AzAccount
 
     }
 }

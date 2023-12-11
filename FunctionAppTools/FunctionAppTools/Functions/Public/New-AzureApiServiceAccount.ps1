@@ -8,7 +8,7 @@ function New-AzureApiServiceAccount {
     )
 
     # Intial logon to Azure AD and Global objects creation #
-    Login-AzAccount
+    Connect-AzAccount
     $Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName | Set-AzContext
     Write-Host "Azure TenantId $($Subscription.Tenant.TenantId)" -ForegroundColor Yellow
     Write-Host "Azure AccountID $($Subscription.Account.Id)" -ForegroundColor Yellow
