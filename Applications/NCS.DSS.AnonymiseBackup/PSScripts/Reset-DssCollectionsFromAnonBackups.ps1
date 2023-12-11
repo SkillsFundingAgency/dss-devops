@@ -62,12 +62,12 @@ $DestinationCosmosAccount = "dss-$($EnvironmentToRestoreTo.ToLower())-shared-cdb
 # Get backup files
 if ($PSCmdlet.ParameterSetName -eq "StorageAccountKey") {
 
-    $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -StorageAccountKey $SourceStorageKey
+    $SourceStorageContext = New-AzStorageContext -StorageAccountName $SourceStorageAccount -StorageAccountKey $SourceStorageKey
 
 }
 elseif ($PSCmdlet.ParameterSetName -eq "ContainerSasToken") {
 
-    $SourceStorageContext = New-AzureStorageContext -StorageAccountName $SourceStorageAccount -SasToken $SourceContainerSasToken
+    $SourceStorageContext = New-AzStorageContext -StorageAccountName $SourceStorageAccount -SasToken $SourceContainerSasToken
 
 }
 
@@ -101,7 +101,7 @@ while (!$DnsCheck) {
 }
 Write-Verbose "DNS resolved for $($DnsCheck[0].Name)"
 
-$AllBackupFiles = Get-AzureStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
+$AllBackupFiles = Get-AzStorageBlob -Container $ContainerName -Context $SourceStorageContext | Sort-Object -Property Name -Descending
 Write-Verbose "$([DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss")) Files found: $($AllBackupFiles.Count)"
 $FilesToRestoreFrom = @()
 foreach ($Blob in $AllBackupFiles) {
@@ -184,8 +184,8 @@ if ($OutputFile) {
 
     $LogContainerStorageAccount = "dss$($EnvironmentToRestoreTo.ToLower())shdarmstr"
     Write-Verbose "Writing logs to blob storage"
-    $LogStorageContext = New-AzureStorageContext -StorageAccountName $LogContainerStorageAccount -SasToken $LogContainerSasToken
-    Set-AzureStorageBlobContent -File $LogsToUpLoad.FullName -Container "restorelogs" -Blob $LogsToUpLoad.Name -Context $LogStorageContext -Force
+    $LogStorageContext = New-AzStorageContext -StorageAccountName $LogContainerStorageAccount -SasToken $LogContainerSasToken
+    Set-AzStorageBlobContent -File $LogsToUpLoad.FullName -Container "restorelogs" -Blob $LogsToUpLoad.Name -Context $LogStorageContext -Force
 
 }
 else {

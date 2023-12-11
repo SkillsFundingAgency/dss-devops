@@ -5,7 +5,7 @@ function Test-LoggedIn {
     $NeedLogin = $true
     try 
     {
-        $Content = Get-AzureRmContext
+        $Content = Get-AzContext
         if ($Content) {
 
             $NeedLogin = ([string]::IsNullOrEmpty($Content.Account))
@@ -14,7 +14,7 @@ function Test-LoggedIn {
     } 
     catch 
     {
-        if ($_ -like "*Login-AzureRmAccount to login*") {
+        if ($_ -like "*Connect-AzAccount to login*") {
 
             $NeedLogin = $true
             
@@ -29,7 +29,7 @@ function Test-LoggedIn {
 
     if ($NeedLogin) {
 
-        Login-AzureRmAccount
+        Login-AzAccount
 
     }
 }

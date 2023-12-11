@@ -14,7 +14,7 @@ function Get-PublishingProfileCredentialsAzure{
     $ResourceType = "Microsoft.Web/sites/config"
     $ResourceName = "$FunctionAppName/publishingcredentials"
  
-    $PublishingCredentials = Invoke-AzureRmResourceAction -ResourceGroupName $ResourceGroupName -ResourceType $ResourceType -ResourceName $ResourceName -Action list -ApiVersion 2015-08-01 -Force
+    $PublishingCredentials = Invoke-AzResourceAction -ResourceGroupName $ResourceGroupName -ResourceType $ResourceType -ResourceName $ResourceName -Action list -ApiVersion 2015-08-01 -Force
  
     return $PublishingCredentials
 }
