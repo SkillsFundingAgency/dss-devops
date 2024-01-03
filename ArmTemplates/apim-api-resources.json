@@ -34,6 +34,10 @@
         "ProductDisplayName": {
             "type": "string",
             "defaultValue": "Data Sharing Service"
+        },
+        "ProductDescription": {
+            "type": "string",
+            "defaultValue": "API containing different service touchpoints, including the National Careers Helpline (NCH), Area Based Contractors (ABCs) and the Digital Service to exchange information about a customer."
         }
     },
     "variables": {
@@ -106,7 +110,7 @@
             "type": "Microsoft.ApiManagement/service/products",
             "apiVersion": "2018-01-01",
             "properties": {
-                "description": "string",
+                "description": "[parameters('ProductDescription')]",
                 "terms": "string",
                 "subscriptionRequired": true,
                 "approvalRequired": true,
