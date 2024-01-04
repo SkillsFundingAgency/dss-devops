@@ -13,7 +13,7 @@ resources:
     type: github
     name: SkillsFundingAgency/dfc-devops
     endpoint: 'GitHub (CDH)'
-    ref: refs/tags/v1.5.0
+    ref: refs/tags/v1.14.0
 
 jobs:
 - job: BuildAndTestPS
@@ -129,7 +129,7 @@ jobs:
     inputs:
       targetType: 'inline'
       script: Invoke-WebRequest -Uri $(TestArmTemplateScriptUrl) -OutFile $(TestArmTemplateScriptFilePath)
-  - task: AzurePowerShell@3
+  - task: AzurePowerShell@5
     displayName: 'Test Arm Template'
     inputs:
       azureSubscription: SFA-DSS-DevTest
