@@ -13,7 +13,7 @@ resources:
     type: github
     name: SkillsFundingAgency/dfc-devops
     endpoint: 'GitHub (CDH)'
-    ref: refs/tags/v1.14.0
+    ref: refs/tags/v1.15.0
 
 jobs:
 - job: BuildAndTestPS
@@ -86,7 +86,7 @@ jobs:
       artifactName: NCS.DSS.AnonymiseBackup
       publishLocation: container
   # Test NCS.DSS.AnonymiseBackup ARM template
-  - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+  - template: AzureDevOpsTemplates/Build/StepTemplates/dfc-arm-build.yml@dfc-devops
     parameters:
       ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Applications\NCS.DSS.AnonymiseBackup\Resources\ArmTemplates'
       AzureSubscription: SFA-DSS-DevTest
