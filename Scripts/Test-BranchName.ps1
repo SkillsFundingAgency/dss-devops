@@ -42,12 +42,12 @@ function Write-FunctionAppName {
  
     if ($Version1.IsPresent) {
 
-        $FunctionAppName = ($NameParts[0..2] -join "-"), "v1", $NameParts[3] -join "-"
+        $FunctionAppName = ($NameParts[0..2] -join "-"), "v1", $NameParts[3], "ver2" -join "-"
 
     }
     else {
 
-        $FunctionAppName = ($NameParts[0..2] -join "-"), $RegExMatches[1], $NameParts[3] -join "-"
+        $FunctionAppName = ($NameParts[0..2] -join "-"), $RegExMatches[1], $NameParts[3], "ver2" -join "-"
 
     }
 
