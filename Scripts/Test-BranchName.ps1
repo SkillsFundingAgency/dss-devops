@@ -32,7 +32,7 @@ param(
     [Parameter(Mandatory=$false, ParameterSetName="Release")]
     [string]$FunctionAppBaseName,
     [Parameter(Mandatory=$false, ParameterSetName="Release")]
-    [string]$FunctionAppSuffix
+    [string]$FunctionAppSuffix = ""
 )
 
 function Write-FunctionAppName {
@@ -43,7 +43,7 @@ function Write-FunctionAppName {
         [switch]$Version1,
         [Parameter(Mandatory=$true, ParameterSetName="Version2+")]
         $RegExMatches,
-        [string]$FunctionAppSuffix = ""
+        [string]$FunctionAppSuffix
     )
  
     $version = "v1"
