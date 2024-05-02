@@ -16,6 +16,9 @@
 
     .PARAMETER FunctionAppBaseName
     The function app name minus the version, eg dss-at-cust-fa rather than dss-at-cust-v2-fa
+
+    .PARAMETER FunctionAppSuffix
+    If defined, appends this suffix on the end of the generated function app name.
 #>
 [CmdletBinding()]
 param(
@@ -27,7 +30,9 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$PipelineType,
     [Parameter(Mandatory=$false, ParameterSetName="Release")]
-	[string]$FunctionAppBaseName
+    [string]$FunctionAppBaseName,
+    [Parameter(Mandatory=$false, ParameterSetName="Release")]
+    [string]$FunctionAppSuffix = ""
 )
 
 function Write-FunctionAppName {
@@ -37,24 +42,27 @@ function Write-FunctionAppName {
         [Parameter(Mandatory=$true, ParameterSetName="Version1")]
         [switch]$Version1,
         [Parameter(Mandatory=$true, ParameterSetName="Version2+")]
-        $RegExMatches
+        $RegExMatches,
+        [string]$FunctionAppSuffix
     )
  
-    if ($Version1.IsPresent) {
+    $version = "v1"
 
-        $FunctionAppName = ($NameParts[0..2] -join "-"), "v1", $NameParts[3], "ver2" -join "-"
+    if(-not $Version1.IsPresent) { $version = $RegExMatches[1] }
 
-    }
-    else {
+    $appFragments = @(
+        $NameParts[0..2]
+        $version
+        $NameParts[3]
+    )
 
-        $FunctionAppName = ($NameParts[0..2] -join "-"), $RegExMatches[1], $NameParts[3], "ver2" -join "-"
+    if($FunctionAppSuffix -ne "") { $appFragments += $FunctionAppSuffix }
 
-    }
+    $FunctionAppName = $appFragments -join '-'
 
     Write-Verbose -Message "Setting FunctionAppName to $FunctionAppName"
     $Output = "##vso[task.setvariable variable=FunctionAppName;isOutput=false]$FunctionAppName"
     $Output
-
 }
 
 # --- RegEx Patterns
@@ -98,7 +106,7 @@ if ($BranchName -match $V1MasterBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        $Output = Write-FunctionAppName -NameParts $NameParts -Version1
+        $Output = Write-FunctionAppName -NameParts $NameParts -Version1 -FunctionAppSuffix $FunctionAppSuffix
         Write-Output $Output
 
     }
@@ -111,7 +119,7 @@ elseif ($BranchName -match $V1FeatureBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$null"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        $Output = Write-FunctionAppName -NameParts $NameParts -Version1
+        $Output = Write-FunctionAppName -NameParts $NameParts -Version1 -FunctionAppSuffix $FunctionAppSuffix
         Write-Output $Output
 
     }
@@ -124,7 +132,7 @@ elseif ($BranchName -match $V2OrHigherMasterBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
+        $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches -FunctionAppSuffix $FunctionAppSuffix
         Write-Output $Output
 
     }
@@ -137,7 +145,7 @@ elseif ($BranchName -match $V2OrHigherFeatureBranchRegEx) {
     Write-Output "##vso[task.setvariable variable=DssApiVersion;isOutput=$IsOutput]$($Matches[1])"
     if ($PSCmdlet.ParameterSetName -eq "Release") {
 
-        $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches
+        $Output = Write-FunctionAppName -NameParts $NameParts -RegExMatches $Matches -FunctionAppSuffix $FunctionAppSuffix
         Write-Output $Output
         
     }
