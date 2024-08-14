@@ -78,8 +78,6 @@ if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "5.0.0" }))
 }
 
 Write-Verbose -Message "Searching for existing account"
-Install-Module Az.Accounts -AllowClobber -Scope CurrentUser -Force
-Import-Module Az.Accounts
 Import-Module Az.Resources 
 
 $GetCosmosDbAccountParameters = @{
