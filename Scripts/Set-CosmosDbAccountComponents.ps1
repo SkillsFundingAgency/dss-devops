@@ -82,7 +82,6 @@ Write-Verbose -Message "Searching for existing account"
 $GetCosmosDbAccountParameters = @{
     Name              = $CosmosDbAccountName
     ResourceGroupName = $ResourceGroupName
-    ExpandProperties  = $true
     ResourceType      = "Microsoft.DocumentDB/databaseAccounts"
 }
 $ExistingAccount = Get-AzResource @GetCosmosDbAccountParameters
