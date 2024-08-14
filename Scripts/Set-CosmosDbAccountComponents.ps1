@@ -79,6 +79,8 @@ if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "2.1.3.528"
 
 Write-Verbose -Message "Searching for existing account"
 
+Import-Module Az 
+
 $GetCosmosDbAccountParameters = @{
     Name              = $CosmosDbAccountName
     ResourceGroupName = $ResourceGroupName
