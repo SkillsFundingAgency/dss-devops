@@ -72,10 +72,7 @@ Class CosmosDbSchema {
     [CosmosDbDatabase[]]$Databases
 }
 
-if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "5.0.0" })) {
-    Install-Module CosmosDB -RequiredVersion "4.7.0" -Scope CurrentUser -Force
-    Import-Module CosmosDB -RequiredVersion "4.7.0"
-}
+Import-Module CosmosDB -RequiredVersion "4.7.0"
 
 Write-Verbose -Message "Searching for existing account"
 Import-Module Az.Resources 
