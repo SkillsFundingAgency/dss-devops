@@ -72,9 +72,9 @@ Class CosmosDbSchema {
     [CosmosDbDatabase[]]$Databases
 }
 
-if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "2.1.3.528" })) {
-    Install-Module CosmosDB -RequiredVersion "2.1.3.528" -Scope CurrentUser -Force
-    Import-Module CosmosDB -RequiredVersion "2.1.3.528"
+if (!(Get-Module CosmosDB | Where-Object { $_.Version.ToString() -eq "5.0.0" })) {
+    Install-Module CosmosDB -RequiredVersion "5.0.0" -Scope CurrentUser -Force
+    Import-Module CosmosDB -RequiredVersion "5.0.0"
 }
 
 Write-Verbose -Message "Searching for existing account"
