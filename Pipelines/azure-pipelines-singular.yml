@@ -57,5 +57,5 @@ steps:
 - bash: az --version
   displayName: 'Show Azure CLI version'
 
-- bash: az apim api operation list -n dss-test-shared-apim --api-id actionplans
+- bash: az apim api operation list -n dss-test-shared-apim --api-id actionplans -g dss-test-shared-rg
   displayName: 'Show API versions for actionplans'
