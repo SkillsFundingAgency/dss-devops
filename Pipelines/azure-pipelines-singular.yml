@@ -1,0 +1,39 @@
+parameters:
+- name: function_app
+  displayName: Function App
+  type: string
+  default:
+  values:
+  - action-plans
+  - actions
+  - address
+  - adviser-details
+  - collections
+  - contact
+  - customer
+  - digital-identity
+  - diversity
+  - employment-progression
+  - goals
+  - interaction
+  - learning-progression
+  - outcomes
+  - sessions
+  - subscriptions
+  - transfer
+  - web-chat
+
+- name: azure_subscription
+  displayName: Azure Subscription
+  type: string
+  default: SFA-CDH-Dev/Test
+  values:
+  - SFA-CDH-Dev/Test
+
+trigger: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+- bash: az --version
