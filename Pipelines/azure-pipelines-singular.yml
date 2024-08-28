@@ -2,26 +2,42 @@ parameters:
 - name: function_app
   displayName: Function App
   type: string
-  default:
+  default: acpla
   values:
-  - action-plans
-  - actions
-  - address
-  - adviser-details
-  - collections
-  - contact
-  - customer
-  - digital-identity
-  - diversity
-  - employment-progression
-  - goals
-  - interaction
-  - learning-progression
-  - outcomes
-  - sessions
-  - subscriptions
-  - transfer
-  - web-chat
+  - acpla          # action plans
+  - act            # actions
+  - addr           # address
+  - advde          # adviser details
+  - col            # collections
+  - cont           # contact details
+  - cust           # customer 
+  - digiden        # digital-identity
+  - div            # diversity
+  - employ         # employment-progression
+  - goals          # goals
+  - intac          # interaction
+  - learn          # learning-progression
+  - otcm           # outcomes
+  - sess           # sessions
+  - subs           # subscriptions
+  - tran           # transfer
+  - wchat          # web-chat
+
+- name: version
+  displayName: Function App / APIM Version
+  type: string
+  default: v1
+
+- name: environment
+  displayName: Environment Prefix
+  type: string
+  default: at
+  values:
+  - at
+  - test
+  - oat
+  - pp
+#  - prd
 
 - name: azure_subscription
   displayName: Azure Subscription
@@ -29,6 +45,8 @@ parameters:
   default: SFA-CDH-Dev/Test
   values:
   - SFA-CDH-Dev/Test
+  - SFA-DIG-PreProd
+#  - SFA-DIG-Prod
 
 trigger: none
 
