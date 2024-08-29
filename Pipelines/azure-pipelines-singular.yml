@@ -151,6 +151,7 @@ steps:
 #   displayName: 'Show Azure CLI version'
 
 - bash: |
+    echo #
     echo The DSS Service you selected was : ${{parameters.dss_service}}
     echo The Function App and APIM Version you selected was : ${{parameters.version}}
     echo The Environment you selected was : ${{parameters.environment}}
@@ -158,6 +159,7 @@ steps:
     echo The APIM path has been set to : ${{variables.apim_path}}
     echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
     echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
+    echo #
   displayName: 'Output variable values'
 
 # - task: AzureCLI@2
@@ -185,4 +187,7 @@ steps:
     azureSubscription: ${{variables.ado_service_connection}}
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-test-shared-asp
+    inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+
+## TODO: if successful, request approval to proceed
+## TODO: then delete
