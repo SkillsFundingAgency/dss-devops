@@ -167,7 +167,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Check if the specified API version exists'
   inputs:
-    azureSubscription: ${{ado_service_connection}}
+    azureSubscription: ${{variables.ado_service_connection}}
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: az apim api show --api-id ${{apim_path}}-${{version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+    inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
