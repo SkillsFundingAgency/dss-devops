@@ -142,7 +142,7 @@ steps:
 - bash: |
     echo The "DSS Service" you selected was         : ${{parameters.dss_service}}
     echo The "APIM path" has been set to            : ${{variables.apim_path}}
-    echo The "Function App" prefix has been set to  : ${{function_app_prefix}}
+    echo The "Function App" prefix has been set to  : ${{variables.function_app_prefix}}
   displayName: 'Output variable values'
 
 # - task: AzureCLI@2
