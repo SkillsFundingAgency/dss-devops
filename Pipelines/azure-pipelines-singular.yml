@@ -192,7 +192,7 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      inlineScript: az apim api delete --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+      inlineScript: az apim api delete --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim --yes
 - job: checkIfFuncAppExists
   displayName: 'Check Func App presence'
   dependsOn: deleteApi
