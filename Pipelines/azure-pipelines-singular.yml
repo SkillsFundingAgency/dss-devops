@@ -176,6 +176,7 @@ jobs:
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
+      displayName: Awaiting deletion confirmation
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
@@ -200,6 +201,7 @@ jobs:
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
+      displayName: Awaiting deletion confirmation
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
