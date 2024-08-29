@@ -66,7 +66,7 @@ steps:
     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az apim api list -g dss-test-shared-rg -n dss-test-shared-apim'
+    inlineScript: 'az apim api list -g dss-${{parameters.environment}}-shared-rg -n dss-${{parameters.environment}}-shared-apim'
 
 - task: AzureCLI@2
   displayName: 'Check if the API version exists'
@@ -74,7 +74,7 @@ steps:
     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az apim api show --api-id actionplans-v3 -g dss-test-shared-rg --service-name dss-test-shared-apim'
+    inlineScript: az apim api show --api-id actionplans-v3 -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 
 
 
