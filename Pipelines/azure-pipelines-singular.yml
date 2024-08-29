@@ -191,7 +191,19 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
-
+- job: manualInterventionFuncApp
+  displayName: 'Awaiting Func App deletion confirmation'
+  pool: server
+  timeoutInMinutes: 4320 # 3 days
+  dependsOn: checkIfFuncAppExists
+  steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 1440 # 24 hours
+      inputs:
+        notifyUsers: |
+          ben.matthews@education.gov.uk
+        instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+        onTimeout: 'reject'
 
 
 # - bash: |
