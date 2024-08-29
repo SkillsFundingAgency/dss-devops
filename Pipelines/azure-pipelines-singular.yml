@@ -1,30 +1,51 @@
+# No. # DSS service             # Function app prefix # APIM path               #
+# --- # ----------------------- # ------------------- # ----------------------- #
+# 1   # Action plans            # acpla               # actionplans             #
+# 2   # Actions                 # act                 # actions                 #
+# 3   # Address                 # addr                # addresses               #
+# 4   # Adviser details         # advde               # adviserdetails          #
+# 5   # Collections             # col                 # collections             #
+# 6   # Contact details         # cont                # contactdetails          #
+# 7   # Customer                # cust                # customers               #
+# 8   # Digital identity        # digiden             # digitalidentities       #
+# 9   # Diversity               # div                 # diversitydetails        #
+# 10  # Employment progression  # employ              # employmentprogressions  #
+# 11  # Goals                   # goals               # goals                   #
+# 12  # Interaction             # intac               # interactions            #
+# 13  # Learning progression    # learn               # learningprogressions    #
+# 14  # Outcomes                # otcm                # outcomes                #
+# 15  # Sessions                # sess                # sessions                #
+# 16  # Subscriptions           # subs                # subscriptions           #
+# 17  # Transfer                # tran                # transfers               #
+# 18  # Webchat                 # wchat               # webchats                #
+
 parameters:
-- name: function_app
-  displayName: Function App
+- name: dss_service
+  displayName: DSS Service
   type: string
-  default: acpla
+  default: action-plans
   values:
-  - acpla          # action plans
-  - act            # actions
-  - addr           # address
-  - advde          # adviser details
-  - col            # collections
-  - cont           # contact details
-  - cust           # customer 
-  - digiden        # digital-identity
-  - div            # diversity
-  - employ         # employment-progression
-  - goals          # goals
-  - intac          # interaction
-  - learn          # learning-progression
-  - otcm           # outcomes
-  - sess           # sessions
-  - subs           # subscriptions
-  - tran           # transfer
-  - wchat          # web-chat
+  - action-plans
+  - actions
+  - address
+  - adviser-details
+  - collections
+  - contact-details
+  - customer
+  - digital-identity
+  - diversity
+  - employment-progression
+  - goals
+  - interaction
+  - learning-progression
+  - outcomes
+  - sessions
+  - subscriptions
+  - transfer
+  - webchat
 
 - name: version
-  displayName: Function App / APIM Version
+  displayName: Function App and APIM Version
   type: string
   default: v1
 
@@ -39,20 +60,71 @@ parameters:
   - pp
 #  - prd
 
-- name: azure_subscription
-  displayName: Azure Subscription
-  type: string
-  default: SFA-CDH-Dev/Test
-  values:
-  - SFA-CDH-Dev/Test
-  - SFA-DIG-PreProd
+# - name: azure_subscription
+#   displayName: Azure Subscription
+#   type: string
+#   default: SFA-CDH-Dev/Test
+#   values:
+#   - SFA-CDH-Dev/Test
+#   - SFA-DIG-PreProd
 #  - SFA-DIG-Prod
 
+# Set variables dynamically
 variables:
-  ${{ if eq(parameters['function_app'], 'acpla') }}:
-    apim_api_name: 'actionplans'
-  ${{ elseif eq(parameters['function_app'], 'act') }}:
-    apim_api_name: 'actions'
+  ${{ if eq(parameters['dss_service'], 'action-plans') }}:
+    apim_path: 'actionplans'
+    function_app_prefix: 'acpla'
+  ${{ elseif eq(parameters['dss_service'], 'actions') }}:
+    apim_path: 'actions'
+    function_app_prefix: 'act'
+  ${{ elseif eq(parameters['dss_service'], 'address') }}:
+    apim_path: 'addresses'
+    function_app_prefix: 'addr'
+  ${{ elseif eq(parameters['dss_service'], 'adviser-details') }}:
+    apim_path: 'adviserdetails'
+    function_app_prefix: 'advde'
+  ${{ elseif eq(parameters['dss_service'], 'collections') }}:
+    apim_path: 'collections'
+    function_app_prefix: 'col'
+  ${{ elseif eq(parameters['dss_service'], 'contact-details') }}:
+    apim_path: 'contactdetails'
+    function_app_prefix: 'cont'
+  ${{ elseif eq(parameters['dss_service'], 'customer') }}:
+    apim_path: 'customers'
+    function_app_prefix: 'cust'
+  ${{ elseif eq(parameters['dss_service'], 'digital-identity') }}:
+    apim_path: 'digitalidentities'
+    function_app_prefix: 'digiden'
+  ${{ elseif eq(parameters['dss_service'], 'diversity') }}:
+    apim_path: 'diversitydetails'
+    function_app_prefix: 'div'
+  ${{ elseif eq(parameters['dss_service'], 'employment-progression') }}:
+    apim_path: 'employmentprogressions'
+    function_app_prefix: 'employ'
+  ${{ elseif eq(parameters['dss_service'], 'goals') }}:
+    apim_path: 'goals'
+    function_app_prefix: 'goals'
+  ${{ elseif eq(parameters['dss_service'], 'interaction') }}:
+    apim_path: 'interactions'
+    function_app_prefix: 'intac'
+  ${{ elseif eq(parameters['dss_service'], 'learning-progression') }}:
+    apim_path: 'learningprogressions'
+    function_app_prefix: 'learn'
+  ${{ elseif eq(parameters['dss_service'], 'outcomes') }}:
+    apim_path: 'outcomes'
+    function_app_prefix: 'otcm'
+  ${{ elseif eq(parameters['dss_service'], 'sessions') }}:
+    apim_path: 'sessions'
+    function_app_prefix: 'sess'
+  ${{ elseif eq(parameters['dss_service'], 'subscriptions') }}:
+    apim_path: 'subscriptions'
+    function_app_prefix: 'subs'
+  ${{ elseif eq(parameters['dss_service'], 'transfer') }}:
+    apim_path: 'transfers'
+    function_app_prefix: 'tran'
+  ${{ elseif eq(parameters['dss_service'], 'webchat') }}:
+    apim_path: 'webchats'
+    function_app_prefix: 'wchat'
 
 trigger: none
 
@@ -60,14 +132,18 @@ pool:
   vmImage: "ubuntu-latest"
 
 steps:
-- bash: az --version
-  displayName: 'Show Azure CLI version'
+# - bash: |
+#     echo "##vso[task.setvariable variable=apim_api_name;]actionplans"
+#   displayName: 'Set'
 
-- bash: echo ${{variables.apim_api_name}}
-  displayName: 'Show Azure CLI version'
+# - bash: az --version
+#   displayName: 'Show Azure CLI version'
 
-- bash: echo $(variables.apim_api_name)
-  displayName: 'Show Azure CLI version'
+- bash: |
+    echo The "DSS Service" you selected was         : ${{parameters.dss_service}}
+    echo The "APIM path" has been set to            : ${{variables.apim_path}}
+    echo The "Function App" prefix has been set to  : ${{function_app_prefix}}
+  displayName: 'Output variable values'
 
 # - task: AzureCLI@2
 #   displayName: 'Show all APIs and their versions for actionplans'
