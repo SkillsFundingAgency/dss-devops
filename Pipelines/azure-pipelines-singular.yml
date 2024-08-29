@@ -159,6 +159,7 @@ jobs:
     displayName: 'Output variable/parameter values'
 - job: checkIfApiExists
   displayName: 'Check APIM presence'
+  steps:
   - task: AzureCLI@2
     displayName: 'Check if the specified API version exists'
     dependsOn: logVariablesAndParams
