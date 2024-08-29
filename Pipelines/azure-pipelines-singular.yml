@@ -48,6 +48,12 @@ parameters:
   - SFA-DIG-PreProd
 #  - SFA-DIG-Prod
 
+variables:
+  ${{ if eq(parameters['function_app'], 'acpla') }}:
+    apim_api_name: 'actionplans'
+  ${{ elseif eq(parameters['function_app'], 'act') }}:
+    apim_api_name: 'actions'
+
 trigger: none
 
 pool:
@@ -57,27 +63,24 @@ steps:
 - bash: az --version
   displayName: 'Show Azure CLI version'
 
-- bash: echo ${{parameters.environment}}
+- bash: echo ${{variables.apim_api_name}}
   displayName: 'Show Azure CLI version'
 
-- task: AzureCLI@2
-  displayName: 'Show all APIs and their versions for actionplans'
-  inputs:
-    azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az apim api list -g dss-${{parameters.environment}}-shared-rg -n dss-${{parameters.environment}}-shared-apim'
+- bash: echo $(variables.apim_api_name)
+  displayName: 'Show Azure CLI version'
 
-- task: AzureCLI@2
-  displayName: 'Check if the API version exists'
-  inputs:
-    azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: az apim api show --api-id actionplans-v3 -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+# - task: AzureCLI@2
+#   displayName: 'Show all APIs and their versions for actionplans'
+#   inputs:
+#     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: 'az apim api list -g dss-${{parameters.environment}}-shared-rg -n dss-${{parameters.environment}}-shared-apim'
 
-
-
-
-# - bash: az apim api operation list -n dss-test-shared-apim --api-id actionplans -g dss-test-shared-rg
-#   displayName: 'Show API versions for actionplans'
+# - task: AzureCLI@2
+#   displayName: 'Check if the API version exists'
+#   inputs:
+#     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: az apim api show --api-id actionplans-v3 -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
