@@ -21,6 +21,8 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         @{ BranchName = "DSS-Release-1-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
         @{ BranchName = "DSS-Release-Sprint-22-v1"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
         @{ BranchName = "DSS-Release-Sprint-22-v1"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
+        @{ BranchName = "develop"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "" }
+        @{ BranchName = "develop"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "" }
     ) {
         param ($BranchName, $PipelineType, $ExpectedOutputType, $DssApiVersion)
 
@@ -45,6 +47,10 @@ Describe "Test-BranchName unit tests" -Tag "Unit" {
         @{ BranchName = "DSS-Release-1-v3"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "v3" }
         @{ BranchName = "DSS-Release-Sprint-22-v3"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "v3" }
         @{ BranchName = "DSS-Release-Sprint-22-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
+        @{ BranchName = "develop-v2"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "v2" }
+        @{ BranchName = "develop-v2"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v2" }
+        @{ BranchName = "develop-v3"; PipelineType = "Build"; ExpectedOutputType = "true"; DssApiVersion = "v3" }
+        @{ BranchName = "develop-v3"; PipelineType = "Release"; ExpectedOutputType = "false"; DssApiVersion = "v3" }
     ) {
         param ($BranchName, $PipelineType, $ExpectedOutputType, $DssApiVersion)
 
