@@ -173,6 +173,7 @@ jobs:
         notifyUsers: |
           ben.matthews@education.gov.uk
         instructions: 'please validate'
+        onTimeout: 'reject'
 - job: postApim
   displayName: 'Check if FA exists'
   steps:
