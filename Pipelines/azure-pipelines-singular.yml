@@ -57,6 +57,9 @@ steps:
 - bash: az --version
   displayName: 'Show Azure CLI version'
 
+- bash: echo $(parameters.environment)
+  displayName: 'Show Azure CLI version'
+
 - task: AzureCLI@2
   displayName: 'Show all APIs and their versions for actionplans'
   inputs:
@@ -64,6 +67,17 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: 'az apim api list -g dss-test-shared-rg -n dss-test-shared-apim'
+
+- task: AzureCLI@2
+  displayName: 'Check if the API version exists'
+  inputs:
+    azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az apim api show --api-id actionplans-v3 -g dss-test-shared-rg --service-name dss-test-shared-apim'
+
+
+
 
 # - bash: az apim api operation list -n dss-test-shared-apim --api-id actionplans -g dss-test-shared-rg
 #   displayName: 'Show API versions for actionplans'
