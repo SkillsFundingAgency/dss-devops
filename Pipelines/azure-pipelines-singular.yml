@@ -142,7 +142,50 @@ trigger: none
 pool:
   vmImage: "ubuntu-latest"
 
-steps:
+jobs:
+- job: setupApim
+  displayName: 'Check if API exists'
+  steps:
+  - bash: |
+      echo #
+      echo The DSS Service you selected was : ${{parameters.dss_service}}
+      echo The Function App and APIM Version you selected was : ${{parameters.version}}
+      echo The Environment you selected was : ${{parameters.environment}}
+      echo #
+      echo The APIM path has been set to : ${{variables.apim_path}}
+      echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
+      echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
+      echo #
+    displayName: 'Output variable values'
+  - task: AzureCLI@2
+    displayName: 'Check if the specified API version exists'
+    inputs:
+      azureSubscription: ${{variables.ado_service_connection}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+- job: manualInterventionApim
+  displayName: 'Wait for external validation'
+  steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 1440
+      inputs:
+        notifyUsers: |
+          ben.matthews@education.gov.uk
+        instructions: 'please validate'
+- job: postApim
+  displayName: 'Check if FA exists'
+  steps:
+  - task: AzureCLI@2
+    displayName: 'Check if the specified function app exists'
+    inputs:
+      azureSubscription: ${{variables.ado_service_connection}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+
+
+
 # - bash: |
 #     echo "##vso[task.setvariable variable=apim_api_name;]actionplans"
 #   displayName: 'Set'
@@ -150,17 +193,17 @@ steps:
 # - bash: az --version
 #   displayName: 'Show Azure CLI version'
 
-- bash: |
-    echo #
-    echo The DSS Service you selected was : ${{parameters.dss_service}}
-    echo The Function App and APIM Version you selected was : ${{parameters.version}}
-    echo The Environment you selected was : ${{parameters.environment}}
-    echo #
-    echo The APIM path has been set to : ${{variables.apim_path}}
-    echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
-    echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
-    echo #
-  displayName: 'Output variable values'
+# - bash: |
+#     echo #
+#     echo The DSS Service you selected was : ${{parameters.dss_service}}
+#     echo The Function App and APIM Version you selected was : ${{parameters.version}}
+#     echo The Environment you selected was : ${{parameters.environment}}
+#     echo #
+#     echo The APIM path has been set to : ${{variables.apim_path}}
+#     echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
+#     echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
+#     echo #
+#   displayName: 'Output variable values'
 
 # - task: AzureCLI@2
 #   displayName: 'Show all APIs and their versions for actionplans'
@@ -170,31 +213,31 @@ steps:
 #     scriptLocation: 'inlineScript'
 #     inlineScript: 'az apim api list -g dss-${{parameters.environment}}-shared-rg -n dss-${{parameters.environment}}-shared-apim'
 
-- task: AzureCLI@2
-  displayName: 'Check if the specified API version exists'
-  inputs:
-    azureSubscription: ${{variables.ado_service_connection}}
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+# - task: AzureCLI@2
+#   displayName: 'Check if the specified API version exists'
+#   inputs:
+#     azureSubscription: ${{variables.ado_service_connection}}
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+# #     inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 
-- task: ManualValidation@0
-  timeoutInMinutes: 1440
-  inputs:
-    notifyUsers: ben.matthews@education.gov.uk
-    instructions: please validate
-    onTimeout: 'resume'
+# - task: ManualValidation@0
+#   timeoutInMinutes: 1440
+#   inputs:
+#     notifyUsers: ben.matthews@education.gov.uk
+#     instructions: please validate
+#     onTimeout: 'resume'
 
-## TODO: if successful, request approval to proceed
-## TODO: then delete
+# ## TODO: if successful, request approval to proceed
+# ## TODO: then delete
 
-- task: AzureCLI@2
-  displayName: 'Check if the specified function app exists'
-  inputs:
-    azureSubscription: ${{variables.ado_service_connection}}
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+# - task: AzureCLI@2
+#   displayName: 'Check if the specified function app exists'
+#   inputs:
+#     azureSubscription: ${{variables.ado_service_connection}}
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
 
-## TODO: if successful, request approval to proceed
-## TODO: then delete
+# ## TODO: if successful, request approval to proceed
+# ## TODO: then delete
