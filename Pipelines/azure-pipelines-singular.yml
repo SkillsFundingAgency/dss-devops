@@ -57,7 +57,7 @@ steps:
 - bash: az --version
   displayName: 'Show Azure CLI version'
 
-- bash: echo $(parameters.environment)
+- bash: echo ${{parameters.environment}}
   displayName: 'Show Azure CLI version'
 
 - task: AzureCLI@2
