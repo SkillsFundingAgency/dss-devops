@@ -151,9 +151,13 @@ steps:
 #   displayName: 'Show Azure CLI version'
 
 - bash: |
-    echo The "DSS Service" you selected was : ${{parameters.dss_service}}
-    echo The "APIM path" has been set to : ${{variables.apim_path}}
-    echo The "Function App" prefix has been set to : ${{variables.function_app_prefix}}
+    echo The DSS Service you selected was : ${{parameters.dss_service}}
+    echo The Function App and APIM Version you selected was : ${{parameters.version}}
+    echo The Environment you selected was : ${{parameters.environment}}
+    echo #
+    echo The APIM path has been set to : ${{variables.apim_path}}
+    echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
+    echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
   displayName: 'Output variable values'
 
 # - task: AzureCLI@2
@@ -171,3 +175,14 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+
+## TODO: if successful, request approval to proceed
+## TODO: then delete
+
+- task: AzureCLI@2
+  displayName: 'Check if the specified function app exists'
+  inputs:
+    azureSubscription: ${{variables.ado_service_connection}}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-test-shared-asp
