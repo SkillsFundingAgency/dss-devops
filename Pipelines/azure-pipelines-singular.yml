@@ -218,3 +218,14 @@ jobs:
           ben.matthews@education.gov.uk
         instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
         onTimeout: 'reject'
+- job: deleteFuncApp
+  displayName: 'Delete Func App version'
+  dependsOn: manualInterventionFuncApp
+  steps:
+  - task: AzureCLI@2
+    displayName: 'Perform deletion of Function App'
+    inputs:
+      azureSubscription: ${{variables.ado_service_connection}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
