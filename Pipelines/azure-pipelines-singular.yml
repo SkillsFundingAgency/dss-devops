@@ -58,12 +58,12 @@ steps:
   displayName: 'Show Azure CLI version'
 
 - task: AzureCLI@2
-  displayName: 'Show API versions for actionplans'
+  displayName: 'Show all APIs and their versions for actionplans'
   inputs:
     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az apim api operation list -n dss-test-shared-apim --api-id actionplans -g dss-test-shared-rg'
+    inlineScript: 'az apim api list -g dss-test-shared-rg -n dss-test-shared-apim'
 
 # - bash: az apim api operation list -n dss-test-shared-apim --api-id actionplans -g dss-test-shared-rg
 #   displayName: 'Show API versions for actionplans'
