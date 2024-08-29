@@ -178,6 +178,13 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 
+- task: ManualValidation@0
+  timeoutInMinutes: 1440
+  inputs:
+    notifyUsers: ben.matthews@education.gov.uk
+    instructions: please validate
+    onTimeout: 'resume'
+
 ## TODO: if successful, request approval to proceed
 ## TODO: then delete
 
