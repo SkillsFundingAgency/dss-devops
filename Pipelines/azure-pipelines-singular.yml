@@ -126,6 +126,17 @@ variables:
     apim_path: 'webchats'
     function_app_prefix: 'wchat'
 
+  ${{ if eq(parameters['environment'], 'at') }}:
+    ado_service_connection: 'SFA-DSS-DevTest'
+  ${{ if eq(parameters['environment'], 'test') }}:
+    ado_service_connection: 'SFA-DSS-DevTest'
+  ${{ if eq(parameters['environment'], 'oat') }}:
+    ado_service_connection: 'SFA-DSS-PreProd'
+  ${{ if eq(parameters['environment'], 'pp') }}:
+    ado_service_connection: 'SFA-DSS-PreProd'
+  # ${{ if eq(parameters['environment'], 'prd') }}:
+  #   ado_service_connection: 'SFA-DSS-Prod'
+
 trigger: none
 
 pool:
@@ -140,9 +151,9 @@ steps:
 #   displayName: 'Show Azure CLI version'
 
 - bash: |
-    echo The "DSS Service" you selected was         : ${{parameters.dss_service}}
-    echo The "APIM path" has been set to            : ${{variables.apim_path}}
-    echo The "Function App" prefix has been set to  : ${{variables.function_app_prefix}}
+    echo The "DSS Service" you selected was : ${{parameters.dss_service}}
+    echo The "APIM path" has been set to : ${{variables.apim_path}}
+    echo The "Function App" prefix has been set to : ${{variables.function_app_prefix}}
   displayName: 'Output variable values'
 
 # - task: AzureCLI@2
@@ -153,10 +164,10 @@ steps:
 #     scriptLocation: 'inlineScript'
 #     inlineScript: 'az apim api list -g dss-${{parameters.environment}}-shared-rg -n dss-${{parameters.environment}}-shared-apim'
 
-# - task: AzureCLI@2
-#   displayName: 'Check if the API version exists'
-#   inputs:
-#     azureSubscription: 'SFA-DSS-DevTest' # SFA-DSS-DevTest / SFA-DSS-PreProd / SFA-DSS-Prod
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: az apim api show --api-id actionplans-v3 -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+- task: AzureCLI@2
+  displayName: 'Check if the specified API version exists'
+  inputs:
+    azureSubscription: ${{ado_service_connection}}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: az apim api show --api-id ${{apim_path}}-${{version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
