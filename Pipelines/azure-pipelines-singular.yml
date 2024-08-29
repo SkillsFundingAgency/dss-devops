@@ -143,8 +143,8 @@ pool:
   vmImage: "ubuntu-latest"
 
 jobs:
-- job: setupApim
-  displayName: 'Check if API exists'
+- job: logVariablesAndParams
+  displayName: 'Log variables and parameters'
   steps:
   - bash: |
       echo #
@@ -156,29 +156,32 @@ jobs:
       echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
       echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
       echo #
-    displayName: 'Output variable values'
+    displayName: 'Output variable/parameter values'
+- job: checkIfApiExists
+  displayName: 'Check APIM presence'
   - task: AzureCLI@2
     displayName: 'Check if the specified API version exists'
+    dependsOn: logVariablesAndParams
     inputs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 - job: manualInterventionApim
-  displayName: 'Wait for external validation'
+  displayName: 'Awaiting APIM deletion confirmation'
   pool: server
-  timeoutInMinutes: 4320
-  dependsOn: setupApim
+  timeoutInMinutes: 4320 # 3 days
+  dependsOn: checkIfApiExists
   steps:
     - task: ManualValidation@0
-      timeoutInMinutes: 1440
+      timeoutInMinutes: 1440 # 24 hours
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
-        instructions: 'please validate'
+        instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
         onTimeout: 'reject'
-- job: postApim
-  displayName: 'Check if FA exists'
+- job: checkIfFuncAppExists
+  displayName: 'Check Func App presence'
   dependsOn: manualInterventionApim
   steps:
   - task: AzureCLI@2
