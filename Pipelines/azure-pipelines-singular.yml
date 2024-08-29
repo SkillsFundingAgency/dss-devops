@@ -166,6 +166,8 @@ jobs:
       inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 - job: manualInterventionApim
   displayName: 'Wait for external validation'
+  pool: server
+  timeoutInMinutes: 4320
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440
