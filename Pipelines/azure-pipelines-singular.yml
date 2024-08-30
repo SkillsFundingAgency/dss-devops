@@ -1,3 +1,7 @@
+######################################################
+##  THIS PIPELINE SUPPORTS THE 'AT' AND 'TEST' ENV  ##
+######################################################
+
 # No. # DSS service             # Function app prefix # APIM path               #
 # --- # ----------------------- # ------------------- # ----------------------- #
 # 1   # Action plans            # acpla               # actionplans             #
@@ -56,18 +60,9 @@ parameters:
   values:
   - at
   - test
-  - oat
-  - pp
+#  - oat
+#  - pp
 #  - prd
-
-# - name: azure_subscription
-#   displayName: Azure Subscription
-#   type: string
-#   default: SFA-CDH-Dev/Test
-#   values:
-#   - SFA-CDH-Dev/Test
-#   - SFA-DIG-PreProd
-#  - SFA-DIG-Prod
 
 # Set variables dynamically
 variables:
@@ -128,14 +123,14 @@ variables:
 
   ${{ if eq(parameters['environment'], 'at') }}:
     ado_service_connection: 'SFA-DSS-DevTest'
-  ${{ if eq(parameters['environment'], 'test') }}:
+  ${{ elseif eq(parameters['environment'], 'test') }}:
     ado_service_connection: 'SFA-DSS-DevTest'
-  ${{ if eq(parameters['environment'], 'oat') }}:
-    ado_service_connection: 'SFA-DSS-PreProd'
-  ${{ if eq(parameters['environment'], 'pp') }}:
-    ado_service_connection: 'SFA-DSS-PreProd'
-  # ${{ if eq(parameters['environment'], 'prd') }}:
-  #   ado_service_connection: 'SFA-DSS-Prod'
+#  ${{ elseif eq(parameters['environment'], 'oat') }}:
+#    ado_service_connection: 'SFA-DSS-PreProd'
+#  ${{ elseif eq(parameters['environment'], 'pp') }}:
+#    ado_service_connection: 'SFA-DSS-PreProd'
+#  ${{ elseif eq(parameters['environment'], 'prd') }}:
+#    ado_service_connection: 'SFA-DSS-Prod'
 
 trigger: none
 
@@ -248,9 +243,6 @@ jobs:
       ${{ if not(eq(parameters['version'], 'original')) }}:
         inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg        
 
-
-
-## TODO - how to handle 'original' ? 'original' APIM always uses 'v1' FA
 ## TODO - review func apps, their RGs and ASPs
 ## TODO - approvals for PRD
 ## TODO - should people be notified via email? A group?
