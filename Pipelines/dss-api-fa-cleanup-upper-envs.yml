@@ -1,6 +1,6 @@
-#######################################################
-##  THIS PIPELINE SUPPORTS THE 'AT' AND 'TEST' ENVs  ##
-#######################################################
+#############################################################
+##  THIS PIPELINE SUPPORTS THE 'OAT', 'PP' AND 'PRD' ENVs  ##
+#############################################################
 
 # No. # DSS service             # Function app prefix # APIM path               #
 # --- # ----------------------- # ------------------- # ----------------------- #
@@ -56,10 +56,11 @@ parameters:
 - name: environment
   displayName: Environment Prefix
   type: string
-  default: at
+  default: oat
   values:
-  - at
-  - test
+  - oat
+  - pp
+#  - prd
 
 # Set variables dynamically
 variables:
@@ -118,10 +119,12 @@ variables:
     apim_path: 'webchats'
     function_app_prefix: 'wchat'
 
-  ${{ if eq(parameters['environment'], 'at') }}:
-    ado_service_connection: 'SFA-DSS-DevTest'
-  ${{ elseif eq(parameters['environment'], 'test') }}:
-    ado_service_connection: 'SFA-DSS-DevTest'
+  ${{ if eq(parameters['environment'], 'oat') }}:
+    ado_service_connection: 'SFA-DSS-PreProd'
+  ${{ elseif eq(parameters['environment'], 'pp') }}:
+    ado_service_connection: 'SFA-DSS-PreProd'
+#  ${{ elseif eq(parameters['environment'], 'prd') }}:
+#    ado_service_connection: 'SFA-DSS-Prod'
 
 trigger: none
 
@@ -199,9 +202,9 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       ${{ if eq(parameters['version'], 'original') }}:
-        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
       ${{ if not(eq(parameters['version'], 'original')) }}:
-        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
 - job: manualInterventionFuncApp
   displayName: 'Awaiting Func App deletion confirmation'
   pool: server
@@ -215,9 +218,9 @@ jobs:
         notifyUsers: |
           ben.matthews@education.gov.uk
         ${{ if eq(parameters['version'], 'original') }}:
-          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
+          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2
         ${{ if not(eq(parameters['version'], 'original')) }}:
-          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2
         onTimeout: 'reject'
 - job: deleteFuncApp
   displayName: 'Delete Func App version'
@@ -230,9 +233,9 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       ${{ if eq(parameters['version'], 'original') }}:
-        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
       ${{ if not(eq(parameters['version'], 'original')) }}:
-        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg        
 
 ## TODO - who should be able to approve the manual validations?
 ## TODO - should people be notified via email? A group?
