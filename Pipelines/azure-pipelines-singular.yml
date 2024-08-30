@@ -178,6 +178,7 @@ jobs:
   pool: server
   timeoutInMinutes: 4320 # 3 days
   dependsOn: checkIfApiExists
+  condition: in(dependencies.checkIfApiExists.result, 'Succeeded')
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
@@ -193,6 +194,7 @@ jobs:
 - job: deleteApi
   displayName: 'Delete API version'
   dependsOn: manualInterventionApim
+  condition: in(dependencies.manualInterventionApim.result, 'Succeeded')
   steps:
   - task: AzureCLI@2
     displayName: 'Perform deletion of API version'
@@ -240,6 +242,7 @@ jobs:
 - job: deleteFuncApp
   displayName: 'Delete Func App version'
   dependsOn: manualInterventionFuncApp
+  condition: in(dependencies.manualInterventionFuncApp.result, 'Succeeded')
   steps:
   - task: AzureCLI@2
     displayName: 'Perform deletion of Function App'
