@@ -224,6 +224,7 @@ jobs:
   pool: server
   timeoutInMinutes: 4320 # 3 days
   dependsOn: checkIfFuncAppExists
+  condition: in(dependencies.checkIfFuncAppExists.result, 'Succeeded')
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
