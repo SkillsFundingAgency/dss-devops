@@ -167,10 +167,10 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-    ${{ if eq(parameters['version'], 'original') }}:
-      inlineScript: az apim api show --api-id ${{variables.apim_path}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
-    ${{ if not(eq(parameters['version'], 'original')) }}:
-      inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+      ${{ if eq(parameters['version'], 'original') }}:
+        inlineScript: az apim api show --api-id ${{variables.apim_path}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+      ${{ if not(eq(parameters['version'], 'original')) }}:
+        inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 - job: manualInterventionApim
   displayName: 'Awaiting APIM deletion confirmation'
   pool: server
@@ -183,10 +183,10 @@ jobs:
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
-      ${{ if eq(parameters['version'], 'original') }}:
-        instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
-      ${{ if not(eq(parameters['version'], 'original')) }}:
-        instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
+        ${{ if eq(parameters['version'], 'original') }}:
+          instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
+        ${{ if not(eq(parameters['version'], 'original')) }}:
+          instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
         onTimeout: 'reject'
 - job: deleteApi
   displayName: 'Delete API version'
