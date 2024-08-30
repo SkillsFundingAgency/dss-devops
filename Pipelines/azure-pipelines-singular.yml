@@ -167,6 +167,9 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
+    ${{ if eq(parameters['version'], 'original') }}:
+      inlineScript: az apim api show --api-id ${{variables.apim_path}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
+    ${{ if not(eq(parameters['version'], 'original')) }}:
       inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
 - job: manualInterventionApim
   displayName: 'Awaiting APIM deletion confirmation'
@@ -180,6 +183,9 @@ jobs:
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
+      ${{ if eq(parameters['version'], 'original') }}:
+        instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
+      ${{ if not(eq(parameters['version'], 'original')) }}:
         instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
         onTimeout: 'reject'
 - job: deleteApi
@@ -229,3 +235,10 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+
+
+
+## TODO - how to handle 'original' ? 'original' APIM always uses 'v1' FA
+## TODO - review func apps, their RGs and ASPs
+## TODO - approvals for PRD
+## TODO - should people be notified via email? A group?
