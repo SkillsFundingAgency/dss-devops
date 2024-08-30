@@ -206,6 +206,7 @@ jobs:
         inlineScript: az apim api delete --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim --yes
 - job: checkIfFuncAppExists
   displayName: 'Check Func App presence'
+  dependsOn: deleteApi
   condition: and(eq('${{ parameters.delete_func_app }}', 'yes'), in(dependencies.deleteApi.result, 'Succeeded', 'Skipped'))
   steps:
   - task: AzureCLI@2
