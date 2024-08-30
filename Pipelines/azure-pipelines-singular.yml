@@ -198,7 +198,10 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      inlineScript: az apim api delete --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim --yes
+      ${{ if eq(parameters['version'], 'original') }}:
+        inlineScript: az apim api delete --api-id ${{variables.apim_path}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim --yes
+      ${{ if not(eq(parameters['version'], 'original')) }}:
+        inlineScript: az apim api delete --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim --yes
 - job: checkIfFuncAppExists
   displayName: 'Check Func App presence'
   dependsOn: deleteApi
@@ -209,7 +212,10 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+      ${{ if eq(parameters['version'], 'original') }}:
+        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+      ${{ if not(eq(parameters['version'], 'original')) }}:
+        inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
 - job: manualInterventionFuncApp
   displayName: 'Awaiting Func App deletion confirmation'
   pool: server
@@ -222,7 +228,10 @@ jobs:
       inputs:
         notifyUsers: |
           ben.matthews@education.gov.uk
-        instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+        ${{ if eq(parameters['version'], 'original') }}:
+          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
+        ${{ if not(eq(parameters['version'], 'original')) }}:
+          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
         onTimeout: 'reject'
 - job: deleteFuncApp
   displayName: 'Delete Func App version'
@@ -234,7 +243,10 @@ jobs:
       azureSubscription: ${{variables.ado_service_connection}}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
-      inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+      ${{ if eq(parameters['version'], 'original') }}:
+        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
+      ${{ if not(eq(parameters['version'], 'original')) }}:
+        inlineScript: az functionapp delete -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg        
 
 
 
