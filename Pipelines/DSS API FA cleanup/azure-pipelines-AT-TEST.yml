@@ -164,10 +164,11 @@ jobs:
       echo #
       echo If APIM and FA version provided is original:
       echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
-      echo - API Management API : ${{variables.apim_path}}  within  dss-${{parameters.environment}}-shared-apim
+      echo - API Management API : ${{variables.apim_path}} within dss-${{parameters.environment}}-shared-apim
+      echo #
       echo If APIM and FA version provided is not original:
       echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
-      echo - API Management API : ${{variables.apim_path}}-${{parameters.version}}  within  dss-${{parameters.environment}}-shared-apim
+      echo - API Management API : ${{variables.apim_path}}-${{parameters.version}} within dss-${{parameters.environment}}-shared-apim
       echo #
     displayName: 'Output variable/parameter values'
 - job: checkIfApiExists
