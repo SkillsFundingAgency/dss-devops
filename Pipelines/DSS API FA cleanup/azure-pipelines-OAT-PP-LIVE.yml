@@ -62,6 +62,22 @@ parameters:
   - pp
 #  - prd
 
+- name: delete_apim
+  displayName: Delete API version?
+  type: string
+  default: no
+  values:
+  - no
+  - yes
+
+- name: delete_func_app
+  displayName: Delete Function app?
+  type: string
+  default: no
+  values:
+  - no
+  - yes
+
 # Set variables dynamically
 variables:
   ${{ if eq(parameters['dss_service'], 'action-plans') }}:
@@ -137,18 +153,30 @@ jobs:
   steps:
   - bash: |
       echo #
-      echo The DSS Service you selected was : ${{parameters.dss_service}}
-      echo The Function App and APIM Version you selected was : ${{parameters.version}}
-      echo The Environment you selected was : ${{parameters.environment}}
+      echo Parameters and variables:
       echo #
-      echo The APIM path has been set to : ${{variables.apim_path}}
-      echo The Function App prefix has been set to : ${{variables.function_app_prefix}}
-      echo The ADO service connection has been set to : ${{variables.ado_service_connection}}
+      echo - The DSS Service you selected was : ${{parameters.dss_service}}
+      echo - The Function App and APIM Version you selected was : ${{parameters.version}}
+      echo - The Environment you selected was : ${{parameters.environment}}
+      echo #
+      echo - The APIM path has been set to : ${{variables.apim_path}}
+      echo - The Function App prefix has been set to : ${{variables.function_app_prefix}}
+      echo #
+      echo - Have you chosen to delete the APIM version? : ${{parameters.delete_apim}}
+      echo - Have you chosen to delete the Function App version? : ${{parameters.delete_func_app}}
+      echo #
+      echo If APIM and FA version provided is original:
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
+      echo - API Management API : ${{variables.apim_path}} within dss-${{parameters.environment}}-shared-apim
+      echo #
+      echo If APIM and FA version provided is not original:
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+      echo - API Management API : ${{variables.apim_path}}-${{parameters.version}} within dss-${{parameters.environment}}-shared-apim
       echo #
     displayName: 'Output variable/parameter values'
 - job: checkIfApiExists
   displayName: 'Check APIM presence'
-  dependsOn: logVariablesAndParams
+  condition: eq('${{ parameters.delete_apim }}', 'yes')
   steps:
   - task: AzureCLI@2
     displayName: 'Check if the specified API version exists'
@@ -165,13 +193,13 @@ jobs:
   pool: server
   timeoutInMinutes: 4320 # 3 days
   dependsOn: checkIfApiExists
+  condition: in(dependencies.checkIfApiExists.result, 'Succeeded')
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
       displayName: Awaiting deletion confirmation
       inputs:
-        notifyUsers: |
-          ben.matthews@education.gov.uk
+        notifyUsers: ''
         ${{ if eq(parameters['version'], 'original') }}:
           instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
         ${{ if not(eq(parameters['version'], 'original')) }}:
@@ -180,6 +208,7 @@ jobs:
 - job: deleteApi
   displayName: 'Delete API version'
   dependsOn: manualInterventionApim
+  condition: in(dependencies.manualInterventionApim.result, 'Succeeded')
   steps:
   - task: AzureCLI@2
     displayName: 'Perform deletion of API version'
@@ -194,6 +223,7 @@ jobs:
 - job: checkIfFuncAppExists
   displayName: 'Check Func App presence'
   dependsOn: deleteApi
+  condition: and(eq('${{ parameters.delete_func_app }}', 'yes'), in(dependencies.deleteApi.result, 'Succeeded', 'Skipped'))
   steps:
   - task: AzureCLI@2
     displayName: 'Check if the specified function app exists'
@@ -210,13 +240,13 @@ jobs:
   pool: server
   timeoutInMinutes: 4320 # 3 days
   dependsOn: checkIfFuncAppExists
+  condition: in(dependencies.checkIfFuncAppExists.result, 'Succeeded')
   steps:
     - task: ManualValidation@0
       timeoutInMinutes: 1440 # 24 hours
       displayName: Awaiting deletion confirmation
       inputs:
-        notifyUsers: |
-          ben.matthews@education.gov.uk
+        notifyUsers: ''
         ${{ if eq(parameters['version'], 'original') }}:
           instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2
         ${{ if not(eq(parameters['version'], 'original')) }}:
@@ -225,6 +255,7 @@ jobs:
 - job: deleteFuncApp
   displayName: 'Delete Func App version'
   dependsOn: manualInterventionFuncApp
+  condition: in(dependencies.manualInterventionFuncApp.result, 'Succeeded')
   steps:
   - task: AzureCLI@2
     displayName: 'Perform deletion of Function App'
