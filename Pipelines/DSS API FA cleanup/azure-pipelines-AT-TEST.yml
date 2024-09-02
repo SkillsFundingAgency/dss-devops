@@ -184,8 +184,7 @@ jobs:
       timeoutInMinutes: 1440 # 24 hours
       displayName: Awaiting deletion confirmation
       inputs:
-        notifyUsers: |
-          ben.matthews@education.gov.uk
+        notifyUsers: ''
         ${{ if eq(parameters['version'], 'original') }}:
           instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
         ${{ if not(eq(parameters['version'], 'original')) }}:
@@ -232,8 +231,7 @@ jobs:
       timeoutInMinutes: 1440 # 24 hours
       displayName: Awaiting deletion confirmation
       inputs:
-        notifyUsers: |
-          ben.matthews@education.gov.uk
+        notifyUsers: ''
         ${{ if eq(parameters['version'], 'original') }}:
           instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
         ${{ if not(eq(parameters['version'], 'original')) }}:
