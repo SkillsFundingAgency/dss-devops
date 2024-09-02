@@ -160,12 +160,12 @@ jobs:
       echo Have you chosen to delete the APIM version? : ${{parameters.delete_apim}}
       echo Have you chosen to delete the Function App version? : ${{parameters.delete_func_app}}
       echo #
-      ${{ if eq(parameters['version'], 'original') }}:
-        echo Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
-        echo API Management API : ${{variables.apim_path}}  within  dss-${{parameters.environment}}-shared-apim
-      ${{ if not(eq(parameters['version'], 'original')) }}:
-        echo Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
-        echo API Management API : ${{variables.apim_path}}-${{parameters.version}}  within  dss-${{parameters.environment}}-shared-apim
+      echo If version is original:
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
+      echo - API Management API : ${{variables.apim_path}}  within  dss-${{parameters.environment}}-shared-apim
+      echo If version is not original:
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+      echo - API Management API : ${{variables.apim_path}}-${{parameters.version}}  within  dss-${{parameters.environment}}-shared-apim
       echo #
     displayName: 'Output variable/parameter values'
 - job: checkIfApiExists
