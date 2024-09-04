@@ -166,11 +166,11 @@ jobs:
       echo - Have you chosen to delete the Function App version? : ${{parameters.delete_func_app}}
       echo #
       echo If APIM and FA version provided is original:
-      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2
       echo - API Management API : ${{variables.apim_path}} within dss-${{parameters.environment}}-shared-apim
       echo #
       echo If APIM and FA version provided is not original:
-      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa
+      echo - Function app name : dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2
       echo - API Management API : ${{variables.apim_path}}-${{parameters.version}} within dss-${{parameters.environment}}-shared-apim
       echo #
     displayName: 'Output variable/parameter values'
