@@ -188,23 +188,27 @@ jobs:
         inlineScript: az apim api show --api-id ${{variables.apim_path}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
       ${{ if not(eq(parameters['version'], 'original')) }}:
         inlineScript: az apim api show --api-id ${{variables.apim_path}}-${{parameters.version}} -g dss-${{parameters.environment}}-shared-rg --service-name dss-${{parameters.environment}}-shared-apim
-- job: manualInterventionApim
+- deployment: manualInterventionApim
   displayName: 'Awaiting APIM deletion confirmation'
   pool: server
   timeoutInMinutes: 1500 # 25 hours
   dependsOn: checkIfApiExists
   condition: in(dependencies.checkIfApiExists.result, 'Succeeded')
-  steps:
-    - task: ManualValidation@0
-      timeoutInMinutes: 1440 # 24 hours
-      displayName: Awaiting deletion confirmation
-      inputs:
-        notifyUsers: ''
-        ${{ if eq(parameters['version'], 'original') }}:
-          instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
-        ${{ if not(eq(parameters['version'], 'original')) }}:
-          instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
-        onTimeout: 'reject'
+  environment: 'dss-cleanup-OAT-PP-PRD'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440 # 24 hours
+            displayName: Awaiting deletion confirmation
+            inputs:
+              notifyUsers: ''
+              ${{ if eq(parameters['version'], 'original') }}:
+                instructions: Please confirm you'd like to delete ${{variables.apim_path}} from dss-${{parameters.environment}}-shared-apim
+              ${{ if not(eq(parameters['version'], 'original')) }}:
+                instructions: Please confirm you'd like to delete ${{variables.apim_path}}-${{parameters.version}} from dss-${{parameters.environment}}-shared-apim
+              onTimeout: 'reject'
 - job: deleteApi
   displayName: 'Delete API version'
   dependsOn: manualInterventionApim
@@ -235,23 +239,27 @@ jobs:
         inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
       ${{ if not(eq(parameters['version'], 'original')) }}:
         inlineScript: az functionapp show -n dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2 -g dss-${{parameters.environment}}-${{variables.function_app_prefix}}-rg
-- job: manualInterventionFuncApp
+- deployment: manualInterventionFuncApp
   displayName: 'Awaiting Func App deletion confirmation'
   pool: server
   timeoutInMinutes: 1500 # 25 hours
   dependsOn: checkIfFuncAppExists
   condition: in(dependencies.checkIfFuncAppExists.result, 'Succeeded')
-  steps:
-    - task: ManualValidation@0
-      timeoutInMinutes: 1440 # 24 hours
-      displayName: Awaiting deletion confirmation
-      inputs:
-        notifyUsers: ''
-        ${{ if eq(parameters['version'], 'original') }}:
-          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2
-        ${{ if not(eq(parameters['version'], 'original')) }}:
-          instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2
-        onTimeout: 'reject'
+  environment: 'dss-cleanup-OAT-PP-PRD'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440 # 24 hours
+            displayName: Awaiting deletion confirmation
+            inputs:
+              notifyUsers: ''
+              ${{ if eq(parameters['version'], 'original') }}:
+                instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-v1-fa-ver2
+              ${{ if not(eq(parameters['version'], 'original')) }}:
+                instructions: Please confirm you'd like to delete dss-${{parameters.environment}}-${{variables.function_app_prefix}}-${{parameters.version}}-fa-ver2
+              onTimeout: 'reject'
 - job: deleteFuncApp
   displayName: 'Delete Func App version'
   dependsOn: manualInterventionFuncApp
