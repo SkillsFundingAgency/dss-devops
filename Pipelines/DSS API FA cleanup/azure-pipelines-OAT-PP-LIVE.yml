@@ -60,7 +60,7 @@ parameters:
   values:
   - oat
   - pp
-#  - prd
+  - prd
 
 - name: delete_apim
   displayName: Delete API version?
@@ -139,8 +139,8 @@ variables:
     ado_service_connection: 'SFA-DSS-PreProd'
   ${{ elseif eq(parameters['environment'], 'pp') }}:
     ado_service_connection: 'SFA-DSS-PreProd'
-#  ${{ elseif eq(parameters['environment'], 'prd') }}:
-#    ado_service_connection: 'SFA-DSS-Prod'
+  ${{ elseif eq(parameters['environment'], 'prd') }}:
+    ado_service_connection: 'SFA-DSS-Prod'
 
 trigger: none
 
