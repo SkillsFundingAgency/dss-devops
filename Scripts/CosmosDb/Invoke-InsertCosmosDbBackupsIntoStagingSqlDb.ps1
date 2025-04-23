@@ -11,7 +11,7 @@ param(
     [string]$ContainerName,
     #Required.
     [Parameter(Mandatory=$false)]
-    [array]$CosmosDatabases = @("actionplans", "actions", "addresses", "adviserdetails", "contacts", "customers", "diversitydetails", "goals", "interactions", "outcomes", "sessions", "subscriptions", "transfers", "webchats"),
+    [array]$CosmosDatabases = @("actions", "addresses", "adviserdetails", "contacts", "customers", "diversitydetails", "goals", "interactions", "outcomes", "sessions", "subscriptions", "transfers", "webchats"),
     [Parameter(Mandatory=$true)]
     [string]$SqlServer,
     [Parameter(Mandatory=$true)]
