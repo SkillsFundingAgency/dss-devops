@@ -11,7 +11,6 @@ namespace NCS.DSS.AnonymiseBackup.Models.Resources
         public Guid? GoalId { get; set; }
 
         public Guid? CustomerId { get; set; }
-        public Guid? ActionPlanId { get; set; }
         public string SubcontractorId { get; set; }
         public DateTime? DateGoalCaptured { get; set; }
         public DateTime? DateGoalShouldBeCompletedBy { get; set; }

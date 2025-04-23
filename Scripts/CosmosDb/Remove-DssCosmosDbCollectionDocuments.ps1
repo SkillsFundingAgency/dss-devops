@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$CosmosAccountName,
     [Parameter(Mandatory=$false)]
-    [array]$Databases = @("actionplans", "actions", "addresses", "contacts", "customers", "diversitydetails", "goals", "interactions", "outcomes", "sessions", "subscriptions", "transfers", "webchats"),
+    [array]$Databases = @("actions", "addresses", "contacts", "customers", "diversitydetails", "goals", "interactions", "outcomes", "sessions", "subscriptions", "transfers", "webchats"),
     [Parameter(Mandatory=$true)]
     [string]$SecondaryCosmosKey
 )

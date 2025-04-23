@@ -3,7 +3,6 @@
     public class DssResourceNames
     {
         public const string Actions = "actions";
-        public const string ActionsPlans = "actionplans";
         public const string Addresses = "addresses";
         public const string AdviserDetails = "adviserdetails";
         public const string Contacts = "contacts";

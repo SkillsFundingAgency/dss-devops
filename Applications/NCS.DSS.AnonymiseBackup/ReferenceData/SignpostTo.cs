@@ -21,9 +21,6 @@ namespace NCS.DSS.Anonymise.ReferenceData
         [Description("Other National Careers Service website content")]
         OtherNCSWebsiteContent = 4,
 
-        [Description("Skills Health Check")]
-        SkillsHealthCheck = 5,
-
         [Description("Other")]
         Other = 99
 

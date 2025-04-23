@@ -31,22 +31,6 @@ namespace NCS.DSS.AnonymiseBackup.Helpers
                 return AnonymiseResourceData(resource);
             }
 
-            if (collectionName == DssResourceNames.ActionsPlans)
-            {
-                List<ActionPlan> resource;
-
-                try
-                {
-                    resource = JsonConvert.DeserializeObject<List<ActionPlan>>(fileContent);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-                return AnonymiseResourceData(resource);
-            }
-
             if (collectionName == DssResourceNames.Addresses)
             {
                 List<Address> resource;
