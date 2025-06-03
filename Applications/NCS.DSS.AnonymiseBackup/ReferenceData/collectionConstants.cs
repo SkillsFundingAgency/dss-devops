@@ -17,6 +17,10 @@ namespace NCS.DSS.Anonymise.ReferenceData
         public const string ContactDB = "contacts";
         public const string ContactCol = "contacts";
 
+
+        public const string ActionPlanDB = "actionplans";
+        public const string ActionPlanCol = "actionplans";
+
         public const string ActionDB = "actions";
         public const string ActionCol = "actions";
 

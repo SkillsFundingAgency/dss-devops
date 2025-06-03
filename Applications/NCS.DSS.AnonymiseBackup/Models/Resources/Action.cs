@@ -10,6 +10,7 @@ namespace NCS.DSS.AnonymiseBackup.Models.Resources
         [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
         public Guid? ActionId { get; set; }
         public Guid? CustomerId { get; set; }
+        public Guid? ActionPlanId { get; set; }
         public DateTime? DateActionAgreed { get; set; }
         public DateTime? DateActionAimsToBeCompletedBy { get; set; }
         public DateTime? DateActionActuallyCompleted { get; set; }

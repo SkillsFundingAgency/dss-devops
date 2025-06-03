@@ -3,7 +3,7 @@
     Uses the Azure REST API to set the Sampling Percentage of a APIM API logger
 
     .EXAMPLE
-    Set-AzureRmApiManagementLoggerSettings.ps1 -SubscriptionId "962cae10-2950-412a-93e3-d8ae92b17896" -ResourceGroupName "dss-at-shared-rg" -ApimInstanceName "dss-at-shared-apim" -ApiName "Actions" -ApimLoggerId "dss-at-apim-ai-logger" -ApimApiLoggerId "applicationinsights" -SamplingPercentage 100 -TenantId "1a92889b-8ea1-4a16-8132-347814051567" -ApplicationId "6ea292bf-3532-4c09-9be7-668aaee20b8d" -AppRegistrationKey $AppRegistrationKey -Verbose
+    Set-AzureRmApiManagementLoggerSettings.ps1 -SubscriptionId "962cae10-2950-412a-93e3-d8ae92b17896" -ResourceGroupName "dss-at-shared-rg" -ApimInstanceName "dss-at-shared-apim" -ApiName "ActionPlans" -ApimLoggerId "dss-at-apim-ai-logger" -ApimApiLoggerId "applicationinsights" -SamplingPercentage 100 -TenantId "1a92889b-8ea1-4a16-8132-347814051567" -ApplicationId "6ea292bf-3532-4c09-9be7-668aaee20b8d" -AppRegistrationKey $AppRegistrationKey -Verbose
 
     .NOTES
     https://docs.microsoft.com/en-us/rest/api/apimanagement/diagnostic/createorupdate

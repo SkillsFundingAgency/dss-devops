@@ -33,6 +33,9 @@ namespace NCS.DSS.AnonymiseBackup.Models.Resources
         [Description("Book an appointment")]
         BookAnAppointment = 3,
 
+        [Description("Creation of actionplan")]
+        CreationOfActionPlan = 4,
+
         [Description("Telephone call")]
         TelephoneCall = 5,
 

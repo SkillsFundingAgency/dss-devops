@@ -4,6 +4,7 @@
 
 # No. # DSS service             # Function app prefix # APIM path               #
 # --- # ----------------------- # ------------------- # ----------------------- #
+# 1   # Action plans            # acpla               # actionplans             #
 # 2   # Actions                 # act                 # actions                 #
 # 3   # Address                 # addr                # addresses               #
 # 4   # Adviser details         # advde               # adviserdetails          #
@@ -78,7 +79,10 @@ parameters:
 
 # Set variables dynamically
 variables:
-  ${{ if eq(parameters['dss_service'], 'actions') }}:
+  ${{ if eq(parameters['dss_service'], 'action-plans') }}:
+    apim_path: 'actionplans'
+    function_app_prefix: 'acpla'
+  ${{ elseif eq(parameters['dss_service'], 'actions') }}:
     apim_path: 'actions'
     function_app_prefix: 'act'
   ${{ elseif eq(parameters['dss_service'], 'address') }}:
