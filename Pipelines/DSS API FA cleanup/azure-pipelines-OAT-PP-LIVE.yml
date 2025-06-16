@@ -143,6 +143,7 @@ variables:
     ado_service_connection: 'SFA-DSS-Prod'
 
 trigger: none
+pr: none
 
 pool:
   vmImage: "ubuntu-latest"
