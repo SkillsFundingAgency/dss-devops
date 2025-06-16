@@ -135,6 +135,7 @@ variables:
     function_app_prefix: 'wchat'
 
 trigger: none
+pr: none
 
 pool:
   vmImage: "ubuntu-latest"
